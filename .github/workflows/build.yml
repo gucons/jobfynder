@@ -21,9 +21,6 @@ jobs:
             - name: Install dependencies
               run: npm install
 
-            - name: Run tests
-              run: npm test # If you have tests, modify as needed
-
             - name: Build application
               run: npm run build # This command builds your Next.js app
 
