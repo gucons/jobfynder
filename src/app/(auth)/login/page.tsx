@@ -5,16 +5,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
-    FormLabel,
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import axios from "axios";
+import { Github, Loader } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -46,20 +45,31 @@ export default function LoginPage() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setLoading(true);
         try {
-            // router.replace("/dashboard");
-            toast.success("Log in successful", {
-                description: "You can now use your account.",
-                action: {
-                    label: "Close",
-                    onClick: () => {},
-                    actionButtonStyle: {
-                        cursor: "pointer",
+            const response = await axios.post<{
+                success: boolean;
+                message?: string;
+            }>("/auth/login", values);
+
+            if (response.status === 201) {
+                toast.success("Log in successful", {
+                    description: "You have successfully logged in.",
+                    action: {
+                        label: "Close",
+                        onClick: () => {},
+                        actionButtonStyle: {
+                            cursor: "pointer",
+                        },
                     },
-                },
-            });
-        } catch (error: any) {
+                });
+                router.replace("/");
+            } else {
+                toast.error(response.data.message || "An error occurred");
+            }
+        } catch (error) {
+            console.error("Error while logging in", error);
+
             toast.error("Internal Server Error", {
-                description: `An error occurred while signing in.\n${error.message}`,
+                description: "Please try again.",
                 action: {
                     label: "Close",
                     onClick: () => {},
@@ -118,7 +128,7 @@ export default function LoginPage() {
                             Google
                         </Button>
                         <Button variant="outline" className="w-full">
-                            <GitHubLogoIcon className="mr-2 h-4 w-4" />
+                            <Github className="mr-2 h-4 w-4" />
                             GitHub
                         </Button>
                     </div>
@@ -217,14 +227,21 @@ export default function LoginPage() {
                                     type="submit"
                                     className="w-full bg-purple-600 hover:bg-purple-700"
                                 >
-                                    Sign in
+                                    {loading ? (
+                                        "Login"
+                                    ) : (
+                                        <div className="flex items-center justify-center">
+                                            <Loader className="animate-spin size-4" />{" "}
+                                            <span>Please wait...</span>
+                                        </div>
+                                    )}
                                 </Button>
                             </div>
                         </form>
                     </Form>
                 </div>
                 <p className="mt-2 text-center text-sm text-gray-600">
-                    Don't have an account?{" "}
+                    Don&apos;t have an account?{" "}
                     <Link
                         href="/register"
                         className="font-medium text-purple-600 hover:text-purple-500"
