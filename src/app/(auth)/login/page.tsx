@@ -228,12 +228,12 @@ export default function LoginPage() {
                                     className="w-full bg-purple-600 hover:bg-purple-700"
                                 >
                                     {loading ? (
-                                        "Login"
-                                    ) : (
                                         <div className="flex items-center justify-center">
                                             <Loader className="animate-spin size-4" />{" "}
                                             <span>Please wait...</span>
                                         </div>
+                                    ) : (
+                                        "Login"
                                     )}
                                 </Button>
                             </div>
