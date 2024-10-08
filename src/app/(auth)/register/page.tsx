@@ -11,10 +11,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import api from "@/lib/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import axios from "axios";
 import { Loader } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -38,6 +41,7 @@ const formSchema = z
     });
 
 export default function RegisterPage() {
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -50,16 +54,28 @@ export default function RegisterPage() {
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
-
         setLoading(true);
         try {
-            // Handle registration logic here
-            toast.success("Registration successful", {
-                description: "You can now log in with your account.",
-            });
+            const response = await api.post("/auth/signup", values);
+
+            if (response.status === 201) {
+                toast.success("Account created successfully", {
+                    description:
+                        "Please check your email to verify your account.",
+                    action: {
+                        label: "Close",
+                        onClick: () => {},
+                        actionButtonStyle: {
+                            cursor: "pointer",
+                        },
+                    },
+                });
+                router.replace("/");
+            } else {
+                toast.error(response.data.message || "An error occurred");
+            }
         } catch (error) {
-            console.error("Error while registering", error);
+            console.error("Error while creating account", error);
 
             toast.error("Internal Server Error", {
                 description: "Please try again.",

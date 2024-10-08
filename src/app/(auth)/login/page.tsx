@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import api from "@/lib/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { Github, Loader } from "lucide-react";
@@ -45,7 +46,7 @@ export default function LoginPage() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setLoading(true);
         try {
-            const response = await axios.post<{
+            const response = await api.post<{
                 success: boolean;
                 message?: string;
             }>("/auth/login", values);
