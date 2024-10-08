@@ -14,7 +14,6 @@ import { Label } from "@/components/ui/label";
 import api from "@/lib/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import axios from "axios";
 import { Loader } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
