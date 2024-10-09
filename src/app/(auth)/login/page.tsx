@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import api from "@/lib/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { Github, Loader } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -87,7 +88,7 @@ export default function LoginPage() {
             <div className="w-full max-w-md sm:w-[448px] space-y-8 rounded-lg bg-white p-8 shadow-md">
                 <div className="text-center">
                     <svg
-                        className="mx-auto h-12 w-12 text-purple-600"
+                        className="mx-auto h-12 w-12 text-primary"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -128,7 +129,7 @@ export default function LoginPage() {
                             Google
                         </Button>
                         <Button variant="outline" className="w-full">
-                            <Github className="mr-2 h-4 w-4" />
+                            <GitHubLogoIcon className="mr-2 h-4 w-4" />
                             GitHub
                         </Button>
                     </div>
@@ -166,7 +167,7 @@ export default function LoginPage() {
                                                         type="email"
                                                         autoComplete="email"
                                                         required
-                                                        className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-purple-500 focus:outline-none focus:ring-purple-500 sm:text-sm"
+                                                        className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-100 focus:outline-none sm:text-sm"
                                                         placeholder="Email address"
                                                     />
                                                 </FormControl>
@@ -190,7 +191,7 @@ export default function LoginPage() {
                                                         type="password"
                                                         autoComplete="current-password"
                                                         required
-                                                        className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-purple-500 focus:outline-none focus:ring-purple-500 sm:text-sm"
+                                                        className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:outline-none  sm:text-sm"
                                                         placeholder="Password"
                                                     />
                                                 </FormControl>
@@ -215,7 +216,7 @@ export default function LoginPage() {
                                 <div className="text-sm">
                                     <Link
                                         href="#"
-                                        className="font-medium text-purple-600 hover:text-purple-500"
+                                        className="font-medium text-primary/80 hover:text-primary"
                                     >
                                         Forgot your password?
                                     </Link>
@@ -223,10 +224,7 @@ export default function LoginPage() {
                             </div>
 
                             <div>
-                                <Button
-                                    type="submit"
-                                    className="w-full bg-purple-600 hover:bg-purple-700"
-                                >
+                                <Button type="submit" className="w-full">
                                     {loading ? (
                                         <div className="flex items-center justify-center">
                                             <Loader className="animate-spin size-4" />{" "}
@@ -244,7 +242,7 @@ export default function LoginPage() {
                     Don&apos;t have an account?{" "}
                     <Link
                         href="/register"
-                        className="font-medium text-purple-600 hover:text-purple-500"
+                        className="font-medium text-primary/80 hover:text-primary"
                     >
                         Sign up
                     </Link>
