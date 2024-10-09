@@ -11,11 +11,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import api from "@/lib/axios";
 import showToastError from "@/lib/toastError";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import { isAxiosError } from "axios";
 import { Loader } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -29,15 +35,20 @@ const formSchema = z
         email: z.string().email({
             message: "Invalid email address.",
         }),
+        role: z.enum(["CONSULTANT", "BENCH_SALES", "RECRUITER"], {
+            message: "Please select a role.",
+        }),
         password: z.string().min(6, {
             message: "Password must be at least 6 characters.",
         }),
         confirmPassword: z.string().min(6, {
             message: "Password must be at least 6 characters.",
         }),
-        terms: z.boolean().refine((data) => data === true, {
-            message: "Please accept the terms and conditions.",
-        }),
+        terms: z
+            .boolean({ message: "Please accept the terms and conditions." })
+            .refine((data) => data === true, {
+                message: "Please accept the terms and conditions.",
+            }),
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: "Passwords must match.",
@@ -52,6 +63,7 @@ export default function RegisterPage() {
         resolver: zodResolver(formSchema),
         defaultValues: {
             email: "",
+            role: undefined,
             password: "",
             confirmPassword: "",
         },
@@ -175,8 +187,42 @@ export default function RegisterPage() {
                                     />
                                 </div>
                                 <div className="grid gap-2">
+                                    <Label>Choose your role</Label>
+                                    <FormField
+                                        control={form.control}
+                                        name="role"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <Select
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    defaultValue={field.value}
+                                                >
+                                                    <FormControl>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Select a role" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <SelectItem value="CONSULTANT">
+                                                            Consultant
+                                                        </SelectItem>
+                                                        <SelectItem value="BENCH_SALES">
+                                                            Bench Sales
+                                                        </SelectItem>
+                                                        <SelectItem value="RECRUITER">
+                                                            Recruiter
+                                                        </SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <div className="grid gap-2">
                                     <Label htmlFor="password">Password</Label>
-
                                     <FormField
                                         control={form.control}
                                         name="password"
