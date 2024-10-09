@@ -5,8 +5,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
+    FormLabel,
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -162,113 +164,104 @@ export default function RegisterPage() {
                             noValidate
                         >
                             <div className="space-y-4 rounded-md">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="email">Email address</Label>
-                                    <FormField
-                                        control={form.control}
-                                        name="email"
-                                        render={({ field }) => (
-                                            <FormItem>
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Email address</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    type="email"
+                                                    autoComplete="email"
+                                                    required
+                                                    className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10  focus:outline-none sm:text-sm"
+                                                    placeholder="Email address"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="role"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Choose your role
+                                            </FormLabel>
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                            >
                                                 <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        id="email-address"
-                                                        name="email"
-                                                        type="email"
-                                                        autoComplete="email"
-                                                        required
-                                                        className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10  focus:outline-none sm:text-sm"
-                                                        placeholder="Email address"
-                                                    />
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select a role" />
+                                                    </SelectTrigger>
                                                 </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label>Choose your role</Label>
-                                    <FormField
-                                        control={form.control}
-                                        name="role"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <Select
-                                                    onValueChange={
-                                                        field.onChange
-                                                    }
-                                                    defaultValue={field.value}
-                                                >
-                                                    <FormControl>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Select a role" />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        <SelectItem value="CONSULTANT">
-                                                            Consultant
-                                                        </SelectItem>
-                                                        <SelectItem value="BENCH_SALES">
-                                                            Bench Sales
-                                                        </SelectItem>
-                                                        <SelectItem value="RECRUITER">
-                                                            Recruiter
-                                                        </SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="password">Password</Label>
-                                    <FormField
-                                        control={form.control}
-                                        name="password"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        id="password"
-                                                        type="password"
-                                                        autoComplete="new-password"
-                                                        required
-                                                        className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10  focus:outline-none sm:text-sm"
-                                                        placeholder="Password"
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="confirm-password">
-                                        Confirm Password
-                                    </Label>
-                                    <FormField
-                                        control={form.control}
-                                        name="confirmPassword"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        id="confirm-password"
-                                                        type="password"
-                                                        autoComplete="new-password"
-                                                        required
-                                                        className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10  focus:outline-none sm:text-sm"
-                                                        placeholder="Confirm Password"
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
+                                                <SelectContent>
+                                                    <SelectItem value="CONSULTANT">
+                                                        Consultant
+                                                    </SelectItem>
+                                                    <SelectItem value="BENCH_SALES">
+                                                        Bench Sales
+                                                    </SelectItem>
+                                                    <SelectItem value="RECRUITER">
+                                                        Recruiter
+                                                    </SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Password</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    type="password"
+                                                    autoComplete="new-password"
+                                                    required
+                                                    className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10  focus:outline-none sm:text-sm"
+                                                    placeholder="Password"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="confirmPassword"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Confirm Password
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    type="password"
+                                                    autoComplete="new-password"
+                                                    required
+                                                    className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10  focus:outline-none sm:text-sm"
+                                                    placeholder="Confirm Password"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                             </div>
 
                             <div className="flex items-center justify-between">
@@ -276,25 +269,26 @@ export default function RegisterPage() {
                                     control={form.control}
                                     name="terms"
                                     render={({ field }) => (
-                                        <FormItem className="space-y-2">
-                                            <div className="flex items-center space-x-2">
-                                                <FormControl>
-                                                    <Checkbox
-                                                        checked={field.value}
-                                                        onCheckedChange={
-                                                            field.onChange
-                                                        }
-                                                        id="terms"
-                                                    />
-                                                </FormControl>
-                                                <Label
-                                                    htmlFor="terms"
-                                                    className="text-sm text-gray-900 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                >
+                                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                            <FormControl>
+                                                <Checkbox
+                                                    checked={field.value}
+                                                    onCheckedChange={
+                                                        field.onChange
+                                                    }
+                                                    id="terms"
+                                                />
+                                            </FormControl>
+                                            <div className="space-y-1 leading-none">
+                                                <FormLabel>
                                                     Accept terms and conditions
-                                                </Label>
+                                                </FormLabel>
+                                                <FormDescription>
+                                                    You must agree to our terms
+                                                    of service and privacy
+                                                    policy.
+                                                </FormDescription>
                                             </div>
-                                            <FormMessage className="text-xs text-red-500" />
                                         </FormItem>
                                     )}
                                 />
