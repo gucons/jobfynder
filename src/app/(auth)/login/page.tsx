@@ -12,9 +12,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import api from "@/lib/axios";
+import showToastError from "@/lib/toastError";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import { Github, Loader } from "lucide-react";
+import { AxiosError, isAxiosError } from "axios";
+import { Loader } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -51,7 +53,7 @@ export default function LoginPage() {
                 message?: string;
             }>("/auth/login", values);
 
-            if (response.status === 201) {
+            if (response.status === 200) {
                 toast.success("Log in successful", {
                     description: "You have successfully logged in.",
                     action: {
@@ -63,22 +65,9 @@ export default function LoginPage() {
                     },
                 });
                 router.replace("/");
-            } else {
-                toast.error(response.data.message || "An error occurred");
             }
         } catch (error) {
-            console.error("Error while logging in", error);
-
-            toast.error("Internal Server Error", {
-                description: "Please try again.",
-                action: {
-                    label: "Close",
-                    onClick: () => {},
-                    actionButtonStyle: {
-                        cursor: "pointer",
-                    },
-                },
-            });
+            showToastError(error);
         } finally {
             setLoading(false);
         }
@@ -226,7 +215,7 @@ export default function LoginPage() {
                             <div>
                                 <Button type="submit" className="w-full">
                                     {loading ? (
-                                        <div className="flex items-center justify-center">
+                                        <div className="flex items-center justify-center gap-2">
                                             <Loader className="animate-spin size-4" />{" "}
                                             <span>Please wait...</span>
                                         </div>
