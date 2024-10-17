@@ -32,7 +32,7 @@ jobs:
               run: |
                   echo "$SSH_PRIVATE_KEY" > private_key
                   chmod 600 private_key
-                  scp -o StrictHostKeyChecking=no -i private_key -r .next/* $VPS_USER@$VPS_IP:jobfynder/frontend/.next
-                  scp -o StrictHostKeyChecking=no -i private_key -r package.json $VPS_USER@$VPS_IP:jobfynder/frontend
-                  scp -o StrictHostKeyChecking=no -i private_key -r package-lock.json $VPS_USER@$VPS_IP:jobfynder/frontend
-                  ssh -o StrictHostKeyChecking=no -i private_key $VPS_USER@$VPS_IP "cd jobfynder/frontend && npm install --production && pm2 restart nextJS"  # Adjust as necessary
+                  scp -o StrictHostKeyChecking=no -i private_key -r .next/* $VPS_USER@$VPS_IP:code/frontend/.next
+                  scp -o StrictHostKeyChecking=no -i private_key -r package.json $VPS_USER@$VPS_IP:code/frontend
+                  scp -o StrictHostKeyChecking=no -i private_key -r package-lock.json $VPS_USER@$VPS_IP:code/frontend
+                  ssh -o StrictHostKeyChecking=no -i private_key $VPS_USER@$VPS_IP "cd code/frontend && npm install --production && pm2 restart frontend"
