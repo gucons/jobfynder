@@ -12,7 +12,6 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
     Select,
     SelectContent,
@@ -25,6 +24,7 @@ import showToastError from "@/lib/toastError";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { Loader } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -101,20 +101,14 @@ export default function RegisterPage() {
         <div className="flex min-h-svh items-center justify-center">
             <div className="w-full max-w-md sm:w-[448px] space-y-8 rounded-lg bg-white p-8 shadow-md">
                 <div className="text-center">
-                    <svg
-                        className="mx-auto h-12 w-12 text-primary"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                        />
-                    </svg>
+                    <Image
+                        className="mx-auto h-12 text-primary"
+                        width={170}
+                        height={170}
+                        priority
+                        src={"/Jobfynder_logo.svg"}
+                        alt="Jobfynder Logo"
+                    />
                     <h2 className="text-3xl font-extrabold text-gray-900">
                         Create your account
                     </h2>
