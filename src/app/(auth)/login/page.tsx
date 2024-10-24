@@ -52,6 +52,8 @@ export default function LoginPage() {
             const response = await signIn("credentials", {
                 email: values.email,
                 password: values.password,
+                redirect: true,
+                redirectTo: "/",
             });
 
             if (response?.error) {
@@ -76,7 +78,6 @@ export default function LoginPage() {
                         },
                     },
                 });
-                router.replace("/");
             }
         } catch (error) {
             showToastError(error);
