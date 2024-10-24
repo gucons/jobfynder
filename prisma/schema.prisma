@@ -1,0 +1,154 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model User {
+  id                String          @id @default(uuid())
+  name              String
+  email             String          @unique
+  image             String?
+  hashedPassword    String?
+  emailVerified     Boolean         @default(false)
+  role              UserRole        @default(PENDING)
+  // Relations to roles
+  consultantProfile Consultant?
+  benchSalesProfile BenchSales?
+  recruiterProfile  Recruiter?
+  // Auth Sessions
+  accounts          Account[]
+  sessions          Session[]
+  Authenticator     Authenticator[]
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+enum UserRole {
+  PENDING
+  CONSULTANT
+  BENCH_SALES
+  RECRUITER
+}
+
+model Consultant {
+  id             String      @id @default(uuid())
+  userId         String      @unique
+  user           User        @relation(fields: [userId], references: [id])
+  // Basic Info
+  firstName      String
+  lastName       String
+  contactEmail   String      @unique
+  profilePicture String?
+  phoneNumber    String?
+  location       String?
+  timeZone       String?
+  // Add timestamps if needed
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  BenchSales     BenchSales? @relation(fields: [benchSalesId], references: [id])
+  benchSalesId   String?
+}
+
+model BenchSales {
+  id           String       @id @default(uuid())
+  userId       String       @unique
+  user         User         @relation(fields: [userId], references: [id])
+  // Consultants under Bench Sales
+  consultants  Consultant[]
+  company      String? // Bench Sales company name
+  contactEmail String?      @unique
+  // Add timestamps if needed
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Recruiter {
+  id           String       @id @default(uuid())
+  userId       String       @unique
+  user         User         @relation(fields: [userId], references: [id])
+  company      String? // Recruiter company
+  contactEmail String?      @unique
+  jobPostings  JobPosting[]
+  // Add timestamps if needed
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model JobPosting {
+  id          String    @id @default(uuid())
+  recruiterId String
+  title       String
+  description String
+  location    String
+  salaryRange String?
+  // Relation to Recruiter
+  recruiter   Recruiter @relation(fields: [recruiterId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}
