@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -9,27 +8,42 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Briefcase, Users, TrendingUp, GraduationCap } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import showToastError from "@/lib/toastError";
+import { UserRole } from "@prisma/client";
+import axios from "axios";
+import {
+    Briefcase,
+    Loader,
+    TrendingUp,
+    Users
+} from "lucide-react";
 import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { toast } from "sonner";
 
-const roles = [
+const roles: Array<{
+    id: UserRole;
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+}> = [
     {
-        id: "consultant",
+        id: "CONSULTANT",
         title: "Consultant",
         description: "Showcase your skills and find job matches that fit you",
         icon: <Briefcase className="h-6 w-6" />,
     },
     {
-        id: "benchSales",
+        id: "BENCH_SALES",
         title: "Bench Sales",
         description:
             "Manage consultants on the bench, maintain hotlists and sell bench resources to clients",
         icon: <TrendingUp className="h-6 w-6" />,
     },
     {
-        id: "recruiter",
+        id: "RECRUITER",
         title: "Recruiter",
         description:
             "Post jobs, connect with consultants, and find talent that matches your hiring needs",
@@ -46,17 +60,30 @@ const roles = [
 
 export default function RoleSelectionPage() {
     const router = useRouter();
+
     const [selectedRole, setSelectedRole] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleRoleChange = (value: string) => {
         setSelectedRole(value);
     };
 
-    const handleContinue = () => {
-        console.log("Selected role:", selectedRole);
+    const handleContinue = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.post("/api/user/profile/role", {
+                role: selectedRole,
+            });
+            if (response.status === 200) {
+                toast.success("Role updated successfully", {});
 
-        // todo: Add the role to the user's profile (Database)
-        router.push("/get-started/basic-info");
+                router.push("/get-started/basic-info");
+            }
+        } catch (error) {
+            showToastError(error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -127,7 +154,14 @@ export default function RoleSelectionPage() {
                             className="w-full mt-6"
                             disabled={!selectedRole}
                         >
-                            Continue
+                            {loading ? (
+                                <span className="flex items-center justify-center">
+                                    <Loader className="animate-spin size-4 mr-2" />
+                                    Loading
+                                </span>
+                            ) : (
+                                "Continue"
+                            )}
                         </Button>
                     </CardContent>
                 </Card>

@@ -94,7 +94,7 @@ export default function BasicInformationPage() {
                     Tell us about yourself
                 </h1>
                 <p className="mt-2 text-center text-sm text-gray-600">
-                    Let's get to know you better to personalize your
+                    Let&apos;s get to know you better to personalize your
                     <br />
                     Jobfynder experience.
                 </p>
