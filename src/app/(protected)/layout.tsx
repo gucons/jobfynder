@@ -2,16 +2,15 @@ import UserMenu from "@/components/header/userMenu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { auth } from "@/lib/auth";
-import { Bell, BellDot, MessageSquare, Search } from "lucide-react";
+import { Bell, MessageSquare, Search } from "lucide-react";
 import Image from "next/image";
 import React from "react";
-import { ReactNode } from "react";
 
-interface LayoutProps {
-    children: ReactNode;
-}
-
-const ProtectedLayout: React.FC<LayoutProps> = async ({ children }) => {
+export default async function ProtectedLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
     // TODO: Add middleware to ensure user object and user is authenticated
     const session = await auth();
     return (
@@ -50,6 +49,4 @@ const ProtectedLayout: React.FC<LayoutProps> = async ({ children }) => {
             <footer>{/* Add your footer content here */}</footer>
         </div>
     );
-};
-
-export default ProtectedLayout;
+}
