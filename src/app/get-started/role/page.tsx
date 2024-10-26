@@ -62,9 +62,9 @@ export default function RoleSelectionPage() {
                     Welcome to Jobfynder!
                 </h1>
                 <p className="mt-2 text-center text-sm text-gray-600 space-y-4">
-                    {/* We're here to make sure you have the best experience. */}
+                    {/* We&apos;re here to make sure you have the best experience. */}
                     {/* <br /> */}
-                    Let's get started by understanding your role so we can
+                    Let&apos;s get started by understanding your role so we can
                     customize your profile.
                 </p>
             </div>
