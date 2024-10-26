@@ -52,13 +52,12 @@ export default function LoginPage() {
             const response = await signIn("credentials", {
                 email: values.email,
                 password: values.password,
-                redirect: true,
-                redirectTo: "/",
+                redirect: false,
             });
 
             if (response?.error) {
                 toast.error("Log in failed", {
-                    description: response.error,
+                    description: response.code,
                     action: {
                         label: "Close",
                         onClick: () => {},
@@ -78,6 +77,7 @@ export default function LoginPage() {
                         },
                     },
                 });
+                router.push("/");
             }
         } catch (error) {
             showToastError(error);

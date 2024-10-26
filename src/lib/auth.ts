@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcrypt";
-import NextAuth, { Session } from "next-auth";
+import NextAuth, { CredentialsSignin, Session } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
@@ -21,6 +21,15 @@ prismaAdapter.createUser = async (data: User) => {
     });
 };
 
+class CustomCredentialsError extends CredentialsSignin {
+    code: string;
+
+    constructor(message: string, code: string) {
+        super(message);
+        this.code = code;
+    }
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: prismaAdapter,
     providers: [
@@ -39,7 +48,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     required: true,
                 },
             },
-            authorize: async (credentials) => {
+            authorize: async (credentials, request) => {
                 const { email, password } = await
                     z.object
                         ({
@@ -88,7 +97,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                             "Error during authentication:",
                             error.message || error,
                         );
-                        throw new Error("An error occurred during authentication.");
+                        throw new CustomCredentialsError(
+                            "An error occurred during authentication.",
+                            error.message || "An error occurred during authentication."
+                        );
                     }
                 }
             },
@@ -97,6 +109,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         Google,
     ],
     callbacks: {
+        // async signIn({ user, account, profile, email, credentials }) {
+        //     if (user?.error === 'my custom error') {
+        //         throw new Error('custom error to the client')
+        //     }
+        //     return true
+        // }
         // async jwt({ token, user }) {
         //     if (token && user) {
         //         token.id = user.id;
