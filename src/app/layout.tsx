@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
+import { SessionProvider } from "next-auth/react";
 import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import "./globals.css";
@@ -49,11 +50,25 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const session = await auth();
+    if (!session) {
+        return null;
+    }
+
+    const clientSession = {
+        expires: session?.expires,
+        user: {
+            email: session?.user?.email,
+            image: session?.user?.image,
+            name: session?.user?.name,
+        },
+    };
 
     return (
         <html lang="en">
             <body className="antialiased font-mono">
-                {children}
+                <SessionProvider session={clientSession}>
+                    {children}
+                </SessionProvider>
                 <Toaster position="top-center" />
             </body>
         </html>
