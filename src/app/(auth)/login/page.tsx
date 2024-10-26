@@ -12,11 +12,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signIn } from "next-auth/react";
 import showToastError from "@/lib/toastError";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { Loader } from "lucide-react";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -90,10 +90,10 @@ export default function LoginPage() {
             <div className="text-center">
                 <Image
                     className="mx-auto h-12 text-primary"
-                    width={170}
-                    height={170}
+                    width={40}
+                    height={40}
                     priority
-                    src={"/Jobfynder_logo.svg"}
+                    src={"/logo.png"}
                     alt="Jobfynder Logo"
                 />
                 <h2 className="text-3xl font-extrabold text-gray-900">

@@ -1,11 +1,6 @@
-import UserMenu from "@/components/header/userMenu";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { auth } from "@/lib/auth";
-import { Bell, MessageSquare, Search } from "lucide-react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import Image from "next/image";
 import { Toaster } from "sonner";
 import "./globals.css";
 
