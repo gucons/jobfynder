@@ -12,6 +12,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Briefcase, Users, TrendingUp, GraduationCap } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const roles = [
     {
@@ -44,6 +45,7 @@ const roles = [
 ];
 
 export default function RoleSelectionPage() {
+    const router = useRouter();
     const [selectedRole, setSelectedRole] = useState("");
 
     const handleRoleChange = (value: string) => {
@@ -51,8 +53,10 @@ export default function RoleSelectionPage() {
     };
 
     const handleContinue = () => {
-        // todo: handel role selection
         console.log("Selected role:", selectedRole);
+
+        // todo: Add the role to the user's profile (Database)
+        router.push("/get-started/basic-info");
     };
 
     return (
@@ -62,10 +66,10 @@ export default function RoleSelectionPage() {
                     Welcome to Jobfynder!
                 </h1>
                 <p className="mt-2 text-center text-sm text-gray-600 space-y-4">
-                    {/* We&apos;re here to make sure you have the best experience. */}
+                    We&apos;re here to make sure you have the best experience.
                     {/* <br /> */}
-                    Let&apos;s get started by understanding your role so we can
-                    customize your profile.
+                    {/* Let&apos;s get started by understanding your role so we can
+                    customize your profile. */}
                 </p>
             </div>
 
