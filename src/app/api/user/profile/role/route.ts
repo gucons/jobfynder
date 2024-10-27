@@ -1,6 +1,6 @@
-import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { authenticateUser } from "@/server/authenticateUser";
+import { handleZodErrorResponse } from "@/server/handleZodErrorResponse";
 import { sendErrorResponse, sendSuccessResponse } from "@/server/response";
 import { UserRole } from "@prisma/client";
 import { z } from "zod";
@@ -18,6 +18,7 @@ export async function POST(req: Request) {
 
         const user = await prisma.user.update({
             where: {
+                id: session.user.id,
                 email: session.user.email as string,
             },
             data: { role },
@@ -36,11 +37,7 @@ export async function POST(req: Request) {
         });
     } catch (error: any) {
         if (error instanceof z.ZodError) {
-            return sendErrorResponse({
-                success: false,
-                message: "Invalid request data",
-                error: error.errors,
-            });
+            return handleZodErrorResponse(error);
         } else {
             console.log("Error updating user role", error.message || error);
             return sendErrorResponse({
