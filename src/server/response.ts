@@ -4,6 +4,7 @@ type error = {
     success: boolean,
     message: string,
     error?: any
+    status?: number
 }
 
 type success = {
@@ -21,7 +22,7 @@ export function sendErrorResponse(params: error) {
             description: params.error.message || "Internal server error",
         },
         {
-            status: 500
+            status: params.status || 500
         }
     )
 }

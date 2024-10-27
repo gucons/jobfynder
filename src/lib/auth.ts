@@ -1,7 +1,8 @@
 import prisma from "@/lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import { UserRole } from "@prisma/client";
 import bcrypt from "bcrypt";
-import NextAuth, { CredentialsSignin, Session } from "next-auth";
+import NextAuth, { CredentialsSignin, DefaultSession, Session } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
@@ -73,6 +74,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         where: {
                             email: email,
                         },
+                        select: {
+                            id: true,
+                            email: true,
+                            name: true,
+                            emailVerified: true,
+                            role: true,
+                            hashedPassword: true,
+                        }
                     });
 
                     if (!user) throw new Error("No user found, please register.");
@@ -85,7 +94,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     if (!isPasswordValid) throw new Error("Invalid email or password.");
 
                     // Return user if credentials are valid
-                    return user;
+                    const { hashedPassword, ...userWithoutPassword } = user;
+                    return userWithoutPassword;
                 } catch (error: any) {
                     if (
                         error instanceof z.ZodError
@@ -115,22 +125,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         //     }
         //     return true
         // }
-        // async jwt({ token, user }) {
-        //     if (token && user) {
-        //         token.id = user.id;
-        //         token.email = user.email;
-        //         token.name = user.name;
-        //     }
-        //     return token;
-        // },
-        // async session({ session, token }) {
-        //     if (session && token) {
-        //         session.user.id = token.id as string;
-        //         session.user.email = token.email as string;
-        //         session.user.name = token.name as string;
-        //     }
-        //     return session;
-        // },
+        async jwt({ token, user }) {
+            if (token && user) {
+                token.id = user.id;
+                token.email = user.email;
+                token.name = user.name;
+                token.role = user.role;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (session && token) {
+                session.user.id = token.id as string;
+                session.user.email = token.email as string;
+                session.user.name = token.name as string;
+                session.user.role = token.role as UserRole;
+            }
+            return session;
+        },
         // async signIn({ user }) {
         //     const existingUser = await prisma.user.findUnique({
         //         where: {

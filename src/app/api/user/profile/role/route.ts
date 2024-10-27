@@ -1,21 +1,13 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { authenticateUser } from "@/server/authenticateUser";
 import { sendErrorResponse, sendSuccessResponse } from "@/server/response";
 import { UserRole } from "@prisma/client";
 import { z } from "zod";
 
 export async function POST(req: Request) {
-
     try {
-        const session = await auth()
-        if (!session) {
-            return sendErrorResponse(
-                {
-                    success: false,
-                    message: "User not authenticated",
-                }
-            )
-        }
+        const session = await authenticateUser()
 
         const requestData = await req.json();
         const { role } =
@@ -26,7 +18,7 @@ export async function POST(req: Request) {
 
         const user = await prisma.user.update({
             where: {
-                email: session?.user?.email as string
+                email: session.user.email as string
             },
             data: { role }
         });
