@@ -48,10 +48,12 @@ model Consultant {
   // Basic Info
   fullName       String
   contactEmail   String      @unique
+  location       String
+  linkedinUrl    String
+  phoneNumber    String
   profilePicture String?
-  phoneNumber    String?
-  location       String?
   timeZone       String?
+  bio            String?     @db.VarChar(500)
   // Add timestamps if needed
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
