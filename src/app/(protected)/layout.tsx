@@ -16,7 +16,7 @@ export default async function ProtectedLayout({
     return (
         <div>
             <header className="bg-white shadow">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
                     <div className="flex items-center space-x-4">
                         <Image
                             src={"/logo.png"}
@@ -25,12 +25,12 @@ export default async function ProtectedLayout({
                             height={40}
                             className="rounded-md"
                         />
-                        <div className="relative items-center flex">
-                            <Search className="size-4 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <div className="relative flex items-center">
+                            <Search className="absolute left-4 top-1/2 size-4 -translate-y-1/2 transform text-gray-400" />
                             <Input
                                 type="search"
                                 placeholder="Search jobs, skills, companies"
-                                className="pl-10 w-64"
+                                className="w-64 pl-10"
                             />
                         </div>
                     </div>

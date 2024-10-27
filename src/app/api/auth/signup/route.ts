@@ -7,11 +7,13 @@ export const POST = async (req: Request) => {
     try {
         const requestData = await req.json();
 
-        const data = z.object({
-            name: z.string(),
-            email: z.string().email(),
-            password: z.string(),
-        }).parse(requestData);
+        const data = z
+            .object({
+                name: z.string(),
+                email: z.string().email(),
+                password: z.string(),
+            })
+            .parse(requestData);
 
         const hashedPassword = await bcrypt.hash(data.password, 10);
 
@@ -19,34 +21,27 @@ export const POST = async (req: Request) => {
             data: {
                 name: data.name,
                 email: data.email,
-                hashedPassword
-            }
-        })
+                hashedPassword,
+            },
+        });
 
-        return sendSuccessResponse(
-            {
-                success: true,
-                message: "User created successfully",
-            })
-
+        return sendSuccessResponse({
+            success: true,
+            message: "User created successfully",
+        });
     } catch (error: any) {
         if (error instanceof z.ZodError) {
-            return sendErrorResponse(
-                {
-                    success: false,
-                    message: error.errors[0].message
-                }
-            )
+            return sendErrorResponse({
+                success: false,
+                message: error.errors[0].message,
+            });
         } else {
             console.log("Error during authentication:", error.message || error);
-            return sendErrorResponse(
-                {
-                    success: false,
-                    message: "An error occurred during authentication.",
-                    error: error.message || error
-                }
-            )
+            return sendErrorResponse({
+                success: false,
+                message: "An error occurred during authentication.",
+                error: error.message || error,
+            });
         }
-
     }
-}
+};

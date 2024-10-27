@@ -1,18 +1,18 @@
 import { NextResponse } from "next/server";
 
 type error = {
-    success: boolean,
-    message: string,
-    error?: any
-    status?: number
-}
+    success: boolean;
+    message: string;
+    error?: any;
+    status?: number;
+};
 
 type success = {
-    success: boolean,
-    message: string,
-    status?: number,
-    data?: any
-}
+    success: boolean;
+    message: string;
+    status?: number;
+    data?: any;
+};
 
 export function sendErrorResponse(params: error) {
     return NextResponse.json(
@@ -22,9 +22,9 @@ export function sendErrorResponse(params: error) {
             description: params.error.message || "Internal server error",
         },
         {
-            status: params.status || 500
+            status: params.status || 500,
         }
-    )
+    );
 }
 
 export function sendSuccessResponse(params: success) {
@@ -32,10 +32,10 @@ export function sendSuccessResponse(params: success) {
         {
             success: params.success,
             message: params.message,
-            data: params.data
+            data: params.data,
         },
         {
-            status: params.status || 200
+            status: params.status || 200,
         }
-    )
+    );
 }

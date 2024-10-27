@@ -65,7 +65,7 @@ export default async function RootLayout({
 
     return (
         <html lang="en">
-            <body className="antialiased font-mono">
+            <body className="font-mono antialiased">
                 <SessionProvider session={clientSession}>
                     {children}
                 </SessionProvider>

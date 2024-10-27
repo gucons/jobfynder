@@ -46,8 +46,7 @@ model Consultant {
   userId         String      @unique
   user           User        @relation(fields: [userId], references: [id])
   // Basic Info
-  firstName      String
-  lastName       String
+  fullName       String
   contactEmail   String      @unique
   profilePicture String?
   phoneNumber    String?

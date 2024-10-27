@@ -97,7 +97,7 @@ export default function RegisterPage() {
     }
 
     return (
-        <div className="w-full max-w-lg flex-1 sm:w-[448px] space-y-8 rounded-lg bg-white p-8 shadow-md">
+        <div className="w-full max-w-lg flex-1 space-y-8 rounded-lg bg-white p-8 shadow-md sm:w-[448px]">
             <div className="text-center">
                 <Image
                     className="mx-auto h-12 text-primary"
@@ -155,7 +155,7 @@ export default function RegisterPage() {
                         className="space-y-8"
                         noValidate
                     >
-                        <div className="rounded-md grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-4 rounded-md">
                             <FormField
                                 control={form.control}
                                 name="name"
@@ -168,7 +168,7 @@ export default function RegisterPage() {
                                                 type="text"
                                                 autoComplete="name"
                                                 required
-                                                className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10  focus:outline-none sm:text-sm"
+                                                className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:outline-none sm:text-sm"
                                                 placeholder="Full name"
                                             />
                                         </FormControl>
@@ -189,7 +189,7 @@ export default function RegisterPage() {
                                                 type="email"
                                                 autoComplete="email"
                                                 required
-                                                className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10  focus:outline-none sm:text-sm"
+                                                className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:outline-none sm:text-sm"
                                                 placeholder="Email address"
                                             />
                                         </FormControl>
@@ -244,7 +244,7 @@ export default function RegisterPage() {
                                                 type="password"
                                                 autoComplete="new-password"
                                                 required
-                                                className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10  focus:outline-none sm:text-sm"
+                                                className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:outline-none sm:text-sm"
                                                 placeholder="Password"
                                             />
                                         </FormControl>
@@ -265,7 +265,7 @@ export default function RegisterPage() {
                                                 type="password"
                                                 autoComplete="new-password"
                                                 required
-                                                className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10  focus:outline-none sm:text-sm"
+                                                className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:outline-none sm:text-sm"
                                                 placeholder="Confirm Password"
                                             />
                                         </FormControl>
@@ -306,7 +306,7 @@ export default function RegisterPage() {
                             <Button type="submit" className="w-full">
                                 {loading ? (
                                     <div className="flex items-center justify-center gap-2">
-                                        <Loader className="animate-spin size-4" />{" "}
+                                        <Loader className="size-4 animate-spin" />{" "}
                                         <span>Please wait...</span>
                                     </div>
                                 ) : (

@@ -13,12 +13,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import showToastError from "@/lib/toastError";
 import { UserRole } from "@prisma/client";
 import axios from "axios";
-import {
-    Briefcase,
-    Loader,
-    TrendingUp,
-    Users
-} from "lucide-react";
+import { Briefcase, Loader, TrendingUp, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
@@ -87,12 +82,12 @@ export default function RoleSelectionPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="flex min-h-screen flex-col justify-center bg-gray-50 py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <h1 className="text-center text-3xl font-extrabold text-gray-900">
                     Welcome to Jobfynder!
                 </h1>
-                <p className="mt-2 text-center text-sm text-gray-600 space-y-4">
+                <p className="mt-2 space-y-4 text-center text-sm text-gray-600">
                     We&apos;re here to make sure you have the best experience.
                     {/* <br /> */}
                     {/* Let&apos;s get started by understanding your role so we can
@@ -126,13 +121,11 @@ export default function RoleSelectionPage() {
                                     />
                                     <Label
                                         htmlFor={role.id}
-                                        className={`w-full cursor-pointer flex items-center space-x-4 rounded-lg border border-gray-200 p-4 hover:bg-gray-100 peer-checked:border-purple-600 peer-checked:bg-purple-50 [&:has([data-state=checked])]:border-purple-600 [&:has([data-state=checked])]:bg-purple-50
-                                            ${
-                                                selectedRole === role.id
-                                                    ? "border-green-600 bg-green-50 hover:bg-green-50 peer-checked:border-green-600 peer-checked:bg-green-50"
-                                                    : ""
-                                            }
-                                            `}
+                                        className={`flex w-full cursor-pointer items-center space-x-4 rounded-lg border border-gray-200 p-4 hover:bg-gray-100 peer-checked:border-purple-600 peer-checked:bg-purple-50 [&:has([data-state=checked])]:border-purple-600 [&:has([data-state=checked])]:bg-purple-50 ${
+                                            selectedRole === role.id
+                                                ? "border-green-600 bg-green-50 hover:bg-green-50 peer-checked:border-green-600 peer-checked:bg-green-50"
+                                                : ""
+                                        } `}
                                     >
                                         <div className="flex-shrink-0">
                                             {role.icon}
@@ -151,12 +144,12 @@ export default function RoleSelectionPage() {
                         </RadioGroup>
                         <Button
                             onClick={handleContinue}
-                            className="w-full mt-6"
+                            className="mt-6 w-full"
                             disabled={!selectedRole}
                         >
                             {loading ? (
                                 <span className="flex items-center justify-center">
-                                    <Loader className="animate-spin size-4 mr-2" />
+                                    <Loader className="mr-2 size-4 animate-spin" />
                                     Loading
                                 </span>
                             ) : (

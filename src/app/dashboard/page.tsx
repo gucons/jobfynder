@@ -5,7 +5,6 @@ import DashboardHeader from "@/components/dashboard/header";
 import Sidebar from "@/components/dashboard/sidebar";
 import React, { useState } from "react";
 
-
 export default function Dashboard() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 

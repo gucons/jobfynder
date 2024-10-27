@@ -29,7 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
     return (
         <motion.aside
             layout
-            className="sticky top-0 h-screen shrink-0 border-r  bg-white px-4 py-3"
+            className="sticky top-0 h-screen shrink-0 border-r bg-white px-4 py-3"
             style={{
                 width: !isCollapsed ? "250px" : "fit-content",
             }}
@@ -78,7 +78,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
         >
             <Button
                 variant={"ghost"}
-                className={`w-full h-full py-3 flex items-center justify-start ${
+                className={`flex h-full w-full items-center justify-start py-3 ${
                     isCollapsed ? "px-1" : "px-3"
                 }`}
             >
@@ -108,7 +108,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
                             scale: 1,
                         }}
                         transition={{ delay: 0.5 }}
-                        className="rounded-full bg-indigo-500 text-xs text-white px-1.5"
+                        className="rounded-full bg-indigo-500 px-1.5 text-xs text-white"
                     >
                         {notifs}
                     </motion.span>
@@ -125,7 +125,7 @@ interface TitleSectionProps {
 const TitleSection: React.FC<TitleSectionProps> = ({ isCollapsed }) => {
     return (
         <div className="mb-3 border-b pb-3">
-            <div className="flex items-center justify-center rounded-md ">
+            <div className="flex items-center justify-center rounded-md">
                 {isCollapsed ? (
                     <Image
                         width={100}

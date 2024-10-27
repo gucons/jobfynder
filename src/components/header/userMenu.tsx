@@ -43,9 +43,9 @@ async function UserMenu({ user }: { user: User }) {
 
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <h1 className="group text-md transition-all flex items-center gap-1 cursor-pointer line-clamp-1 text-nowrap">
+                    <h1 className="text-md group line-clamp-1 flex cursor-pointer items-center gap-1 text-nowrap transition-all">
                         {user.name ? user.name : "User"}
-                        <ChevronRight className="h-4 w-4 group-hover:rotate-90 transition-all" />
+                        <ChevronRight className="h-4 w-4 transition-all group-hover:rotate-90" />
                     </h1>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-30 text-lg">

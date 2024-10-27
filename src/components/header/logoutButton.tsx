@@ -9,7 +9,7 @@ function SignOutButton() {
                 await signOut({ redirect: true, redirectTo: "/login" });
             }}
         >
-            <button type="submit" className="flex gap-2 items-center">
+            <button type="submit" className="flex items-center gap-2">
                 <LogOut className="size-4" />
                 Sign Out
             </button>
