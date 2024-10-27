@@ -32,11 +32,15 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
+import showToastError from "@/lib/toastError";
 import { cn } from "@/lib/utils";
+import BasicDetailsSchema from "@/schema/basicDetailsSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CaretSortIcon } from "@radix-ui/react-icons";
-import { CheckIcon } from "lucide-react";
+import axios from "axios";
+import { CheckIcon, Loader } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
@@ -55,39 +59,15 @@ const locationOptions: Array<{
     { value: "other", label: "Other" },
 ];
 
-const formSchema = z.object({
-    fullName: z
-        .string()
-        .min(2, { message: "Full name must be at least 2 characters." }),
-    email: z.string().email({ message: "Please enter a valid email address." }),
-    location: z.string().min(1, { message: "Please select your location." }),
-    linkedinUrl: z
-        .string()
-        .url({ message: "Please enter a valid LinkedIn URL." })
-        .optional()
-        .or(z.literal("")),
-    phoneNumber: z
-        .string()
-        .regex(/^\+?[1-9]\d{1,14}$/, {
-            message: "Please enter a valid phone number.",
-        })
-        .optional()
-        .or(z.literal("")),
-    bio: z
-        .string()
-        .max(500, { message: "Bio must not exceed 500 characters." })
-        .optional(),
-});
-
 export default function BasicInformationPage() {
     const session = useSession();
-    console.log("Session:", session);
+    const [loading, setLoading] = useState(false);
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof BasicDetailsSchema>>({
+        resolver: zodResolver(BasicDetailsSchema),
         defaultValues: {
             fullName: session.data?.user?.name as string, // This could be pre-filled if available from registration
-            email: session.data?.user?.email as string, // This could be pre-filled if available from registration
+            contactEmail: session.data?.user?.email as string, // This could be pre-filled if available from registration
             location: "",
             linkedinUrl: "",
             phoneNumber: "",
@@ -95,10 +75,22 @@ export default function BasicInformationPage() {
         },
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
-        //todo: Handle form submission
-        toast.success("Basic information saved successfully!");
+    async function onSubmit(values: z.infer<typeof BasicDetailsSchema>) {
+        setLoading(true);
+        try {
+            const response = await axios.post(
+                "/api/user/profile/basic-info",
+                values
+            );
+            if (response.status === 200) {
+                toast.success("Information updated successfully");
+                // todo - redirect to next step
+            }
+        } catch (error) {
+            showToastError(error);
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -146,13 +138,14 @@ export default function BasicInformationPage() {
                                 />
                                 <FormField
                                     control={form.control}
-                                    name="email"
+                                    name="contactEmail"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Email</FormLabel>
+                                            <FormLabel>Contact Email</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="email"
+                                                    contentEditable={false}
                                                     placeholder="john.doe@example.com"
                                                     {...field}
                                                 />
@@ -251,7 +244,7 @@ export default function BasicInformationPage() {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                LinkedIn Profile URL (Optional)
+                                                LinkedIn Profile URL
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -260,7 +253,7 @@ export default function BasicInformationPage() {
                                                 />
                                             </FormControl>
                                             <FormDescription>
-                                                Recommended for verification and
+                                                Required for verification and
                                                 better job matches.
                                             </FormDescription>
                                             <FormMessage />
@@ -272,9 +265,7 @@ export default function BasicInformationPage() {
                                     name="phoneNumber"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Phone Number (Optional)
-                                            </FormLabel>
+                                            <FormLabel>Phone Number</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="tel"
@@ -282,10 +273,6 @@ export default function BasicInformationPage() {
                                                     {...field}
                                                 />
                                             </FormControl>
-                                            <FormDescription>
-                                                Encouraged for recruiters and
-                                                direct communications.
-                                            </FormDescription>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -296,7 +283,10 @@ export default function BasicInformationPage() {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Professional Bio (Optional)
+                                                Professional Bio
+                                                <span className="ml-2 text-xs">
+                                                    (Optional)
+                                                </span>
                                             </FormLabel>
                                             <FormControl>
                                                 <Textarea
@@ -313,7 +303,14 @@ export default function BasicInformationPage() {
                                     )}
                                 />
                                 <Button type="submit" className="w-full">
-                                    Next
+                                    {loading ? (
+                                        <span className="flex items-center justify-center">
+                                            <Loader className="mr-2 size-4 animate-spin" />
+                                            Loading
+                                        </span>
+                                    ) : (
+                                        "Next"
+                                    )}
                                 </Button>
                             </form>
                         </Form>
