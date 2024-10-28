@@ -50,12 +50,9 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const session = await auth();
-    if (!session) {
-        return null;
-    }
 
     const clientSession = {
-        expires: session?.expires,
+        expires: session?.expires || "",
         user: {
             email: session?.user?.email,
             image: session?.user?.image,
