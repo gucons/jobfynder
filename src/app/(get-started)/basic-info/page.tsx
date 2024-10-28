@@ -94,8 +94,8 @@ export default function BasicInformationPage() {
     }
 
     return (
-        <div className="flex min-h-screen flex-col justify-center bg-gray-50 py-12 sm:px-6 lg:px-8">
-            <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="min-h-screen flex-grow px-4 pb-10 pt-8 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-lg flex-grow">
                 <h1 className="text-center text-3xl font-extrabold text-gray-900">
                     Tell us about yourself
                 </h1>
