@@ -461,6 +461,11 @@ export default function ConsultantOnboarding() {
                     )}
                   />
                 </CardContent>
+                <CardFooter>
+                  <Button type="submit" className="w-full">
+                    Submit
+                  </Button>
+                </CardFooter>
               </Card>
             </form>
           </Form>
@@ -556,6 +561,11 @@ export default function ConsultantOnboarding() {
                     )}
                   />
                 </CardContent>
+                <CardFooter>
+                  <Button type="submit" className="w-full">
+                    Submit
+                  </Button>
+                </CardFooter>
               </Card>
             </form>
           </Form>
