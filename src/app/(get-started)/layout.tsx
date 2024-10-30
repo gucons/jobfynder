@@ -7,7 +7,7 @@ export default function GetStartedLayout({
 }) {
     return (
         <ScrollArea className="h-svh w-svw">
-            <div className="flex h-full w-full items-center justify-center bg-accent p-2 py-10">
+            <div className="flex h-svh w-full items-center justify-center bg-accent p-2 py-10">
                 {children}
             </div>
         </ScrollArea>
