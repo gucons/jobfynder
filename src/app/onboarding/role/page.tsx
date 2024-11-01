@@ -71,7 +71,7 @@ export default function RoleSelectionPage() {
         role: selectedRole,
       });
       if (response.status === 200) {
-        toast.success("Role updated successfully", {});
+        toast.success("Role updated successfully");
 
         router.push("/onboarding/basic-info");
       }

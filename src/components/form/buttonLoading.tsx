@@ -31,4 +31,6 @@ const ButtonLoading = React.forwardRef<
   }
 );
 
+ButtonLoading.displayName = "ButtonLoading";
+
 export default ButtonLoading;

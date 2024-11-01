@@ -3,6 +3,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { useImperativeHandle } from "react";
+import { init } from "next/dist/compiled/webpack/webpack";
 
 interface UseAutosizeTextAreaProps {
   textAreaRef: HTMLTextAreaElement | null;
@@ -39,7 +40,7 @@ export const useAutosizeTextArea = ({
         textAreaRef.style.height = `${scrollHeight + offsetBorder}px`;
       }
     }
-  }, [textAreaRef, triggerAutoSize]);
+  }, [textAreaRef, triggerAutoSize, init, maxHeight, minHeight]);
 };
 
 export type AutosizeTextAreaRef = {

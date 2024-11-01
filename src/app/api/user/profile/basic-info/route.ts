@@ -8,16 +8,23 @@ import { ZodError } from "zod";
 export async function POST(req: Request) {
     try {
         const session = await authenticateUser();
+        console.log("Session", session);
+
 
         const requestData = await req.json();
         const data = BasicDetailsSchema
             .parse(requestData);
 
-        const consultant = await prisma.consultant.create({
-            data: {
+        const consultant = await prisma.consultant.upsert({
+            where: {
+                userId: session.user.id,
+            },
+            update: {
                 ...data,
-                // userId: session.user.id,
-                userId: "42196e39-e200-4806-9c1f-4a768bef369c",
+            },
+            create: {
+                ...data,
+                userId: session.user.id,
             },
         });
 
