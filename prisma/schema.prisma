@@ -64,17 +64,17 @@ model Consultant {
   id                   String      @id @default(uuid())
   userId               String      @unique
   user                 User        @relation(fields: [userId], references: [id])
-  professionalSummary  String?     @db.Text
+  professionalSummary  String      @db.Text
   experienceYears      Int         @default(0)
   desiredJobTitles     String[]    @default([])
-  employmentStatus     String?
+  employmentStatus     String
   industriesOfInterest String[]    @default([])
   education            Education[]
   certifications       String[]    @default([])
-  linkedinProfileURL   String?
-  portfolioURL         String?
+  linkedinURL          String
+  portfolioURL         String
   skillsAndExpertise   String[]    @default([])
-  resumeCV             String?
+  resumeCV             String
   // Add timestamps if needed
   createdAt            DateTime    @default(now())
   updatedAt            DateTime    @updatedAt
