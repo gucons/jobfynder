@@ -18,17 +18,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { UploadDropzone } from "@/lib/uploadThingComponent";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
-
-// File limit constants
-const MAX_FILE_SIZE = 5000000;
-const ACCEPTED_FILE_TYPES = [
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-];
 
 const skills: {
   label: string;
@@ -66,30 +60,62 @@ const professionalFormSchema = z.object({
     .optional()
     .or(z.literal("")),
   skills: z.array(z.string()).min(1, "Please select at least one skill"),
-  resume: z
-    .any()
-    .refine((file) => file?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
-    .refine(
-      (file) => ACCEPTED_FILE_TYPES.includes(file?.type),
-      "Only .pdf, .doc, and .docx files are accepted."
-    ),
+  resume: z.string({ message: "Please upload a resume" }),
 });
 
-function handleProfessionalFormSubmit(
+async function handleProfessionalFormSubmit(
   values: z.infer<typeof professionalFormSchema>
 ) {
-  console.log(values);
+  localStorage.setItem("professionalFormData", JSON.stringify(values));
+
+  // Retrieve data from all forms
+  const coreFormData = JSON.parse(localStorage.getItem("coreFormData") || "{}");
+  const educationalFormData = JSON.parse(
+    localStorage.getItem("educationFormData") || "{}"
+  );
+  const professionalFormData = values;
+
+  // Combine all form data
+  const combinedData = {
+    ...coreFormData,
+    ...educationalFormData,
+    ...professionalFormData,
+  };
+
+  // Upload combined data to the database
+  // try {
+  //   const response = await fetch("/api/upload", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(combinedData),
+  //   });
+
+  //   if (!response.ok) {
+  //     throw new Error("Failed to upload data");
+  //   }
+
+  //   console.log("Data uploaded successfully");
+  // } catch (error) {
+  //   console.error("Error uploading data:", error);
+  // }
+  console.log("Combined data:", combinedData);
 }
 
 export default function ProfessionalForm() {
+  const previousData = localStorage.getItem("professionalFormData");
+
   const professionalHookForm = useForm<z.infer<typeof professionalFormSchema>>({
     resolver: zodResolver(professionalFormSchema),
-    defaultValues: {
-      linkedinUrl: "",
-      portfolioUrl: "",
-      skills: [],
-      resume: undefined,
-    },
+    defaultValues: previousData
+      ? JSON.parse(previousData)
+      : {
+          linkedinUrl: "",
+          portfolioUrl: "",
+          skills: [],
+          resume: undefined,
+        },
   });
 
   return (
@@ -166,15 +192,19 @@ export default function ProfessionalForm() {
                 <FormItem>
                   <FormLabel>Resume/CV</FormLabel>
                   <FormControl>
-                    <Input
-                      type="file"
-                      accept=".pdf,.doc,.docx"
-                      onChange={(e) => field.onChange(e.target.files?.[0])}
+                    <UploadDropzone
+                      endpoint="resume"
+                      onClientUploadComplete={(res) => {
+                        field.onChange(res[0].key);
+                        toast.success("Resume uploaded successfully");
+                      }}
+                      onUploadError={() => {
+                        toast.error(
+                          "An error occurred while uploading the resume"
+                        );
+                      }}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Upload your resume in PDF, DOC, or DOCX format (max 5MB).
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

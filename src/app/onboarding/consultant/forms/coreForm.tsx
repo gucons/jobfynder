@@ -104,16 +104,19 @@ function handleCoreFormSubmit(values: z.infer<typeof coreFormSchema>) {
 }
 
 export default function CoreForm() {
+  const previousData = localStorage.getItem("coreFormData");
   // React Hook Form for core details
   const coreHookForm = useForm<z.infer<typeof coreFormSchema>>({
     resolver: zodResolver(coreFormSchema),
-    defaultValues: {
-      professionalSummary: "",
-      yearsOfExperience: 0,
-      currentEmploymentStatus: undefined,
-      desiredJobTitles: [],
-      industriesOfInterest: [],
-    },
+    defaultValues: previousData
+      ? JSON.parse(previousData)
+      : {
+          professionalSummary: "",
+          yearsOfExperience: 0,
+          currentEmploymentStatus: undefined,
+          desiredJobTitles: [],
+          industriesOfInterest: [],
+        },
   });
 
   return (

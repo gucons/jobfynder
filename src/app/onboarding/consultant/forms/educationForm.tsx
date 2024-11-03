@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -35,7 +37,9 @@ const educationFormSchema = z.object({
       })
     )
     .min(1, "Please add at least one education entry"),
-  certifications: z.array(z.string()),
+  certifications: z.array(z.string(), {
+    message: "Please upload at least one certification",
+  }),
 });
 
 function handleEducationFormSubmit(
@@ -46,14 +50,18 @@ function handleEducationFormSubmit(
 }
 
 export default function EducationForm() {
+  const previousData = localStorage.getItem("educationFormData");
+
   const educationHookForm = useForm<z.infer<typeof educationFormSchema>>({
     resolver: zodResolver(educationFormSchema),
-    defaultValues: {
-      education: [
-        { institution: "", year: new Date().getFullYear(), major: "" },
-      ],
-      certifications: [],
-    },
+    defaultValues: previousData
+      ? JSON.parse(previousData)
+      : {
+          education: [
+            { institution: "", year: new Date().getFullYear(), major: "" },
+          ],
+          certifications: [],
+        },
   });
 
   return (
