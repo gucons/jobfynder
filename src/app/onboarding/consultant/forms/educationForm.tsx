@@ -42,6 +42,8 @@ const educationFormSchema = z.object({
   }),
 });
 
+export type EducationFormFields = z.infer<typeof educationFormSchema>;
+
 function handleEducationFormSubmit(
   values: z.infer<typeof educationFormSchema>
 ) {

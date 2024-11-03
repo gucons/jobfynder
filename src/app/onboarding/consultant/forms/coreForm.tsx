@@ -72,7 +72,7 @@ const coreFormSchema = z.object({
     .string()
     .min(10, "Professional summary must be at least 10 characters long")
     .max(500, "Professional summary must not exceed 500 characters"),
-  yearsOfExperience: z
+  experienceYears: z
     .number()
     .min(0, "Years of experience must be a positive number"),
   industriesOfInterest: z
@@ -81,16 +81,18 @@ const coreFormSchema = z.object({
   desiredJobTitles: z
     .array(z.string())
     .min(1, "Please enter at least one desired job title"),
-  currentEmploymentStatus: z.enum([
+  employmentStatus: z.enum([
     "employed",
     "looking",
     "open_to_opportunities",
   ]),
 });
 
+export type coreFormFiels = z.infer<typeof coreFormSchema>;
+
 const employmentStatusOptions: {
   label: string;
-  value: z.infer<typeof coreFormSchema>["currentEmploymentStatus"];
+  value: z.infer<typeof coreFormSchema>["employmentStatus"];
 }[] = [
   { label: "Employed", value: "employed" },
   { label: "Looking", value: "looking" },
@@ -112,7 +114,7 @@ export default function CoreForm() {
       ? JSON.parse(previousData)
       : {
           professionalSummary: "",
-          yearsOfExperience: 0,
+          experienceYears: 0,
           currentEmploymentStatus: undefined,
           desiredJobTitles: [],
           industriesOfInterest: [],
@@ -156,7 +158,7 @@ export default function CoreForm() {
             <div className="grid grid-cols-4 gap-3">
               <FormField
                 control={coreHookForm.control}
-                name="yearsOfExperience"
+                name="experienceYears"
                 render={({ field }) => (
                   <FormItem className="col-span-1">
                     <FormLabel>Experience</FormLabel>
@@ -197,7 +199,7 @@ export default function CoreForm() {
             <div className="grid grid-cols-4 gap-3">
               <FormField
                 control={coreHookForm.control}
-                name="currentEmploymentStatus"
+                name="employmentStatus"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Employment Status</FormLabel>

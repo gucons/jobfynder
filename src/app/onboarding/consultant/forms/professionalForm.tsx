@@ -11,7 +11,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,12 +18,20 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UploadDropzone } from "@/lib/uploadThingComponent";
+import ConsultantSchema from "@/schema/consultantSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { coreFormFiels } from "./coreForm";
+import { EducationFormFields } from "./educationForm";
+import axios from "axios";
+import showToastError from "@/lib/toastError";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import ButtonLoading from "@/components/form/buttonLoading";
 
-const skills: {
+const skillsAndExpertise: {
   label: string;
   value: string;
 }[] = [
@@ -49,61 +56,20 @@ const skills: {
 ];
 
 const professionalFormSchema = z.object({
-  linkedinUrl: z
-    .string()
-    .url("Please enter a valid LinkedIn URL")
-    .optional()
-    .or(z.literal("")),
-  portfolioUrl: z
-    .string()
-    .url("Please enter a valid portfolio URL")
-    .optional()
-    .or(z.literal("")),
-  skills: z.array(z.string()).min(1, "Please select at least one skill"),
-  resume: z.string({ message: "Please upload a resume" }),
+  linkedinURL: z.string().url("Please enter a valid LinkedIn URL"),
+  portfolioURL: z.string().url("Please enter a valid portfolio URL"),
+  skillsAndExpertise: z
+    .array(z.string())
+    .min(1, "Please select at least one skill"),
+  resumeCV: z.string({ message: "Please upload a resume" }),
 });
 
-async function handleProfessionalFormSubmit(
-  values: z.infer<typeof professionalFormSchema>
-) {
-  localStorage.setItem("professionalFormData", JSON.stringify(values));
-
-  // Retrieve data from all forms
-  const coreFormData = JSON.parse(localStorage.getItem("coreFormData") || "{}");
-  const educationalFormData = JSON.parse(
-    localStorage.getItem("educationFormData") || "{}"
-  );
-  const professionalFormData = values;
-
-  // Combine all form data
-  const combinedData = {
-    ...coreFormData,
-    ...educationalFormData,
-    ...professionalFormData,
-  };
-
-  // Upload combined data to the database
-  // try {
-  //   const response = await fetch("/api/upload", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(combinedData),
-  //   });
-
-  //   if (!response.ok) {
-  //     throw new Error("Failed to upload data");
-  //   }
-
-  //   console.log("Data uploaded successfully");
-  // } catch (error) {
-  //   console.error("Error uploading data:", error);
-  // }
-  console.log("Combined data:", combinedData);
-}
+export type ProfessionalFormFields = z.infer<typeof professionalFormSchema>;
 
 export default function ProfessionalForm() {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
   const previousData = localStorage.getItem("professionalFormData");
 
   const professionalHookForm = useForm<z.infer<typeof professionalFormSchema>>({
@@ -112,11 +78,47 @@ export default function ProfessionalForm() {
       ? JSON.parse(previousData)
       : {
           linkedinUrl: "",
-          portfolioUrl: "",
-          skills: [],
+          portfolioURL: "",
+          skillsAndExpertise: [],
           resume: undefined,
         },
   });
+
+  async function handleProfessionalFormSubmit(
+    values: z.infer<typeof professionalFormSchema>
+  ) {
+    localStorage.setItem("professionalFormData", JSON.stringify(values));
+
+    // Retrieve data from all forms
+    const coreFormData: coreFormFiels = JSON.parse(
+      localStorage.getItem("coreFormData") || "{}"
+    );
+    const educationalFormData: EducationFormFields = JSON.parse(
+      localStorage.getItem("educationFormData") || "{}"
+    );
+    const professionalFormData = values;
+
+    // Combine all form data
+    const combinedData: z.infer<typeof ConsultantSchema> = {
+      ...coreFormData,
+      ...educationalFormData,
+      ...professionalFormData,
+    };
+
+    // Upload combined data to the database
+    try {
+      const response = await axios.post("/api/user/profile/role", combinedData);
+      if (response.status === 200) {
+        toast.success("Role updated successfully");
+
+        router.push("/onboarding/basic-info");
+      }
+    } catch (error) {
+      showToastError(error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <Form {...professionalHookForm}>
@@ -136,7 +138,7 @@ export default function ProfessionalForm() {
           <CardContent className="space-y-4">
             <FormField
               control={professionalHookForm.control}
-              name="linkedinUrl"
+              name="linkedinURL"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>LinkedIn Profile URL</FormLabel>
@@ -153,7 +155,7 @@ export default function ProfessionalForm() {
             />
             <FormField
               control={professionalHookForm.control}
-              name="portfolioUrl"
+              name="portfolioURL"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Portfolio URL</FormLabel>
@@ -170,15 +172,15 @@ export default function ProfessionalForm() {
             />
             <FormField
               control={professionalHookForm.control}
-              name="skills"
+              name="skillsAndExpertise"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Skills and Expertise</FormLabel>
                   <FormControl>
                     <MultiSelect
                       field={field}
-                      options={skills}
-                      label="Choose your skills"
+                      options={skillsAndExpertise}
+                      label="Choose your skillsAndExpertise"
                     />
                   </FormControl>
                   <FormMessage />
@@ -187,7 +189,7 @@ export default function ProfessionalForm() {
             />
             <FormField
               control={professionalHookForm.control}
-              name="resume"
+              name="resumeCV"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Resume/CV</FormLabel>
@@ -211,9 +213,7 @@ export default function ProfessionalForm() {
             />
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full">
-              Submit
-            </Button>
+            <ButtonLoading type="submit" loading={loading} />
           </CardFooter>
         </Card>
       </form>

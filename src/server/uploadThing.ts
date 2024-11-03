@@ -24,7 +24,6 @@ export const ourFileRouter = {
 
   resume: f({
     pdf: { maxFileCount: 1, maxFileSize: "2MB" },
-    // text: { maxFileCount: 1, maxFileSize: "2MB" },
   })
     .middleware(async ({ req }) => {
       // Verify the user is authenticated
