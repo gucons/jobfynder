@@ -115,7 +115,7 @@ export default function RoleSelectionPage() {
                   />
                   <Label
                     htmlFor={role.id}
-                    className={`flex w-full m-0 cursor-pointer items-center space-x-4 rounded-lg border border-gray-200 p-4 hover:bg-gray-100 peer-checked:border-purple-600 peer-checked:bg-purple-50 [&:has([data-state=checked])]:border-purple-600 [&:has([data-state=checked])]:bg-purple-50 ${
+                    className={`m-0 flex w-full cursor-pointer items-center space-x-4 rounded-lg border border-gray-200 p-4 hover:bg-gray-100 peer-checked:border-purple-600 peer-checked:bg-purple-50 [&:has([data-state=checked])]:border-purple-600 [&:has([data-state=checked])]:bg-purple-50 ${
                       selectedRole === role.id
                         ? "border-green-600 bg-green-50 hover:bg-green-50 peer-checked:border-green-600 peer-checked:bg-green-50"
                         : ""
@@ -133,6 +133,7 @@ export default function RoleSelectionPage() {
               ))}
             </RadioGroup>
             <ButtonLoading
+              type="submit"
               onClick={handleContinue}
               className="mt-6 w-full"
               disabled={!selectedRole}

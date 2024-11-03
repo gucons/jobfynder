@@ -29,7 +29,7 @@ export const metadata: Metadata = {
         title: "Jobfynder - Niche Job Board for IT Professionals",
         description:
             "Find IT jobs, connect with recruiters, and access training and support services to get into your dream job.",
-        images: "/images/jobfynder-og-image.jpg",
+        // images: "/images/jobfynder-og-image.jpg",
         siteName: "Jobfynder",
     },
 
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
         title: "Jobfynder - Connect with Recruiters & Follow Jobs",
         description:
             "A niche social network and job board connecting IT professionals and staffing agencies with training, resume support, and immigration services.",
-        images: "/images/jobfynder-twitter-image.jpg",
+        // images: "/images/jobfynder-twitter-image.jpg",
     },
 };
 

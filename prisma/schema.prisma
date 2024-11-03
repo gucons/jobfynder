@@ -22,6 +22,8 @@ model User {
   hashedPassword    String?
   emailVerified     Boolean         @default(false)
   role              UserRole        @default(PENDING)
+  // Basic Info
+  basicInfo         BasicInfo?
   // Relations to roles
   consultantProfile Consultant?
   benchSalesProfile BenchSales?
@@ -32,6 +34,23 @@ model User {
   Authenticator     Authenticator[]
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
+  basicInfoId       String?
+}
+
+model BasicInfo {
+  id             String   @id @default(uuid())
+  fullName       String
+  contactEmail   String   @unique
+  location       String
+  linkedinUrl    String
+  phoneNumber    String
+  profilePicture String?
+  timeZone       String?
+  bio            String?  @db.VarChar(500)
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 enum UserRole {
@@ -42,23 +61,38 @@ enum UserRole {
 }
 
 model Consultant {
-  id             String      @id @default(uuid())
-  userId         String      @unique
-  user           User        @relation(fields: [userId], references: [id])
-  // Basic Info
-  fullName       String
-  contactEmail   String      @unique
-  location       String
-  linkedinUrl    String
-  phoneNumber    String
-  profilePicture String?
-  timeZone       String?
-  bio            String?     @db.VarChar(500)
+  id                   String      @id @default(uuid())
+  userId               String      @unique
+  user                 User        @relation(fields: [userId], references: [id])
+  professionalSummary  String?     @db.Text
+  experienceYears      Int         @default(0)
+  desiredJobTitles     String[]    @default([])
+  employmentStatus     String?
+  industriesOfInterest String[]    @default([])
+  education            Education[]
+  certifications       String[]    @default([])
+  linkedinProfileURL   String?
+  portfolioURL         String?
+  skillsAndExpertise   String[]    @default([])
+  resumeCV             String?
   // Add timestamps if needed
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-  BenchSales     BenchSales? @relation(fields: [benchSalesId], references: [id])
-  benchSalesId   String?
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  BenchSales           BenchSales? @relation(fields: [benchSalesId], references: [id])
+  benchSalesId         String?
+}
+
+model Education {
+  id           String @id @default(uuid())
+  institution  String
+  major        String
+  year         Int
+  consultantId String
+
+  ConsultantProfile Consultant @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model BenchSales {
