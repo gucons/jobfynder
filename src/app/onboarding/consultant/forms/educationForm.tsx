@@ -16,9 +16,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { UploadButton } from "@/lib/uploadThingComponent";
+import { UploadDropzone } from "@/lib/uploadThingComponent";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const educationFormSchema = z.object({
@@ -34,7 +35,7 @@ const educationFormSchema = z.object({
       })
     )
     .min(1, "Please add at least one education entry"),
-  certifications: z.string().optional(),
+  certifications: z.array(z.string()),
 });
 
 function handleEducationFormSubmit(
@@ -51,7 +52,7 @@ export default function EducationForm() {
       education: [
         { institution: "", year: new Date().getFullYear(), major: "" },
       ],
-      certifications: "",
+      certifications: [],
     },
   });
 
@@ -147,21 +148,16 @@ export default function EducationForm() {
                 <FormItem>
                   <FormLabel>Certifications</FormLabel>
                   <FormControl>
-                    {/* <Input
-                      type="file"
-                      accept=".pdf,.doc,.docx"
-                      onChange={(e) => field.onChange(e.target.files?.[0])}
-                    /> */}
-                    <UploadButton
-                      endpoint="imageUploader"
+                    <UploadDropzone
+                      endpoint="consultantCertifications"
                       onClientUploadComplete={(res) => {
-                        // Do something with the response
-                        console.log("Files: ", res);
-                        alert("Upload Completed");
+                        field.onChange(res.map((file) => file.key));
+                        toast.success("Certification uploaded successfully");
                       }}
-                      onUploadError={(error: Error) => {
-                        // Do something with the error.
-                        alert(`ERROR! ${error.message}`);
+                      onUploadError={() => {
+                        toast.error(
+                          "An error occurred while uploading the certification"
+                        );
                       }}
                     />
                   </FormControl>

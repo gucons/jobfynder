@@ -9,7 +9,7 @@ function page({}: Props) {
   return (
     <div className="flex h-svh w-svw items-center justify-center">
       <UploadButton
-        endpoint="imageUploader"
+        endpoint="consultantCertifications"
         onClientUploadComplete={(res) => {
           // Do something with the response
           console.log("Files: ", res);
