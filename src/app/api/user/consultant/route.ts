@@ -19,8 +19,13 @@ export async function POST(req: Request) {
       update: {
         ...data,
         education: {
-          set: data.education
-            ? data.education.map((edu: any) => ({ ...edu }))
+          deleteMany: {}, // Clear all previous education entries
+          create: data.education
+            ? data.education.map((edu: any) => ({
+                institution: edu.institution,
+                major: edu.major,
+                year: edu.year,
+              }))
             : [],
         },
       },
@@ -28,7 +33,11 @@ export async function POST(req: Request) {
         ...data,
         education: {
           create: data.education
-            ? data.education.map((edu: any) => ({ ...edu }))
+            ? data.education.map((edu: any) => ({
+                institution: edu.institution,
+                major: edu.major,
+                year: edu.year,
+              }))
             : [],
         },
         userId: session.user.id,

@@ -21,17 +21,15 @@ import {
 import { Input } from "@/components/ui/input";
 import showToastError from "@/lib/toastError";
 import { UploadDropzone } from "@/lib/uploadThingComponent";
+import usePersistentForm from "@/lib/usePersistentForm";
 import ConsultantSchema from "@/schema/consultantSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { CoreFormFields } from "./coreForm";
 import { EducationFormFields } from "./educationForm";
-import usePersistentForm from "@/lib/usePersistentForm";
 
 const skillsAndExpertise: {
   label: string;
@@ -88,8 +86,8 @@ export default function ProfessionalForm() {
   async function handleProfessionalFormSubmit(
     values: z.infer<typeof professionalFormSchema>
   ) {
+    setLoading(true);
     localStorage.setItem("professionalFormData", JSON.stringify(values));
-
     // Retrieve data from all forms
     const coreFormData: CoreFormFields = JSON.parse(
       localStorage.getItem("coreFormData") || "{}"
@@ -108,11 +106,10 @@ export default function ProfessionalForm() {
 
     // Upload combined data to the database
     try {
-      const response = await axios.post("/api/user/profile/role", combinedData);
+      const response = await axios.post("/api/user/consultant", combinedData);
       if (response.status === 200) {
-        toast.success("Role updated successfully");
-
-        router.push("/onboarding/basic-info");
+        toast.success("Consultant details updated successfully");
+        router.push("/");
       }
     } catch (error) {
       showToastError(error);
