@@ -1,5 +1,7 @@
+"use client";
+
+import ButtonLoading from "@/components/form/buttonLoading";
 import MultiSelect from "@/components/form/multiSelect";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -17,19 +19,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import showToastError from "@/lib/toastError";
 import { UploadDropzone } from "@/lib/uploadThingComponent";
 import ConsultantSchema from "@/schema/consultantSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { coreFormFiels } from "./coreForm";
+import { CoreFormFields } from "./coreForm";
 import { EducationFormFields } from "./educationForm";
-import axios from "axios";
-import showToastError from "@/lib/toastError";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import ButtonLoading from "@/components/form/buttonLoading";
+import usePersistentForm from "@/lib/usePersistentForm";
 
 const skillsAndExpertise: {
   label: string;
@@ -61,7 +63,7 @@ const professionalFormSchema = z.object({
   skillsAndExpertise: z
     .array(z.string())
     .min(1, "Please select at least one skill"),
-  resumeCV: z.string({ message: "Please upload a resume" }),
+  resumeCV: z.string().min(1, "Please upload a resume"),
 });
 
 export type ProfessionalFormFields = z.infer<typeof professionalFormSchema>;
@@ -70,19 +72,18 @@ export default function ProfessionalForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const previousData = localStorage.getItem("professionalFormData");
+  const defaultValues: ProfessionalFormFields = {
+    linkedinURL: "",
+    portfolioURL: "",
+    skillsAndExpertise: [],
+    resumeCV: "",
+  };
 
-  const professionalHookForm = useForm<z.infer<typeof professionalFormSchema>>({
-    resolver: zodResolver(professionalFormSchema),
-    defaultValues: previousData
-      ? JSON.parse(previousData)
-      : {
-          linkedinUrl: "",
-          portfolioURL: "",
-          skillsAndExpertise: [],
-          resume: undefined,
-        },
-  });
+  const professionalHookForm = usePersistentForm(
+    professionalFormSchema,
+    "professionalFormData",
+    defaultValues
+  );
 
   async function handleProfessionalFormSubmit(
     values: z.infer<typeof professionalFormSchema>
@@ -90,7 +91,7 @@ export default function ProfessionalForm() {
     localStorage.setItem("professionalFormData", JSON.stringify(values));
 
     // Retrieve data from all forms
-    const coreFormData: coreFormFiels = JSON.parse(
+    const coreFormData: CoreFormFields = JSON.parse(
       localStorage.getItem("coreFormData") || "{}"
     );
     const educationalFormData: EducationFormFields = JSON.parse(

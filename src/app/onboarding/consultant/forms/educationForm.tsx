@@ -19,8 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UploadDropzone } from "@/lib/uploadThingComponent";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import usePersistentForm from "@/lib/usePersistentForm";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -37,7 +36,7 @@ const educationFormSchema = z.object({
       })
     )
     .min(1, "Please add at least one education entry"),
-  certifications: z.array(z.string(), {
+  certifications: z.array(z.string().min(1,"File URL cannot be empty"),{
     message: "Please upload at least one certification",
   }),
 });
@@ -52,19 +51,22 @@ function handleEducationFormSubmit(
 }
 
 export default function EducationForm() {
-  const previousData = localStorage.getItem("educationFormData");
+  const defaultValues: EducationFormFields = {
+    education: [
+      {
+        institution: "",
+        year: new Date().getFullYear(),
+        major: "",
+      },
+    ],
+    certifications: [],
+  };
 
-  const educationHookForm = useForm<z.infer<typeof educationFormSchema>>({
-    resolver: zodResolver(educationFormSchema),
-    defaultValues: previousData
-      ? JSON.parse(previousData)
-      : {
-          education: [
-            { institution: "", year: new Date().getFullYear(), major: "" },
-          ],
-          certifications: [],
-        },
-  });
+  const educationHookForm = usePersistentForm(
+    educationFormSchema,
+    "educationFormData",
+    defaultValues
+  );
 
   return (
     <Form {...educationHookForm}>

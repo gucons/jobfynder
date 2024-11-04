@@ -26,7 +26,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import usePersistentForm from "@/lib/usePersistentForm";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -81,14 +83,10 @@ const coreFormSchema = z.object({
   desiredJobTitles: z
     .array(z.string())
     .min(1, "Please enter at least one desired job title"),
-  employmentStatus: z.enum([
-    "employed",
-    "looking",
-    "open_to_opportunities",
-  ]),
+  employmentStatus: z.enum(["employed", "looking", "open_to_opportunities"]),
 });
 
-export type coreFormFiels = z.infer<typeof coreFormSchema>;
+export type CoreFormFields = z.infer<typeof coreFormSchema>;
 
 const employmentStatusOptions: {
   label: string;
@@ -106,25 +104,24 @@ function handleCoreFormSubmit(values: z.infer<typeof coreFormSchema>) {
 }
 
 export default function CoreForm() {
-  const previousData = localStorage.getItem("coreFormData");
-  // React Hook Form for core details
-  const coreHookForm = useForm<z.infer<typeof coreFormSchema>>({
-    resolver: zodResolver(coreFormSchema),
-    defaultValues: previousData
-      ? JSON.parse(previousData)
-      : {
-          professionalSummary: "",
-          experienceYears: 0,
-          currentEmploymentStatus: undefined,
-          desiredJobTitles: [],
-          industriesOfInterest: [],
-        },
-  });
+  const defaultValues: CoreFormFields = {
+    professionalSummary: "",
+    experienceYears: 0,
+    employmentStatus: "looking",
+    desiredJobTitles: [],
+    industriesOfInterest: [],
+  };
+
+  const coreForm = usePersistentForm(
+    coreFormSchema,
+    "coreFormData",
+    defaultValues
+  );
 
   return (
-    <Form {...coreHookForm}>
+    <Form {...coreForm}>
       <form
-        onSubmit={coreHookForm.handleSubmit(handleCoreFormSubmit)}
+        onSubmit={coreForm.handleSubmit(handleCoreFormSubmit)}
         className="space-y-8"
       >
         <Card>
@@ -136,7 +133,7 @@ export default function CoreForm() {
           </CardHeader>
           <CardContent className="space-y-6">
             <FormField
-              control={coreHookForm.control}
+              control={coreForm.control}
               name="professionalSummary"
               render={({ field }) => (
                 <FormItem>
@@ -157,7 +154,7 @@ export default function CoreForm() {
             />
             <div className="grid grid-cols-4 gap-3">
               <FormField
-                control={coreHookForm.control}
+                control={coreForm.control}
                 name="experienceYears"
                 render={({ field }) => (
                   <FormItem className="col-span-1">
@@ -179,7 +176,7 @@ export default function CoreForm() {
                 )}
               />
               <FormField
-                control={coreHookForm.control}
+                control={coreForm.control}
                 name="desiredJobTitles"
                 render={({ field }) => (
                   <FormItem className="col-span-3">
@@ -198,7 +195,7 @@ export default function CoreForm() {
             </div>
             <div className="grid grid-cols-4 gap-3">
               <FormField
-                control={coreHookForm.control}
+                control={coreForm.control}
                 name="employmentStatus"
                 render={({ field }) => (
                   <FormItem>
@@ -225,13 +222,13 @@ export default function CoreForm() {
                 )}
               />
               <FormField
-                control={coreHookForm.control}
+                control={coreForm.control}
                 name="industriesOfInterest"
                 render={() => (
                   <FormItem className="col-span-3">
                     <FormLabel>Industries of Interest</FormLabel>
                     <FormField
-                      control={coreHookForm.control}
+                      control={coreForm.control}
                       name="industriesOfInterest"
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-start space-x-3 space-y-0">
