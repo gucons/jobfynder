@@ -1,5 +1,6 @@
 "use client";
 
+import ButtonLoading from "@/components/form/buttonLoading";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -12,12 +13,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Logo from "@/constants/logo";
 import showToastError from "@/lib/toastError";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import { Loader } from "lucide-react";
 import { signIn } from "next-auth/react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -77,7 +77,7 @@ export default function LoginPage() {
             },
           },
         });
-        router.replace("/");
+        router.replace("/onboarding/role");
       }
     } catch (error) {
       showToastError(error);
@@ -88,13 +88,10 @@ export default function LoginPage() {
   return (
     <div className="w-full max-w-lg flex-1 space-y-8 rounded-lg bg-white p-8 shadow-md sm:w-[448px]">
       <div className="text-center">
-        <Image
-          className="mx-auto h-12 text-primary"
-          width={40}
-          height={40}
-          priority
-          src={"/logo.png"}
-          alt="Jobfynder Logo"
+        <Logo
+          className="mx-auto mb-4 h-12 object-contain text-primary"
+          width={160}
+          height={200}
         />
         <h2 className="text-3xl font-extrabold text-gray-900">
           Sign in to your account
@@ -212,18 +209,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div>
-              <Button type="submit" className="w-full">
-                {loading ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <Loader className="size-4 animate-spin" />{" "}
-                    <span>Please wait...</span>
-                  </div>
-                ) : (
-                  "Login"
-                )}
-              </Button>
-            </div>
+            <ButtonLoading type="submit" loading={loading} />
           </form>
         </Form>
       </div>
