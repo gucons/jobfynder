@@ -4,13 +4,13 @@ import ButtonLoading from "@/components/form/buttonLoading";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Logo from "@/constants/logo";
@@ -82,7 +82,7 @@ export default function RegisterPage() {
             },
           },
         });
-        router.replace("/");
+        router.replace("/onboarding/basic-info");
       }
     } catch (error) {
       showToastError(error);

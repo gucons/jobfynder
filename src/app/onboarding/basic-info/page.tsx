@@ -9,14 +9,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
   Form,
   FormControl,
   FormDescription,
@@ -26,20 +18,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { Textarea } from "@/components/ui/textarea";
 import showToastError from "@/lib/toastError";
-import { cn } from "@/lib/utils";
 import BasicDetailsSchema from "@/schema/basicDetailsSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserRole } from "@prisma/client";
-import { CaretSortIcon } from "@radix-ui/react-icons";
 import axios from "axios";
-import { CheckIcon, Loader } from "lucide-react";
+import { Loader } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -47,37 +33,19 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
-const roles: Array<{
-  label: UserRole;
-  route: string;
-}> = [
-  {
-    label: "CONSULTANT",
-    route: "/onboarding/consultant",
-  },
-  {
-    label: "BENCH_SALES",
-    route: "/onboarding/bench-sales",
-  },
-  {
-    label: "RECRUITER",
-    route: "/onboarding/recruiter",
-  },
-];
-
-const locationOptions: Array<{
-  value: string;
-  label: string;
-}> = [
-  { value: "us", label: "United States" },
-  { value: "ca", label: "Canada" },
-  { value: "uk", label: "United Kingdom" },
-  { value: "au", label: "Australia" },
-  { value: "in", label: "India" },
-  { value: "de", label: "Germany" },
-  { value: "fr", label: "France" },
-  { value: "other", label: "Other" },
-];
+// const locationOptions: Array<{
+//   value: string;
+//   label: string;
+// }> = [
+//   { value: "us", label: "United States" },
+//   { value: "ca", label: "Canada" },
+//   { value: "uk", label: "United Kingdom" },
+//   { value: "au", label: "Australia" },
+//   { value: "in", label: "India" },
+//   { value: "de", label: "Germany" },
+//   { value: "fr", label: "France" },
+//   { value: "other", label: "Other" },
+// ];
 
 export default function BasicInformationPage() {
   const router = useRouter();
@@ -89,7 +57,6 @@ export default function BasicInformationPage() {
     defaultValues: {
       fullName: session.data?.user?.name as string, // This could be pre-filled if available from registration
       contactEmail: session.data?.user?.email as string, // This could be pre-filled if available from registration
-      location: "",
       linkedinUrl: "",
       phoneNumber: "",
       bio: "",
@@ -103,10 +70,7 @@ export default function BasicInformationPage() {
       if (response.status === 200) {
         toast.success("Information updated successfully");
 
-        router.push(
-          (roles.find((role) => role.label === session.data?.user?.role)
-            ?.route as string) + "?step=core"
-        );
+        router.push("/onboarding/role");
       }
     } catch (error) {
       showToastError(error);
@@ -116,8 +80,8 @@ export default function BasicInformationPage() {
   }
 
   return (
-    <div className="min-h-screen flex-grow px-4 pb-10 pt-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-lg flex-grow">
+    <div className="flex-1 px-4 py-4 pt-6">
+      <div className="w-full sm:mx-auto sm:max-w-md">
         <h1 className="text-center text-3xl font-extrabold text-gray-900">
           Tell us about yourself
         </h1>
@@ -128,7 +92,7 @@ export default function BasicInformationPage() {
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-lg">
+      <div className="mx-auto mt-8 w-full max-w-xl flex-1">
         <Card>
           <CardHeader>
             <CardTitle>Basic Information</CardTitle>
@@ -140,137 +104,155 @@ export default function BasicInformationPage() {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-4"
               >
-                <FormField
-                  control={form.control}
-                  name="fullName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Full Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="John Doe" {...field} disabled />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="contactEmail"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contact Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          contentEditable={false}
-                          placeholder="john.doe@example.com"
-                          disabled
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Location</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className={cn(
-                                "w-full justify-between",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value
-                                ? locationOptions.find(
-                                    (location) => location.value === field.value
-                                  )?.label
-                                : "Select location"}
-                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="p-0">
-                          <Command>
-                            <CommandInput
-                              placeholder="Search locations..."
-                              className="h-9"
-                            />
-                            <CommandList>
-                              <CommandEmpty>No results found</CommandEmpty>
-                              <CommandGroup>
-                                {locationOptions.map((location) => (
-                                  <CommandItem
-                                    value={location.label}
-                                    key={location.value}
-                                    onSelect={() => {
-                                      form.setValue("location", location.value);
-                                    }}
-                                  >
-                                    {location.label}
-                                    <CheckIcon
-                                      className={cn(
-                                        "ml-auto h-4 w-4",
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="fullName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Full Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="John Doe" {...field} disabled />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="contactEmail"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Contact Email</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="email"
+                            contentEditable={false}
+                            placeholder="john.doe@example.com"
+                            disabled
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="phoneNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Phone Number</FormLabel>
+                        <FormControl>
+                          {/* <Input
+                            type="tel"
+                            placeholder="+1 (555) 123-4567"
+                            {...field}
+                          /> */}
+                          <PhoneInput
+                            type="tel"
+                            className=""
+                            defaultCountry="IN"
+                            international
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* <FormField
+                    control={form.control}
+                    name="location"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Location</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant="outline"
+                                size={"lg"}
+                                role="combobox"
+                                className={cn(
+                                  "w-full justify-between px-4",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                {field.value
+                                  ? locationOptions.find(
+                                      (location) =>
                                         location.value === field.value
-                                          ? "opacity-100"
-                                          : "opacity-0"
-                                      )}
-                                    />
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="linkedinUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>LinkedIn Profile URL</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="https://www.linkedin.com/in/johndoe"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Required for verification and better job matches.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="phoneNumber"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="tel"
-                          placeholder="+1 (555) 123-4567"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                                    )?.label
+                                  : "Select location"}
+                                <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="p-0">
+                            <Command>
+                              <CommandInput
+                                placeholder="Search locations..."
+                                className="h-9"
+                              />
+                              <CommandList>
+                                <CommandEmpty>No results found</CommandEmpty>
+                                <CommandGroup>
+                                  {locationOptions.map((location) => (
+                                    <CommandItem
+                                      value={location.label}
+                                      key={location.value}
+                                      onSelect={() => {
+                                        form.setValue(
+                                          "location",
+                                          location.value
+                                        );
+                                      }}
+                                    >
+                                      {location.label}
+                                      <CheckIcon
+                                        className={cn(
+                                          "ml-auto h-4 w-4",
+                                          location.value === field.value
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  /> */}
+
+                  <FormField
+                    control={form.control}
+                    name="linkedinUrl"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>LinkedIn Profile URL</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="linkedin.com/in/johndoe"
+                            {...field}
+                          />
+                        </FormControl>
+                        {/* <FormDescription>
+                          Required for verification and better job matches.
+                        </FormDescription> */}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
                 <FormField
                   control={form.control}
                   name="bio"

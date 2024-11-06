@@ -41,7 +41,7 @@ model BasicInfo {
   id             String   @id @default(uuid())
   fullName       String
   contactEmail   String   @unique
-  location       String
+  location       String?
   linkedinUrl    String
   phoneNumber    String
   profilePicture String?

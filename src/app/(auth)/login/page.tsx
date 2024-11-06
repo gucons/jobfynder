@@ -77,7 +77,7 @@ export default function LoginPage() {
             },
           },
         });
-        router.replace("/onboarding/role");
+        router.replace("/onboarding/basic-info");
       }
     } catch (error) {
       showToastError(error);

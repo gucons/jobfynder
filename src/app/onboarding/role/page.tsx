@@ -1,7 +1,6 @@
 "use client";
 
 import ButtonLoading from "@/components/form/buttonLoading";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -14,12 +13,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import showToastError from "@/lib/toastError";
 import { UserRole } from "@prisma/client";
 import axios from "axios";
-import { Briefcase, Loader, TrendingUp, Users } from "lucide-react";
+import { Briefcase, TrendingUp, Users } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
-const roles: Array<{
+const rolesOptions: Array<{
   id: UserRole;
   title: string;
   description: string;
@@ -54,9 +54,27 @@ const roles: Array<{
   // },
 ];
 
+const roles: Array<{
+  label: UserRole;
+  route: string;
+}> = [
+  {
+    label: "CONSULTANT",
+    route: "/onboarding/consultant",
+  },
+  {
+    label: "BENCH_SALES",
+    route: "/onboarding/bench-sales",
+  },
+  {
+    label: "RECRUITER",
+    route: "/onboarding/recruiter",
+  },
+];
+
 export default function RoleSelectionPage() {
   const router = useRouter();
-
+  const session = useSession();
   const [selectedRole, setSelectedRole] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -73,7 +91,10 @@ export default function RoleSelectionPage() {
       if (response.status === 200) {
         toast.success("Role updated successfully");
 
-        router.push("/onboarding/basic-info");
+        router.push(
+          (roles.find((role) => role.label === session.data?.user?.role)
+            ?.route as string) + "?step=core"
+        );
       }
     } catch (error) {
       showToastError(error);
@@ -83,20 +104,17 @@ export default function RoleSelectionPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+    <div className="flex min-h-screen flex-col justify-center px-4 py-4">
+      <div className="w-full sm:mx-auto sm:max-w-md">
         <h1 className="text-center text-3xl font-extrabold text-gray-900">
           Welcome to Jobfynder!
         </h1>
         <p className="mt-2 space-y-4 text-center text-sm text-gray-600">
           We&apos;re here to make sure you have the best experience.
-          {/* <br /> */}
-          {/* Let&apos;s get started by understanding your role so we can
-                    customize your profile. */}
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-lg">
+      <div className="mt-8 w-full sm:max-w-xl">
         <Card>
           <CardHeader>
             <CardTitle>Select Your Role</CardTitle>
@@ -106,7 +124,7 @@ export default function RoleSelectionPage() {
           </CardHeader>
           <CardContent>
             <RadioGroup onValueChange={handleRoleChange} className="space-y-2">
-              {roles.map((role) => (
+              {rolesOptions.map((role) => (
                 <div key={role.id} className="flex items-center">
                   <RadioGroupItem
                     value={role.id}
