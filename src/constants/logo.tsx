@@ -7,7 +7,7 @@ type Props = {
   className?: string;
 };
 
-const logoSource = "/jobfynder-logo.png";
+const logoSource = "/icon.svg";
 
 const Logo = forwardRef<HTMLImageElement, Props>(function Logo(
   { width, height, className = "", ...props },

@@ -24,6 +24,7 @@ const rolesOptions: Array<{
   title: string;
   description: string;
   icon: React.ReactNode;
+  disabled?: boolean;
 }> = [
   {
     id: "CONSULTANT",
@@ -37,6 +38,7 @@ const rolesOptions: Array<{
     description:
       "Manage consultants on the bench, maintain hotlists and sell bench resources to clients",
     icon: <TrendingUp className="h-6 w-6" />,
+    disabled: true,
   },
   {
     id: "RECRUITER",
@@ -44,6 +46,7 @@ const rolesOptions: Array<{
     description:
       "Post jobs, connect with consultants, and find talent that matches your hiring needs",
     icon: <Users className="h-6 w-6" />,
+    disabled: true,
   },
   // {
   //     id: "trainer",
@@ -124,31 +127,34 @@ export default function RoleSelectionPage() {
           </CardHeader>
           <CardContent>
             <RadioGroup onValueChange={handleRoleChange} className="space-y-2">
-              {rolesOptions.map((role) => (
+                {rolesOptions.map((role) => (
                 <div key={role.id} className="flex items-center">
                   <RadioGroupItem
-                    value={role.id}
-                    id={role.id}
-                    className="peer sr-only"
+                  value={role.id}
+                  id={role.id}
+                  className="peer sr-only"
+                  disabled={role.disabled}
                   />
                   <Label
-                    htmlFor={role.id}
-                    className={`m-0 flex w-full cursor-pointer items-center space-x-4 rounded-lg border border-gray-200 p-4 hover:bg-gray-100 peer-checked:border-purple-600 peer-checked:bg-purple-50 [&:has([data-state=checked])]:border-purple-600 [&:has([data-state=checked])]:bg-purple-50 ${
-                      selectedRole === role.id
-                        ? "border-green-600 bg-green-50 hover:bg-green-50 peer-checked:border-green-600 peer-checked:bg-green-50"
-                        : ""
-                    } `}
+                  htmlFor={role.id}
+                  className={`m-0 flex w-full cursor-pointer items-center space-x-4 rounded-lg border border-gray-200 p-4 hover:bg-gray-100 peer-checked:border-purple-600 peer-checked:bg-purple-50 [&:has([data-state=checked])]:border-purple-600 [&:has([data-state=checked])]:bg-purple-50 ${
+                    selectedRole === role.id
+                    ? "border-green-600 bg-green-50 hover:bg-green-50 peer-checked:border-green-600 peer-checked:bg-green-50"
+                    : ""
+                  } ${
+                    role.disabled ? "opacity-50 cursor-not-allowed hover:bg-transparent" : ""
+                  }`}
                   >
-                    <div className="flex-shrink-0">{role.icon}</div>
-                    <div className="flex-grow">
-                      <div className="font-semibold">{role.title}</div>
-                      <div className="text-sm text-gray-500">
-                        {role.description}
-                      </div>
+                  <div className="flex-shrink-0">{role.icon}</div>
+                  <div className="flex-grow">
+                    <div className="font-semibold">{role.title}</div>
+                    <div className="text-sm text-gray-500">
+                    {role.description}
                     </div>
+                  </div>
                   </Label>
                 </div>
-              ))}
+                ))}
             </RadioGroup>
             <ButtonLoading
               type="submit"

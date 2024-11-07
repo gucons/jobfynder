@@ -9,6 +9,7 @@ import "./globals.css";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { ourFileRouter } from "@/server/uploadThing";
 import { extractRouterConfig } from "uploadthing/server";
+import { LayoutProvider } from "@/context/useLayoutContext";
 
 const logoFont = localFont({
   src: "./fonts/font.otf",
@@ -47,6 +48,9 @@ export const metadata: Metadata = {
       "A niche social network and job board connecting IT professionals and staffing agencies with training, resume support, and immigration services.",
     // images: "/images/jobfynder-twitter-image.jpg",
   },
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default async function RootLayout({
@@ -67,8 +71,10 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className="font-mono antialiased">
-        <SessionProvider session={clientSession}>{children}</SessionProvider>
+      <body className={`${logoFont.variable} font-sans antialiased`}>
+        <SessionProvider session={clientSession}>
+          <LayoutProvider>{children}</LayoutProvider>
+        </SessionProvider>
         <Toaster position="top-center" />
         <NextSSRPlugin
           /**
