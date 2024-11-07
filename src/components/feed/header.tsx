@@ -58,25 +58,27 @@ export default function Header() {
           <IconInput startIcon={Search} placeholder="Search..." />
         </div>
         <nav className="flex items-center space-x-4">
-          <Button variant="ghost">Demo</Button>
+          {/* <Button variant="ghost">Demo</Button>
           <Button variant="ghost">Pages</Button>
           <Button variant="ghost">Account</Button>
-          <Button variant="ghost">My Network</Button>
-          <Button variant="ghost" size="icon" className="relative">
+          <Button variant="ghost">My Network</Button> */}
+          <Button variant="outline" size="icon" className="relative">
             <Link2 className="h-5 w-5" />
             <Badge className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0">
               3
             </Badge>
           </Button>
-          <Button variant="ghost" size="icon" className="relative">
-            <MessageCircle className="h-5 w-5" />
-            <Badge className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0">
-              5
-            </Badge>
-          </Button>
+            <Button variant="outline" size="icon" className="relative">
+              <MessageCircle className="h-5 w-5" />
+              <Badge className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 flex items-center justify-center">
+                <span>
+                  5
+                </span>
+              </Badge>
+            </Button>
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
+              <Button variant="outline" size="icon" className="relative">
                 <Bell className="h-5 w-5" />
                 <Badge className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0">
                   2

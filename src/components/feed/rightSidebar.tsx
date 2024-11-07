@@ -62,24 +62,23 @@ export default function RightSidebar() {
                 </div>
               </div>
               <Button
-                size="sm"
+                size="icon"
+                className="rounded-lg p-2"
                 variant={user.followed ? "secondary" : "default"}
               >
                 {user.followed ? (
                   <>
-                    <Check className="mr-2 h-4 w-4" />
-                    Following
+                    <Check className="h-4 w-4" />
                   </>
                 ) : (
                   <>
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    Follow
+                    <UserPlus className="h-4 w-4" />
                   </>
                 )}
               </Button>
             </div>
           ))}
-          <Button variant="link" className="mt-4 w-full">
+          <Button variant="default" className="w-full">
             View more
           </Button>
         </CardContent>

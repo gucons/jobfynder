@@ -38,7 +38,7 @@ export default function LeftSidebar() {
             <p className="text-sm font-semibold text-gray-600">
               Web Developer at Webestica
             </p>
-            <p className="mt-2 font-mono text-sm font-normal text-gray-600">
+            <p className="mt-4 text-sm font-normal text-gray-600">
               I'd love to change the world, but they won't give me the source
               code.
             </p>
@@ -61,7 +61,7 @@ export default function LeftSidebar() {
             </div>
           </div>
           <Separator className="my-4" />
-          <nav className="px-2">
+          <nav className="px-2 pb-4">
             {menuItems.map((item, index) => (
               <Button
                 key={index}
