@@ -1,18 +1,19 @@
 import Link from "next/link";
 import { BsChatLeftTextFill, BsGearFill } from "react-icons/bs";
 
-import LogoBox from "@/components/template-components/TopHeader/LogoBox";
+// import LogoBox from '@/components/LogoBox'
 import CollapseMenu from "./CollapseMenu";
 import MobileMenuToggle from "./MobileMenuToggle";
 import NotificationDropdown from "./NotificationDropdown";
 import ProfileDropdown from "./ProfileDropdown";
 import StyledHeader from "./StyledHeader";
+import Logo from "@/constants/logo";
 
 const TopHeader = () => {
   return (
     <StyledHeader>
       <div className="container">
-        <LogoBox />
+        <Logo width={50} height={50} />
 
         <MobileMenuToggle />
 

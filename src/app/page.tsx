@@ -20,6 +20,9 @@ export default async function Home() {
     return (
       <div className="grid min-h-screen grid-cols-1 items-center justify-items-center gap-16 p-8 pb-20 font-[family-name:var(--font-geist-sans)] sm:p-20">
         Welcome {session.user.name} and your email is {session.user.email}
+        <Link href={"/feed"} className="rounded-r-md bg-gray-500 p-2">
+          View Feed
+        </Link>
         <SignOutButton />
       </div>
     );

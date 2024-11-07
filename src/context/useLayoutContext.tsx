@@ -1,6 +1,9 @@
 "use client";
 
-import { ChildrenType } from "@/types/component";
+import { createContext, use, useMemo, useState } from "react";
+
+import type { ChildrenType } from "@/types/component";
+import { toggleDocumentAttribute } from "@/utils/layout";
 import type {
   DialogControlType,
   LayoutOffcanvasStatesType,
@@ -8,8 +11,6 @@ import type {
   LayoutType,
   ThemeType,
 } from "@/types/context";
-import { toggleDocumentAttribute } from "@/utils/layout";
-import { createContext, use, useMemo, useState } from "react";
 
 const LayoutContext = createContext<LayoutType | undefined>(undefined);
 

@@ -4,6 +4,7 @@ import { SessionProvider } from "next-auth/react";
 import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import "./globals.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 // UploadThing Next SSR Plugin
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
