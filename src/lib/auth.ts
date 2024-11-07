@@ -15,7 +15,7 @@ import { z } from "zod";
 const prismaAdapter = PrismaAdapter(prisma);
 
 // @ts-ignore
-prismaAdapter.createUser = async (data: User) => {
+prismaAdapter.createUser = async (data) => {
   return await prisma.user.create({
     data: {
       name: data.name as string,
@@ -37,7 +37,7 @@ class CustomCredentialsError extends CredentialsSignin {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: prismaAdapter,
+  // adapter: prismaAdapter,
   providers: [
     Credentials({
       credentials: {
@@ -123,44 +123,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google,
   ],
   callbacks: {
-    // async signIn({ user, account, profile, email, credentials }) {
-    //     if (user?.error === 'my custom error') {
-    //         throw new Error('custom error to the client')
-    //     }
-    //     return true
-    // }
     async jwt({ token, user }) {
-      if (token && user) {
+      if (user) {
         token.id = user.id;
-        token.email = user.email;
-        token.name = user.name;
         token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
-      if (session && token) {
-        session.user.id = token.id as string;
-        session.user.email = token.email as string;
-        session.user.name = token.name as string;
-        session.user.role = token.role as UserRole;
+      if (token) {
+        session.user = {
+          ...session.user,
+          id: token.id as string,
+          role: token.role as UserRole,
+        };
       }
       return session;
     },
-    // async signIn({ user }) {
-    //     const existingUser = await prisma.user.findUnique({
-    //         where: {
-    //             email: user.email as string,
-    //         },
-    //     });
-    //     if (existingUser?.emailVerified) {
-    //         return true;
-    //     }
-
-    //     /// TODO: Handle verification email if email is not verified
-
-    //     return true;
-    // },
   },
   session: {
     strategy: "jwt",
