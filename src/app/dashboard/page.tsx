@@ -307,7 +307,7 @@ export default function CentralDashboard() {
                 <CardHeader>
                   <CardTitle>Welcome back, {user.name}!</CardTitle>
                   <CardDescription>
-                    Here's an overview of your activity
+                    Here&apos;s an overview of your activity
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -380,7 +380,7 @@ export default function CentralDashboard() {
                         </Avatar>
                         <div>
                           <p className="text-sm font-medium">
-                            New industry article: "The Future of Remote Work"
+                            New industry article: &quot;The Future of Remote Work&quot;
                           </p>
                           <p className="text-sm text-muted-foreground">
                             Published by TechInsights • 3 days ago

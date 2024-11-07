@@ -11,6 +11,7 @@
         "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
     },
     "dependencies": {
+        "@auth/core": "^0.37.3",
         "@auth/prisma-adapter": "^2.7.2",
         "@hookform/resolvers": "^3.9.0",
         "@prisma/client": "^5.21.1",

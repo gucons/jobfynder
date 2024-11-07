@@ -39,7 +39,7 @@ export default function LeftSidebar() {
               Web Developer at Webestica
             </p>
             <p className="mt-4 text-sm font-normal text-gray-600">
-              I'd love to change the world, but they won't give me the source
+              I&apos;d love to change the world, but they won&apos;t give me the source
               code.
             </p>
             <Separator className="my-4" />

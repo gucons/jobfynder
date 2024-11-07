@@ -84,10 +84,10 @@ export default function RightSidebar() {
         </CardContent>
       </Card>
 
-      {/* Today's news */}
+      {/* Today&apos;s news */}
       <Card>
         <CardHeader>
-          <CardTitle>Today's news</CardTitle>
+          <CardTitle>Today&apos;s news</CardTitle>
         </CardHeader>
         <CardContent className="p-4">
           <div className="space-y-4">
