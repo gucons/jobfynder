@@ -60,7 +60,7 @@ export default function NotificationPanel() {
           Icon={Bell}
         />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-96 p-0" align="end">
+      <DropdownMenuContent className="w-80 p-0" align="end">
         <Card className="border-0 border-none p-0 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between bg-accent px-4 py-2">
             <span className="flex items-center gap-3">
@@ -71,7 +71,7 @@ export default function NotificationPanel() {
                 </span>
               )}
             </span>
-            {notifications.length > 0 && (
+            {/* {notifications.length > 0 && (
               <Button
                 variant="outline"
                 size={"sm"}
@@ -80,7 +80,7 @@ export default function NotificationPanel() {
               >
                 Clear all
               </Button>
-            )}
+            )} */}
           </CardHeader>
           <CardContent className="p-0">
             <ScrollArea className="grid h-[300px] grid-cols-1 gap-y-4 py-2 pl-1 pr-3">

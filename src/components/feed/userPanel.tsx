@@ -13,13 +13,10 @@ import {
 import {
   HelpCircle,
   LogOut,
-  Moon,
   Settings,
-  Sun,
-  UserIcon,
+  UserIcon
 } from "lucide-react";
 import { User } from "next-auth";
-import { useTheme } from "next-themes";
 import ThemeToggle from "../theme/themeToggle";
 
 type Props = {
@@ -27,8 +24,6 @@ type Props = {
 };
 
 export default function UserAccountDropdown({ user }: Props) {
-  const { setTheme, theme } = useTheme();
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -81,30 +76,11 @@ export default function UserAccountDropdown({ user }: Props) {
           <span>Log out</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
+
         <div className="p-2">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Theme</span>
-            {/* <div className="flex space-x-1"> */}
-              {/* <Button
-                variant={theme === "light" ? "secondary" : "ghost"}
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setTheme("light")}
-              >
-                <Sun className="h-4 w-4" />
-                <span className="sr-only">Light mode</span>
-              </Button>
-              <Button
-                variant={theme === "dark" ? "secondary" : "ghost"}
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setTheme("dark")}
-              >
-                <Moon className="h-4 w-4" />
-                <span className="sr-only">Dark mode</span>
-              </Button> */}
-              <ThemeToggle />
-            {/* </div> */}
+            <ThemeToggle />
           </div>
         </div>
       </DropdownMenuContent>
