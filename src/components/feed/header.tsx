@@ -29,7 +29,6 @@ const navItems: Array<{
 }> = [
   { icon: Users, badgeCount: 3 },
   { icon: MessageCircle, badgeCount: 5 },
-  // { icon: Bell, badgeCount: 2 },
 ];
 
 export default function Header() {
@@ -38,12 +37,17 @@ export default function Header() {
       <nav className="container mx-auto flex h-16 max-w-screen-xl items-center justify-between">
         <div className="flex items-center space-x-4">
           <Link href={"/"} className="flex items-center space-x-2">
-            <Logo width={40} height={40} />
+            <Logo width={100} height={100} className="size-12" />
           </Link>
 
-          <IconInput icon={Search} placeholder="Search..." />
+          <IconInput
+            icon={Search}
+            placeholder="Search..."
+            type="search"
+            aria-label="Search"
+          />
         </div>
-        <div className="flex items-center space-x-8">
+        <div className="flex items-center space-x-6">
           {/* // Nav Items */}
           <div className="space-x-4">
             {navItems.map((item, index) => (

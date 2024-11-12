@@ -7,9 +7,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="">
+    <div className="bg-accent">
       <Header />
-      <SocialLayout >{children}</SocialLayout>
+      <SocialLayout>{children}</SocialLayout>
     </div>
   );
 }
