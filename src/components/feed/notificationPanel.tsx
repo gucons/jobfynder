@@ -47,7 +47,7 @@ export default function NotificationPanel() {
   };
 
   return (
-    <DropdownMenu open>
+    <DropdownMenu>
       <DropdownMenuTrigger>
         <NotificationBadge
           notificationCount={notifications.length}

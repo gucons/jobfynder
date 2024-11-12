@@ -15,26 +15,29 @@ datasource db {
 }
 
 model User {
-  id                String          @id @default(uuid())
-  name              String
-  email             String          @unique
-  image             String?
-  hashedPassword    String?
-  emailVerified     Boolean         @default(false)
-  role              UserRole        @default(PENDING)
+  id                 String               @id @default(uuid())
+  name               String
+  email              String               @unique
+  image              String?
+  hashedPassword     String?
+  emailVerified      Boolean              @default(false)
+  role               UserRole             @default(PENDING)
   // Basic Info
-  basicInfo         BasicInfo?
+  basicInfoId        String?
+  basicInfo          BasicInfo?
   // Relations to roles
-  consultantProfile Consultant?
-  benchSalesProfile BenchSales?
-  recruiterProfile  Recruiter?
+  consultantProfile  Consultant?
+  benchSalesProfile  BenchSales?
+  recruiterProfile   Recruiter?
+  // Notifications
+  InfoNotification   InfoNotification[]
+  ActionNotification ActionNotification[]
   // Auth Sessions
-  accounts          Account[]
-  sessions          Session[]
-  Authenticator     Authenticator[]
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  basicInfoId       String?
+  accounts           Account[]
+  sessions           Session[]
+  Authenticator      Authenticator[]
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
 }
 
 model BasicInfo {
@@ -131,6 +134,28 @@ model JobPosting {
   recruiter   Recruiter @relation(fields: [recruiterId], references: [id])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+model InfoNotification {
+  id        String   @id @default(uuid())
+  userId    String // ID of the user receiving the notification
+  message   String // Message content
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ActionNotification {
+  id          String   @id @default(uuid())
+  userId      String // ID of the user receiving the notification
+  message     String // Message content
+  actionUrl   String // URL for the action
+  actionLabel String // Label for action button
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {

@@ -1,5 +1,6 @@
 "use client";
 
+import NotificationPanel from "@/components/feed/notificationPanel";
 import { UploadButton } from "@/lib/uploadThingComponent";
 import React from "react";
 
@@ -7,8 +8,8 @@ type Props = {};
 
 function page({}: Props) {
   return (
-    <div className="flex h-svh w-svw items-center justify-center">
-      <UploadButton
+    <div className="flex h-svh w-svw items-start justify-center m-10">
+      {/* <UploadButton
         endpoint="consultantCertifications"
         onClientUploadComplete={(res) => {
           // Do something with the response
@@ -19,7 +20,8 @@ function page({}: Props) {
           // Do something with the error.
           alert(`ERROR! ${error.message}`);
         }}
-      />
+      /> */}
+      <NotificationPanel />
     </div>
   );
 }
