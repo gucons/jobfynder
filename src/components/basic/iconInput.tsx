@@ -1,45 +1,34 @@
-import React from "react";
-import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LucideIcon } from "lucide-react";
+import React from "react";
+import { Input } from "../ui/input";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  startIcon?: LucideIcon;
-  endIcon?: LucideIcon;
+  icon?: LucideIcon;
 }
 
 const IconInput = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, startIcon, endIcon, ...props }, ref) => {
-    const StartIcon = startIcon;
-    const EndIcon = endIcon;
+  ({ className, type, icon, ...props }, ref) => {
+    const Icon = icon;
 
     return (
-      <div className="relative w-full">
-        {StartIcon && (
-          <div className="absolute left-2 top-1/2 -translate-y-1/2 transform">
-            <StartIcon size={16} className="text-muted-foreground" />
-          </div>
+      <div
+        className={cn(
+          "my-1 flex items-center space-x-2 rounded-md border border-input px-3 py-2 text-foreground focus-within:ring-2 focus-within:ring-blue-500",
+          className
         )}
-        <input
-          type={type}
-          className={cn(
-            "flex h-10 w-full rounded-md border border-input bg-background px-4 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50",
-            startIcon ? "pl-8" : "",
-            endIcon ? "pr-8" : "",
-            className
-          )}
+      >
+        {Icon && <Icon size={16} className="size-4" />}
+        <Input
           ref={ref}
+          className="h-fit border-0 border-none bg-transparent p-0 text-sm text-gray-700 placeholder:text-muted-foreground focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
           {...props}
         />
-        {EndIcon && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 transform">
-            <EndIcon className="text-muted-foreground" size={16} />
-          </div>
-        )}
       </div>
     );
   }
 );
 IconInput.displayName = "Input";
 
-export default IconInput
+export default IconInput;
