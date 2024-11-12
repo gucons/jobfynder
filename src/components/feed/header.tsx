@@ -1,27 +1,12 @@
-// components/layout/Header.tsx
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import Logo from "@/constants/logo";
-import {
-  LogOut,
-  LucideIcon,
-  MessageCircle,
-  Search,
-  Settings,
-  User,
-  Users,
-} from "lucide-react";
+import { getSessionServer } from "@/lib/auth";
+import { LucideIcon, MessageCircle, Search, Users } from "lucide-react";
 import Link from "next/link";
 import IconInput from "../basic/iconInput";
 import NotificationBadge from "../basic/notificationBadge";
 import NotificationPanel from "./notificationPanel";
+import UserDropdown from "./userPanel";
+import { Session } from "next-auth";
 
 const navItems: Array<{
   icon: LucideIcon;
@@ -31,7 +16,9 @@ const navItems: Array<{
   { icon: MessageCircle, badgeCount: 5 },
 ];
 
-export default function Header() {
+export default async function Header() {
+  const session = (await getSessionServer()) as Session;
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <nav className="container mx-auto flex h-16 max-w-screen-xl items-center justify-between">
@@ -63,33 +50,7 @@ export default function Header() {
           </div>
 
           {/* // User Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <Avatar className="rounded-lg">
-                  <AvatarImage src="https://github.com/shadcn.png" alt="User" />
-                  <AvatarFallback className="rounded-lg border">
-                    U
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end">
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <UserDropdown user={session.user} />
         </div>
       </nav>
     </header>
