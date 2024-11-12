@@ -4,13 +4,14 @@ import { SessionProvider } from "next-auth/react";
 import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import "./globals.css";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 
 // UploadThing Next SSR Plugin
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { ourFileRouter } from "@/server/uploadThing";
 import { extractRouterConfig } from "uploadthing/server";
 import { LayoutProvider } from "@/context/useLayoutContext";
+import { ThemeProvider } from "@/components/theme/themeProvider";
 
 const logoFont = localFont({
   src: "./fonts/font.otf",
@@ -74,7 +75,14 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${logoFont.variable} font-sans antialiased`}>
         <SessionProvider session={clientSession}>
-          <LayoutProvider>{children}</LayoutProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <LayoutProvider>{children}</LayoutProvider>
+          </ThemeProvider>
         </SessionProvider>
         <Toaster position="top-center" />
         <NextSSRPlugin

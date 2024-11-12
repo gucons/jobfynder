@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { User } from "next-auth";
 import { useTheme } from "next-themes";
+import ThemeToggle from "../theme/themeToggle";
 
 type Props = {
   user: User;
@@ -83,8 +84,8 @@ export default function UserAccountDropdown({ user }: Props) {
         <div className="p-2">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Theme</span>
-            <div className="flex space-x-1">
-              <Button
+            {/* <div className="flex space-x-1"> */}
+              {/* <Button
                 variant={theme === "light" ? "secondary" : "ghost"}
                 size="icon"
                 className="h-8 w-8"
@@ -101,8 +102,9 @@ export default function UserAccountDropdown({ user }: Props) {
               >
                 <Moon className="h-4 w-4" />
                 <span className="sr-only">Dark mode</span>
-              </Button>
-            </div>
+              </Button> */}
+              <ThemeToggle />
+            {/* </div> */}
           </div>
         </div>
       </DropdownMenuContent>
