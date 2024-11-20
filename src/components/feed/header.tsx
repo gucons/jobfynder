@@ -1,12 +1,15 @@
 import Logo from "@/constants/logo";
 import { getSessionServer } from "@/lib/auth";
-import { LucideIcon, MessageCircle, Search, Users } from "lucide-react";
+import { AtSign, LucideIcon, MessageCircle, Search, Users } from "lucide-react";
 import Link from "next/link";
 import IconInput from "../basic/iconInput";
 import NotificationBadge from "../basic/notificationBadge";
 import NotificationPanel from "./notificationPanel";
 import UserDropdown from "./userPanel";
 import { Session } from "next-auth";
+import { Input } from "../ui/input";
+import { Label } from "@radix-ui/react-label";
+import SearchBox from "../dashboard/searchBox";
 
 const navItems: Array<{
   icon: LucideIcon;
@@ -27,8 +30,7 @@ export default async function Header() {
             <Logo width={100} height={100} className="size-12" />
           </Link>
 
-          <IconInput
-            icon={Search}
+          <SearchBox
             placeholder="Search..."
             type="search"
             aria-label="Search"

@@ -6,6 +6,7 @@ import {
   MoreHorizontal,
   MessageCircle,
   HelpCircle,
+  AtSign,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -17,17 +18,35 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Label } from "../ui/label";
 
 export default function CreatePost() {
   return (
     <Card>
       <CardContent className="p-4">
         <div className="flex items-center space-x-4">
-          <Avatar>
-            <AvatarImage src="https://placehold.co/40x40" alt="User" />
+          <Avatar className="h-12 w-12">
+            <AvatarImage src="https://github.com/shadcn.png" alt="User" />
             <AvatarFallback>U</AvatarFallback>
           </Avatar>
-          <Input placeholder="Share your thoughts..." className="bg-gray-100" />
+          {/* <span className="w-full rounded-r-xl bg-accent">
+            Share your thoughts...
+          </span> */}
+          <div className="space-y-2">
+            <Label htmlFor="input-09">Input with start icon</Label>
+            <div className="relative flex">
+              <Input
+                id="input-09"
+                className="peer ps-9"
+                placeholder="Email"
+                type="email"
+              />
+              <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
+                <AtSign size={16} strokeWidth={2} aria-hidden="true" />
+              </div>
+            </div>
+          </div>
+          {/* <Input placeholder="Share your thoughts..." className="ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0" /> */}
         </div>
         <div className="mt-4 flex justify-between">
           <Button variant="ghost" className="text-blue-600">

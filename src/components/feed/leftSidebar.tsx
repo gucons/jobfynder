@@ -29,7 +29,7 @@ export default function LeftSidebar() {
             <img
               src="https://placehold.co/200x300"
               alt="Cover"
-              className="h-20 w-full object-cover"
+              className="h-24 w-full object-cover"
             />
             <Avatar className="absolute -bottom-6 left-4 h-14 w-14 border-4 border-white">
               <AvatarImage

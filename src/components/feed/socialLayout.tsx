@@ -1,3 +1,4 @@
+import CreatePost from "./createPost";
 import LeftSidebar from "./leftSidebar";
 import PostCard from "./postCard";
 import RightSidebar from "./rightSidebar";
@@ -23,9 +24,9 @@ export default function SocialLayout({
   return (
     <div className="container mx-auto grid max-w-screen-xl grid-cols-12 gap-6 py-8">
       <LeftSidebar />
-      {/* <main className="col-span-6 space-y-6">{children}</main> */}
       <div className="col-span-6 space-y-6">
-        <Stories />
+        {/* <Stories /> */}
+        <CreatePost />
         <PostCard {...post} />
         {children}
       </div>
