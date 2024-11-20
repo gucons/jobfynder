@@ -49,8 +49,8 @@ export default function UserAccountDropdown({ user }: Props) {
                 <AvatarFallback>JD</AvatarFallback>
               </Avatar>
               <div>
-                <p className="text-sm font-medium leading-none">John Doe</p>
-                <p className="mt-1 text-xs leading-none text-muted-foreground">
+                <p className="text-sm font-medium leading-none m-0 mb-1">John Doe</p>
+                <p className="text-xs leading-none text-muted-foregroun m-0">
                   Software Engineer
                 </p>
               </div>
