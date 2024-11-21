@@ -12,7 +12,9 @@ export default function FeedLayout({
       <FeedHeader />
       <div className="container mx-auto grid max-w-screen-xl grid-cols-12 gap-6 py-8">
         <ProfileSidebar />
-        <div className="col-span-6">{children}</div>
+        <div className="col-span-full px-6 md:col-span-6 md:p-0">
+          {children}
+        </div>
         <SuggestionsPanel />
       </div>
     </div>

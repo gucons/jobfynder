@@ -29,7 +29,7 @@ const userInfo = {
 
 export default function ProfileSidebar() {
   return (
-    <div className="col-span-3 h-max rounded-lg border bg-card text-card-foreground shadow-sm">
+    <div className="col-span-3 hidden h-max rounded-lg border bg-card text-card-foreground shadow-sm md:block">
       <div className="relative rounded-t-lg">
         <Image
           src={userInfo.coverImage}

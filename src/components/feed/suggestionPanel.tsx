@@ -12,38 +12,43 @@ const suggestedUsers = [
   {
     name: "Frances Guerrero",
     title: "News anchor",
-    image: "https://images.pexels.com/photos/15263136/pexels-photo-15263136/free-photo-of-head-of-a-dog.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    image:
+      "https://images.pexels.com/photos/15263136/pexels-photo-15263136/free-photo-of-head-of-a-dog.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     followed: false,
   },
   {
     name: "Lori Ferguson",
     title: "Web Developer",
-    image: "https://images.pexels.com/photos/15263136/pexels-photo-15263136/free-photo-of-head-of-a-dog.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    image:
+      "https://images.pexels.com/photos/15263136/pexels-photo-15263136/free-photo-of-head-of-a-dog.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     followed: true,
   },
   {
     name: "Samuel Bishop",
     title: "News anchor",
-    image: "https://images.pexels.com/photos/15263136/pexels-photo-15263136/free-photo-of-head-of-a-dog.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    image:
+      "https://images.pexels.com/photos/15263136/pexels-photo-15263136/free-photo-of-head-of-a-dog.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     followed: false,
   },
   {
     name: "Dennis Barrett",
     title: "Web Developer",
-    image: "https://images.pexels.com/photos/15263136/pexels-photo-15263136/free-photo-of-head-of-a-dog.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    image:
+      "https://images.pexels.com/photos/15263136/pexels-photo-15263136/free-photo-of-head-of-a-dog.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     followed: false,
   },
   {
     name: "Judy Nguyen",
     title: "News anchor",
-    image: "https://images.pexels.com/photos/15263136/pexels-photo-15263136/free-photo-of-head-of-a-dog.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    image:
+      "https://images.pexels.com/photos/15263136/pexels-photo-15263136/free-photo-of-head-of-a-dog.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     followed: false,
   },
 ];
 
 export default function SuggestionsPanel() {
   return (
-    <div className="col-span-3 space-y-6 justify-self-end">
+    <div className="col-span-3 hidden space-y-6 justify-self-end md:block">
       {/* Who to follow */}
       <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
         <div className="px-4 pt-3">
@@ -59,7 +64,11 @@ export default function SuggestionsPanel() {
             >
               <div className="flex items-center space-x-4">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage className="object-cover object-center" src={user.image} alt={user.name} />
+                  <AvatarImage
+                    className="object-cover object-center"
+                    src={user.image}
+                    alt={user.name}
+                  />
                   <AvatarFallback>{user.name[0]}</AvatarFallback>
                 </Avatar>
                 <div>

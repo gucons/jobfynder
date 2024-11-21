@@ -6,7 +6,7 @@ export default function CreatePost() {
     <Card className="select-none transition-all duration-200">
       <CardContent className="p-5">
         <div className="flex items-center space-x-4">
-          <Avatar className="size-12 transition-transform duration-200 hover:scale-105">
+          <Avatar className="size-12">
             <AvatarImage src="https://github.com/shadcn.png" alt="User" />
             <AvatarFallback>U</AvatarFallback>
           </Avatar>
