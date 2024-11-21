@@ -59,7 +59,7 @@ export default function SuggestionsPanel() {
             >
               <div className="flex items-center space-x-4">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={user.image} alt={user.name} />
+                  <AvatarImage className="object-cover object-center" src={user.image} alt={user.name} />
                   <AvatarFallback>{user.name[0]}</AvatarFallback>
                 </Avatar>
                 <div>
