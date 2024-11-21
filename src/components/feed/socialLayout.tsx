@@ -1,7 +1,7 @@
 import CreatePost from "./createPost";
-import LeftSidebar from "./leftSidebar";
+import LeftSidebar from "./profilePanel";
 import PostCard from "./postCard";
-import RightSidebar from "./rightSidebar";
+import RightSidebar from "./suggestionPanel";
 import Stories from "./stories";
 
 export default function SocialLayout({

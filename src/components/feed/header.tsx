@@ -1,20 +1,10 @@
-// import BrandLogo from "@/constants/logo";
 import { getSessionServer } from "@/lib/auth";
 import { BarChart, LucideIcon, MessageCircle, Users } from "lucide-react";
 import { Session } from "next-auth";
 import Link from "next/link";
-import NotificationBadge from "../base/notificationBadge";
 import NotificationPanel from "./notificationPanel";
 import SearchBox from "./searchBox";
 import UserDropdown from "./userPanel";
-
-const navItems: Array<{
-  icon: LucideIcon;
-  badgeCount: number;
-}> = [
-  { icon: Users, badgeCount: 3 },
-  { icon: MessageCircle, badgeCount: 5 },
-];
 
 export default async function FeedHeader() {
   const session = (await getSessionServer()) as Session;
@@ -37,8 +27,6 @@ export default async function FeedHeader() {
         <div className="flex items-center space-x-6">
           {/* // Notification Panel */}
           <NotificationPanel />
-
- 
 
           {/* // User Dropdown */}
           <UserDropdown user={session.user} />
