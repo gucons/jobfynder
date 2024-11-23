@@ -9,11 +9,11 @@ type Props = {};
 function page({}: Props) {
   return (
     <div className="mx-auto max-w-3xl">
-      <div className="space-y-4">
+      <div className="space-y-2">
         <CreatePost />
         <div className="flex items-center gap-4">
           <Separator className="flex-1" />
-          <span className="whitespace-nowrap text-sm font-medium text-muted-foreground">
+          <span className="whitespace-nowrap text-xs font-medium text-muted-foreground">
             Recent Posts
           </span>
           <Separator className="flex-1" />

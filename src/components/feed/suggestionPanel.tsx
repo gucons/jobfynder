@@ -117,7 +117,7 @@ export default function SuggestionsPanel() {
       {/* Today's news */}
       <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
         <div className="px-4 pt-3">
-          <h3 className="text-xl font-semibold">Today's news</h3>
+          <h3 className="text-xl font-semibold">Today&apos;s news</h3>
         </div>
         <div className="p-4 pt-3">
           <div className="space-y-4">

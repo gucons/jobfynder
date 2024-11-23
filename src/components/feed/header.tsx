@@ -1,13 +1,18 @@
 import { getSessionServer } from "@/lib/auth";
-import { BarChart, LucideIcon, MessageCircle, Users } from "lucide-react";
-import { Session } from "next-auth";
+import { BarChart } from "lucide-react";
+import { Session, User } from "next-auth";
 import Link from "next/link";
 import NotificationPanel from "./notificationPanel";
 import SearchBox from "./searchBox";
 import UserDropdown from "./userPanel";
 
 export default async function FeedHeader() {
-  const session = (await getSessionServer()) as Session;
+  const session = await getSessionServer();
+
+  if (!session || !session.user) return;
+  <div className="grid h-full w-full items-center justify-center">
+    <p>Error fetching session. Please try again later.</p>;
+  </div>;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">

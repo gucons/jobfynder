@@ -1,4 +1,3 @@
-
 import { PostCardProps } from "@/components/feed/postCard";
 
 export const posts: PostCardProps[] = [
