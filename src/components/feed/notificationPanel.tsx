@@ -2,7 +2,6 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,8 +10,6 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Bell, Cake, Check, X } from "lucide-react";
 import * as React from "react";
-import { CardFooter } from "react-bootstrap";
-import NotificationBadge from "../base/notificationBadge";
 import { Badge } from "../ui/badge";
 
 export default function NotificationPanel() {
@@ -58,9 +55,9 @@ export default function NotificationPanel() {
         <Button
           variant="ghost"
           size="icon"
-          className="relative border p-2.5 text-center"
+          className="relative border text-center"
         >
-          <Bell className="size-4" />
+          <Bell />
           <Badge
             variant="destructive"
             className="absolute -right-2 -top-1 h-4 px-1.5 text-center text-xs tabular-nums"
