@@ -9,10 +9,13 @@ import UserDropdown from "./userPanel";
 export default async function FeedHeader() {
   const session = await getSessionServer();
 
-  if (!session || !session.user) return;
-  <div className="grid h-full w-full items-center justify-center">
-    <p>Error fetching session. Please try again later.</p>;
-  </div>;
+  // ! Uncomment this after implementing the auth
+  // if (!session || !session.user)
+  //   return (
+  //     <div className="grid h-full w-full items-center justify-center">
+  //       <p>Error fetching session. Please try again later.</p>;
+  //     </div>
+  //   );
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
@@ -34,7 +37,7 @@ export default async function FeedHeader() {
           <NotificationPanel />
 
           {/* // User Dropdown */}
-          <UserDropdown user={session.user} />
+          <UserDropdown user={session?.user} />
         </div>
       </nav>
     </header>

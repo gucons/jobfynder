@@ -51,19 +51,19 @@ export default function SuggestionsPanel() {
     <div className="col-span-3 hidden space-y-6 justify-self-end md:block">
       {/* Who to follow */}
       <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-        <div className="px-4 pt-3">
+        <div className="px-4 py-4">
           <h3 className="text-center text-xl font-semibold">
             Suggested Connections
           </h3>
         </div>
-        <div className="p-4 pt-3">
+        <div className="px-4 py-2 pt-0">
           {suggestedUsers.map((user, index) => (
             <div
               key={index}
-              className="group mb-2 flex cursor-default items-center justify-between rounded-lg p-2 ring-1 ring-transparent transition-colors last:mb-0 hover:ring-border"
+              className="group mb-1 flex cursor-default items-center justify-between rounded-lg p-2 ring-1 ring-transparent transition-colors last:mb-0 hover:ring-border"
             >
               <div className="flex items-center space-x-4">
-                <Avatar className="h-10 w-10">
+                <Avatar className="size-9">
                   <AvatarImage
                     className="object-cover object-center"
                     src={user.image}
@@ -82,8 +82,8 @@ export default function SuggestionsPanel() {
                   <TooltipTrigger asChild>
                     <Button
                       variant={user.followed ? "ghost" : "secondary"}
-                      size="sm"
-                      className="h-8 w-8"
+                      size="icon"
+                      className="size-8"
                       aria-label={user.followed ? "Following" : "Follow"}
                     >
                       {user.followed ? (
@@ -102,7 +102,7 @@ export default function SuggestionsPanel() {
           ))}
 
           <Button
-            className="mt-2 w-full justify-between text-sm font-medium hover:bg-muted"
+            className="my-2 w-full justify-between text-sm font-medium hover:bg-muted"
             variant="secondary"
           >
             Show more
