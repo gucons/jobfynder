@@ -14,8 +14,7 @@ import { User } from "next-auth";
 import ThemeToggle from "../theme/themeToggle";
 
 type Props = {
-  // ! Make it required after implementing the auth
-  user?: User;
+  user: User;
 };
 
 export default function UserAccountDropdown({ user }: Props) {
@@ -23,16 +22,13 @@ export default function UserAccountDropdown({ user }: Props) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer rounded-lg">
-          <AvatarImage
-            src={user?.image || "https://github.com/shadcn.png"}
-            alt="User"
-          />
+          <AvatarImage src={user.image as string} alt="User" />
           <AvatarFallback className="rounded-lg border">
-            {user?.name
+            {user.name
               ?.split(" ")
               .map((n) => n[0])
               .join("")
-              .toUpperCase() || "U"}
+              .toUpperCase()}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -41,21 +37,18 @@ export default function UserAccountDropdown({ user }: Props) {
           <div className="flex flex-col space-y-1">
             <div className="flex items-center">
               <Avatar className="mr-3 h-10 w-10">
-                <AvatarImage
-                  src={user?.image || "https://github.com/shadcn.png"}
-                  alt="User"
-                />
+                <AvatarImage src={user?.image as string} alt="User" />
                 <AvatarFallback>
-                  {user?.name
+                  {user.name
                     ?.split(" ")
                     .map((n) => n[0])
                     .join("")
-                    .toUpperCase() || "U"}
+                    .toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <p className="m-0 mb-1 text-sm font-medium leading-none">
-                  {user?.name || "User"}
+                  {user.name}
                 </p>
                 <p className="text-muted-foregroun m-0 text-xs leading-none">
                   Software Engineer

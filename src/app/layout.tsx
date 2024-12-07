@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@/components/theme/themeProvider";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -58,8 +59,9 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-[family-name:var(--font-geist-sans)] antialiased`}
+        suppressHydrationWarning
       >
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
