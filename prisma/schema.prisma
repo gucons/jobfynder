@@ -29,6 +29,10 @@ model User {
   consultantProfile  Consultant?
   benchSalesProfile  BenchSales?
   recruiterProfile   Recruiter?
+  // Posts
+  posts              Post[]
+  // Comments
+  comments           Comment[]
   // Notifications
   InfoNotification   InfoNotification[]
   ActionNotification ActionNotification[]
@@ -156,6 +160,46 @@ model ActionNotification {
   createdAt   DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  title     String? // Optional title, as not all posts may have one
+  content   String // Text content of the post
+  media     String[] // Array of URLs for images, videos, or documents
+  published Boolean  @default(false)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+
+  // Engagement fields
+  likes    Int       @default(0) // Count of likes
+  comments Comment[] // Comments on the post
+  shares   Int       @default(0) // Count of shares
+
+  // Visibility
+  visibility Visibility @default(PUBLIC) // Visibility status (e.g., Public, Connections, Private)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Comment {
+  id       String @id @default(uuid())
+  content  String // Comment text
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
+  postId   String
+  post     Post   @relation(fields: [postId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Visibility {
+  PUBLIC
+  CONNECTIONS
+  PRIVATE
 }
 
 model Account {
