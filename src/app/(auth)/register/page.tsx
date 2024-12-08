@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import showToastError from "@/lib/toastError";
+import { showErrorToast } from "@/lib/handle-error";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import axios from "axios";
@@ -85,7 +85,7 @@ export default function RegisterPage() {
         router.replace("/onboarding/basic-info");
       }
     } catch (error) {
-      showToastError(error);
+      showErrorToast(error);
     } finally {
       setLoading(false);
     }

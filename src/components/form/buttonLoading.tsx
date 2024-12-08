@@ -5,10 +5,19 @@ import React from "react";
 
 const ButtonLoading = React.forwardRef<
   HTMLButtonElement,
-  ButtonProps & { loading?: boolean }
+  ButtonProps & { loading: boolean; loaderText?: string; staticText?: string }
 >(
   (
-    { className, variant, size, asChild = false, loading = false, ...props },
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      loading = false,
+      loaderText = "Loading",
+      staticText = "Submit",
+      ...props
+    },
     ref
   ) => {
     return (
@@ -21,10 +30,10 @@ const ButtonLoading = React.forwardRef<
         {loading ? (
           <span className="flex items-center justify-center">
             <Loader className="mr-2 size-4 animate-spin" />
-            Loading
+            {loaderText}
           </span>
         ) : (
-          "Continue"
+          staticText
         )}
       </Button>
     );

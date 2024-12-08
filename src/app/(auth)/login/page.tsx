@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import showToastError from "@/lib/toastError";
+import { showErrorToast } from "@/lib/handle-error";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { signIn } from "next-auth/react";
@@ -80,7 +80,7 @@ export default function LoginPage() {
         router.replace("/dashboard");
       }
     } catch (error) {
-      showToastError(error);
+      showErrorToast(error);
     } finally {
       setLoading(false);
     }

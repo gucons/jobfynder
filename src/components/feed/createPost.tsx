@@ -1,105 +1,134 @@
 "use client";
 
+import { UploadedFilesCard } from "@/components/base/file-upload/uploaded-files-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
-import { ImageIcon, SmileIcon, Users2 } from "lucide-react";
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { useUploadFile } from "@/hooks/use-upload-file";
+import { getErrorMessage } from "@/lib/handle-error";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { FileUploader } from "../base/file-upload/file-uploader";
+import ButtonLoading from "../form/buttonLoading";
+import { Textarea } from "../ui/textarea";
+
+const PostSchema = z.object({
+  content: z.string({ message: "Content is required" }).min(20, {
+    message: "Content must be at least 20 characters",
+  }),
+  media: z.array(z.instanceof(File)),
+});
 
 export default function CreatePost() {
-  const [content, setContent] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("Submitting post:", content);
-    setContent("");
-    setIsLoading(false);
-  };
+  const { onUpload, progresses, uploadedFiles, isUploading } = useUploadFile(
+    "postMedia",
+    { defaultUploadedFiles: [] }
+  );
+
+  const form = useForm<z.infer<typeof PostSchema>>({
+    resolver: zodResolver(PostSchema),
+    defaultValues: {
+      content: "",
+      media: [],
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof PostSchema>) {
+    setLoading(true);
+
+    toast.promise(onUpload(values.media), {
+      loading: "Uploading images...",
+      success: () => {
+        form.reset();
+        setLoading(false);
+        return "Images uploaded";
+      },
+      error: (err) => {
+        setLoading(false);
+        form.reset();
+        return getErrorMessage(err);
+      },
+    });
+  }
 
   return (
-    <Card className="select-none shadow-none">
-      <CardContent className="p-0 px-4 py-3 flex items-center justify-center">
-        <Dialog>
-          <DialogTrigger className="w-full p-0">
-        <div className="flex w-full h-full items-center justify-center gap-4">
-          <Avatar className="size-11">
-            <AvatarImage src="https://github.com/shadcn.png" alt="User" />
-            <AvatarFallback>U</AvatarFallback>
-          </Avatar>
-          <span className="flex h-11 w-full cursor-pointer items-center rounded-xl border bg-accent px-4 font-medium transition-all duration-200 hover:bg-accent/80 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 active:scale-[0.99]">
-            What&apos;s on your mind?
-          </span>
-        </div>
-          </DialogTrigger>
-
-          <DialogContent className="sm:max-w-[525px]">
-        <DialogHeader>
-          <DialogTitle className="text-center text-xl font-semibold">
-            Create post
-          </DialogTitle>
-        </DialogHeader>
-
-        <div className="flex flex-col space-y-6">
-          <div className="flex items-center space-x-3">
-            <Avatar className="size-10 ring-2 ring-primary/10">
-          <AvatarImage src="https://github.com/shadcn.png" alt="User" />
-          <AvatarFallback>U</AvatarFallback>
-            </Avatar>
-            <span className="font-semibold">John Doe</span>
-          </div>
-
-          <Textarea
-            placeholder="What's on your mind?"
-            className="min-h-[150px] resize-none rounded-xl border-none bg-accent/5 p-4 text-lg leading-relaxed focus-visible:ring-1 focus-visible:ring-primary/20"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
-
-          <Card className="border-dashed border-primary/20 bg-card/50">
-            <CardContent className="grid grid-cols-3 gap-2 p-4">
-          {[
-            { icon: ImageIcon, label: "Photo/Video" },
-            { icon: Users2, label: "Tag People" },
-            { icon: SmileIcon, label: "Feeling" },
-          ].map((item, index) => (
-            <Button
-              key={index}
-              variant="ghost"
-              className="flex space-x-2 transition-all duration-200 hover:bg-primary/10"
-            >
-              <item.icon className="size-5" />
-              <span>{item.label}</span>
-            </Button>
-          ))}
-            </CardContent>
-          </Card>
-
-          <Button
-            className={cn(
-          "w-full bg-gradient-to-r from-primary to-primary/90 text-white transition-all duration-300",
-          "hover:from-primary/90 hover:to-primary hover:shadow-md",
-          "disabled:from-gray-400 disabled:to-gray-400"
-            )}
-            onClick={handleSubmit}
-            disabled={!content.trim() || isLoading}
+    <Card className="shadow-sm">
+      <CardContent className="space-y-4 p-4">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex w-full flex-col gap-6"
           >
-            {isLoading ? "Posting..." : "Post"}
-          </Button>
-        </div>
-          </DialogContent>
-        </Dialog>
+            <div className="flex items-start gap-3">
+              <Avatar className="size-10">
+                <AvatarImage src="https://github.com/shadcn.png" alt="User" />
+                <AvatarFallback>U</AvatarFallback>
+              </Avatar>
+
+              <div className="flex-1 space-y-3">
+                <FormField
+                  control={form.control}
+                  name="content"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          placeholder="What's on your mind?"
+                          className="resize-none text-base leading-relaxed"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media"
+                  render={({ field }) => (
+                    <div>
+                      <FormItem className="w-full">
+                        <FormControl>
+                          <FileUploader
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            maxFileCount={4}
+                            maxSize={4 * 1024 * 1024}
+                            progresses={progresses}
+                            disabled={isUploading}
+                            className="h-24"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                      {uploadedFiles.length > 0 ? (
+                        <UploadedFilesCard uploadedFiles={uploadedFiles} />
+                      ) : null}
+                    </div>
+                  )}
+                />
+                <ButtonLoading
+                  type="submit"
+                  loading={loading}
+                  loaderText="Creating post"
+                  staticText="Create post"
+                />
+              </div>
+            </div>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );

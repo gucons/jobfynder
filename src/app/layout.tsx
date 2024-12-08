@@ -2,6 +2,7 @@ import { ThemeProvider } from "@/components/theme/themeProvider";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -62,6 +63,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <ThemeProvider>{children}</ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );

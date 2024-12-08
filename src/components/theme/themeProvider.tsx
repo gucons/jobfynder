@@ -7,7 +7,7 @@ export function ThemeProvider({
   ...props
 }: React.ComponentProps<typeof NextThemesProvider>) {
   // If we are on the server, just return the children
-  if (typeof window === "undefined") return { children };
+  if (typeof window === "undefined") return <>{children}</>;
   else
     return (
       <NextThemesProvider
