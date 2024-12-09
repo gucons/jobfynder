@@ -13,29 +13,31 @@ import {
   AlertCircle,
   Bookmark,
   EyeOff,
+  MehIcon,
   MoreHorizontal,
   UserMinus,
 } from "lucide-react";
+import Image from "next/image";
 import * as React from "react";
 import Activity from "./postActions";
-import Image from "next/image";
 
 export interface PostCardProps {
-  user: {
+  author: {
     name: string;
-    title: string;
-    image: string;
+    // TODO: Add title to author in future
+    // title: string;
+    image: string | null;
   };
-  time: string;
+  updatedAt: Date;
   content: string;
-  postImage: string;
+  media: string[];
 }
 
 const PostCard: React.FC<PostCardProps> = ({
-  user,
-  time,
+  author,
+  updatedAt,
   content,
-  postImage,
+  media,
 }) => {
   return (
     <Card>
@@ -43,15 +45,16 @@ const PostCard: React.FC<PostCardProps> = ({
         <div className="flex items-start justify-between">
           <div className="flex space-x-4">
             <Avatar className="size-10 ring-2 ring-primary/10">
-              <AvatarImage src={user.image} alt={user.name} />
-              <AvatarFallback>{user.name[0]}</AvatarFallback>
+              <AvatarImage src={author?.image as string} alt={author.name} />
+              <AvatarFallback>{author.name[0]}</AvatarFallback>
             </Avatar>
             <div>
               <h3 className="m-0 text-base font-medium tracking-tight hover:text-primary">
-                {user.name}
+                {author.name}
               </h3>
               <p className="m-0 text-xs text-muted-foreground">
-                {user.title} • {time}
+                {/* // TODO: Add title to author in future */}
+                {"Software Engineer"} • {updatedAt.toDateString()}
               </p>
             </div>
           </div>
@@ -76,7 +79,7 @@ const PostCard: React.FC<PostCardProps> = ({
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <UserMinus className="mr-2 h-4 w-4" />
-                <span>Unfollow {user.name}</span>
+                <span>Unfollow {author.name}</span>
               </DropdownMenuItem>
               <DropdownMenuItem className="text-red-600">
                 <AlertCircle className="mr-2 h-4 w-4" />
@@ -87,14 +90,15 @@ const PostCard: React.FC<PostCardProps> = ({
         </div>
         <p className="mt-4 leading-relaxed text-gray-700">{content}</p>
         <div className="mt-4 overflow-hidden rounded-xl bg-secondary/10">
-          <Image
-            src={postImage}
-            width={600}
-            height={300}
-            alt="Post image"
-            className="w-full object-cover"
-            unoptimized
-          />
+          {media && media.length > 0 && (
+            <Image
+              src={`https://utfs.io/f/${media[0]}`}
+              width={600}
+              height={300}
+              alt="Post image"
+              className="w-full object-cover"
+            />
+          )}
         </div>
         <div className="mt-6 flex items-center justify-start border-t pt-4">
           <Activity

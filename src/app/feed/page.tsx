@@ -2,11 +2,34 @@ import CreatePost from "@/components/feed/createPost";
 import PostCard from "@/components/feed/postCard";
 import { Separator } from "@/components/ui/separator";
 import { posts } from "@/data/posts";
-import React from "react";
+import prisma from "@/lib/prisma";
 
 type Props = {};
 
-function page({}: Props) {
+async function page({}: Props) {
+  const posts = await prisma.post.findMany({
+    orderBy: {
+      createdAt: "asc",
+    },
+    where: {
+      // visibility: "PUBLIC",
+      // published: true,
+    },
+    select: {
+      updatedAt: true,
+      likes: true,
+      media: true,
+      content: true,
+      author: {
+        select: {
+          name: true,
+          image: true,
+        },
+      },
+    },
+    take: 10,
+  });
+
   return (
     <div className="mx-auto max-w-3xl">
       <div className="space-y-2">
