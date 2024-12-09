@@ -164,7 +164,6 @@ model ActionNotification {
 
 model Post {
   id        String   @id @default(uuid())
-  title     String? // Optional title, as not all posts may have one
   content   String // Text content of the post
   media     String[] // Array of URLs for images, videos, or documents
   published Boolean  @default(false)
