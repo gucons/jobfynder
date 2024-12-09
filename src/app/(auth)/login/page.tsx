@@ -1,7 +1,7 @@
 "use client";
 
 import Logo from "@/components/brand/logo";
-import ButtonLoading from "@/components/form/buttonLoading";
+import ButtonLoading from "@/components/form/loading-button";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {

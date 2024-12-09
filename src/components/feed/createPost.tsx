@@ -18,7 +18,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { FileUploader } from "../base/file-upload/file-uploader";
-import ButtonLoading from "../form/buttonLoading";
+import ButtonLoading from "../form/loading-button";
 import { AutosizeTextarea } from "../ui/auto-resize-testarea";
 
 const PostSchema = z.object({
