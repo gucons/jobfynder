@@ -1,58 +1,55 @@
-import { NextApiRequest } from "next";
-import { isRedirectError } from "next/dist/client/components/redirect";
+import { NextResponse } from "next/server";
 import { ZodError } from "zod";
-import { sendErrorResponse } from "./handle-route-response";
 
-export function getErrorMessage(err: unknown): string {
-  const unknownError = "Internal server error";
-
+function getErrorMessage(err: unknown): string {
   if (err instanceof ZodError) {
-    // Handle Zod validation errors
-    const errors = err.issues.map(
-      (issue) => `${issue.path.join(".")}: ${issue.message}`
-    );
-    return `Validation Error:\n${errors.join("\n")}`;
+    return err.issues
+      .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+      .join("\n");
   }
 
   if (err instanceof SyntaxError) {
-    // Handle JSON parse or syntax errors
     return `Syntax Error: ${err.message}`;
   }
 
   if (err instanceof Error) {
-    // Handle generic errors
-    return `Error: ${err.message}`;
-  }
-
-  if (isRedirectError(err)) {
-    // Pass through redirect errors
-    throw err;
+    return err.message;
   }
 
   if (typeof err === "string") {
-    // Handle string-based errors
     return err;
   }
 
+  // Safely handle generic objects with a 'message' field
   if (typeof err === "object" && err !== null && "message" in err) {
-    // Handle unexpected error objects with a `message` property
-    return (err as any).message;
+    return String((err as any).message); // Type-safe fallback
   }
 
-  // Default to unknown error message
-  return unknownError;
+  return "Internal server error";
 }
 
-const handleRoute = (fn:(req: NextApiRequest) => Promise<unknown>) => {
-  return async (req: NextApiRequest) => {
+const handleRoute = (fn: (req: Request) => Promise<Response>) => {
+  return async (req: Request) => {
     try {
-      await fn(req);
+      return await fn(req);
     } catch (error) {
-      return sendErrorResponse({
-        message: getErrorMessage(error),
-        error: error,
-        status: 500,
-      });
+      // Log full error for debugging
+      if (error) {
+        console.error("Error in route handler:", error);
+      }
+
+      // Build user-friendly error response
+      const errorMessage = getErrorMessage(error);
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            process.env.NODE_ENV === "development"
+              ? errorMessage
+              : "An error occurred. Please try again later.",
+        },
+        { status: 500 }
+      );
     }
   };
 };
