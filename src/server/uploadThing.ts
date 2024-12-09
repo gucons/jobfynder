@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { auth } from "@/server/auth";
 // import { ratelimit } from "@/lib/rate-limit";
 import { generateReactHelpers } from "@uploadthing/react";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
