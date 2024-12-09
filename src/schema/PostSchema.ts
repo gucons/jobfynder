@@ -2,8 +2,8 @@ import { Post } from "@prisma/client";
 import { z } from "zod";
 
 const PostSchema = z.object({
-  content: z.string().min(1).max(500),
-  media: z.array(z.string()).optional(),
+  content: z.string().min(20).max(500),
+  media: z.array(z.string()),
 });
 
 export type PostType = z.infer<typeof PostSchema>;

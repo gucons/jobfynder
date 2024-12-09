@@ -1,6 +1,5 @@
 "use client";
 
-import { UploadedFilesCard } from "@/components/base/file-upload/uploaded-files-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -13,6 +12,7 @@ import {
 import { useUploadFile } from "@/hooks/use-upload-file";
 import { getErrorMessage } from "@/lib/handle-error";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -22,9 +22,12 @@ import ButtonLoading from "../form/loading-button";
 import { AutosizeTextarea } from "../ui/auto-resize-testarea";
 
 const PostSchema = z.object({
-  content: z.string({ message: "Content is required" }).min(0, {
-    message: "Content must be at least 20 characters",
-  }),
+  content: z
+    .string({ message: "Content is required" })
+    .min(20, {
+      message: "Content must be at least 20 characters",
+    })
+    .max(500, { message: "Content must be at most 500 characters" }),
   media: z.array(z.instanceof(File)),
 });
 
@@ -44,22 +47,46 @@ export default function CreatePost() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof PostSchema>) {
+  const createPost = async ({
+    content,
+    media,
+  }: {
+    content: string;
+    media: string[];
+  }) => {
+    await axios.post("/api/user/post", { content, media });
+  };
+
+  async function onSubmit(values: z.infer<typeof PostSchema>) {
     setLoading(true);
 
-    toast.promise(onUpload(values.media), {
-      loading: "Uploading images...",
-      success: () => {
-        form.reset();
-        setLoading(false);
-        return "Images uploaded";
-      },
-      error: (err) => {
-        setLoading(false);
-        form.reset();
-        return getErrorMessage(err);
-      },
-    });
+    try {
+      await toast.promise(onUpload(values.media), {
+        loading: "Uploading media...",
+        success: "Media uploaded",
+        error: (err) => getErrorMessage(err),
+      });
+
+      const fileKeys = uploadedFiles.map((file) => file.key);
+
+      await toast.promise(
+        createPost({
+          content: values.content,
+          media: fileKeys,
+        }),
+        {
+          loading: "Creating post...",
+          success: "Post created successfully",
+          error: (err) => getErrorMessage(err),
+        }
+      );
+
+      form.reset();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
