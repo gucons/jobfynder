@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import ConsultantSchema from "@/schema/consultantSchema";
+// import ConsultantSchema from "@/schema/consultantSchema";
 import { authenticateUser } from "@/server/authenticateUser";
 import { handleZodErrorResponse } from "@/server/handleZodErrorResponse";
 import { sendErrorResponse, sendSuccessResponse } from "@/server/response";
@@ -10,7 +10,8 @@ export async function POST(req: Request) {
     const session = await authenticateUser();
 
     const requestData = await req.json();
-    const data = ConsultantSchema.parse(requestData);
+    const data = requestData;
+    // const data = ConsultantSchema.parse(requestData);
 
     const consultant = await prisma.consultant.upsert({
       where: {

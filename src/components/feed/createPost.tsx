@@ -19,10 +19,10 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { FileUploader } from "../base/file-upload/file-uploader";
 import ButtonLoading from "../form/buttonLoading";
-import { Textarea } from "../ui/textarea";
+import { AutosizeTextarea } from "../ui/auto-resize-testarea";
 
 const PostSchema = z.object({
-  content: z.string({ message: "Content is required" }).min(20, {
+  content: z.string({ message: "Content is required" }).min(0, {
     message: "Content must be at least 20 characters",
   }),
   media: z.array(z.instanceof(File)),
@@ -83,10 +83,12 @@ export default function CreatePost() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Textarea
+                        <AutosizeTextarea
                           {...field}
+                          minHeight={60}
                           placeholder="What's on your mind?"
                           className="resize-none text-base leading-relaxed"
+                          disabled={loading}
                         />
                       </FormControl>
                       <FormMessage />
@@ -108,14 +110,14 @@ export default function CreatePost() {
                             maxSize={4 * 1024 * 1024}
                             progresses={progresses}
                             disabled={isUploading}
-                            className="h-24"
+                            className="h-28"
                           />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
-                      {uploadedFiles.length > 0 ? (
+                      {/* {uploadedFiles.length > 0 ? (
                         <UploadedFilesCard uploadedFiles={uploadedFiles} />
-                      ) : null}
+                      ) : null} */}
                     </div>
                   )}
                 />

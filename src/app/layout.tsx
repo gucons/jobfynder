@@ -62,7 +62,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} font-[family-name:var(--font-geist-sans)] antialiased`}
         suppressHydrationWarning
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        {/* <ThemeProvider>{children}</ThemeProvider> */}
+        {children}
         <Toaster />
       </body>
     </html>

@@ -31,7 +31,7 @@ export const ourFileRouter = {
       return { uploadedBy: metadata.userId as string };
     }),
 
-  postMedia: f({ image: { maxFileSize: "4MB", maxFileCount: 8 } })
+  postMedia: f({ image: { maxFileSize: "4MB", maxFileCount: 4 } })
     .middleware(async ({ req }) => {
       // Rate limit the upload
       // const ip = req.headers.get("x-forwarded-for") ?? "127.0.0.1";
@@ -49,6 +49,3 @@ export const ourFileRouter = {
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;
-
-export const { useUploadThing, uploadFiles } =
-  generateReactHelpers<OurFileRouter>();

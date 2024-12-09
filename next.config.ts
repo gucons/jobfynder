@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
       {
         hostname: "placehold.co",
       },
+      { hostname: "utfs.io" },
     ],
 
     // "images.pexels.com", "placehold.co"],
