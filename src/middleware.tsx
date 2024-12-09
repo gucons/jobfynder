@@ -1,4 +1,4 @@
-import { getSessionServer } from "@/lib/auth";
+import { getSessionServer } from "@/server/auth";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 

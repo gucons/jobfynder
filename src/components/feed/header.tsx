@@ -1,4 +1,4 @@
-import { getSessionServer } from "@/lib/auth";
+import { getSessionServer } from "@/server/auth";
 import { Session } from "next-auth";
 import Link from "next/link";
 import Logo from "../brand/logo";

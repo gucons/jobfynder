@@ -1,4 +1,4 @@
-import { signOut } from "@/lib/auth";
+import { signOut } from "@/server/auth";
 import { LogOut } from "lucide-react";
 
 function SignOutButton() {
