@@ -1,22 +1,21 @@
-import { auth } from "@/lib/auth";
+import { auth } from "@/server/auth";
 import { Session, User } from "next-auth";
-import { sendErrorResponse } from "./response";
+import { sendErrorResponse } from "./handle-route-response";
 
 export async function authenticateUser(): Promise<Session & { user: User }> {
   try {
     const session = await auth();
-    if (!session || !session.user) {
+
+    if (!session || !session.user || !session.user.id || !session.user.email) {
       return sendErrorResponse({
-        success: false,
         message: "User not authenticated",
         status: 401,
       }) as unknown as Promise<Session & { user: User }>;
     }
 
     return session as Session & { user: User };
-  } catch (error) {
+  } catch (error: unknown) {
     return sendErrorResponse({
-      success: false,
       message: "Internal server error",
     }) as unknown as Promise<Session & { user: User }>;
   }

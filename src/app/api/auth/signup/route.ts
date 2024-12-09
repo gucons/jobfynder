@@ -1,10 +1,13 @@
 import prisma from "@/lib/prisma";
-import { sendErrorResponse, sendSuccessResponse } from "@/server/response";
+import {
+  sendSuccessResponse
+} from "@/server/handle-route-response";
+import handleRoute from "@/server/handleRoutes";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 
 export const POST = async (req: Request) => {
-  try {
+  handleRoute(async () => {
     const requestData = await req.json();
 
     const data = z
@@ -26,22 +29,7 @@ export const POST = async (req: Request) => {
     });
 
     return sendSuccessResponse({
-      success: true,
       message: "User created successfully",
     });
-  } catch (error: any) {
-    if (error instanceof z.ZodError) {
-      return sendErrorResponse({
-        success: false,
-        message: error.errors[0].message,
-      });
-    } else {
-      console.log("Error during authentication:", error.message || error);
-      return sendErrorResponse({
-        success: false,
-        message: "An error occurred during authentication.",
-        error: error.message || error,
-      });
-    }
-  }
+  });
 };

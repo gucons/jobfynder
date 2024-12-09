@@ -1,17 +1,18 @@
 import prisma from "@/lib/prisma";
-// import ConsultantSchema from "@/schema/consultantSchema";
+import ConsultantSchema from "@/schema/consultantSchema";
 import { authenticateUser } from "@/server/authenticateUser";
-import { handleZodErrorResponse } from "@/server/handleZodErrorResponse";
-import { sendErrorResponse, sendSuccessResponse } from "@/server/response";
-import { z } from "zod";
+import {
+  sendErrorResponse,
+  sendSuccessResponse,
+} from "@/server/handle-route-response";
+import handleRoute from "@/server/handleRoutes";
 
 export async function POST(req: Request) {
-  try {
+  handleRoute(async () => {
     const session = await authenticateUser();
 
     const requestData = await req.json();
-    const data = requestData;
-    // const data = ConsultantSchema.parse(requestData);
+    const data = ConsultantSchema.parse(requestData);
 
     const consultant = await prisma.consultant.upsert({
       where: {
@@ -47,27 +48,12 @@ export async function POST(req: Request) {
 
     if (!consultant) {
       return sendErrorResponse({
-        success: false,
         message: "Consultant not found",
       });
     }
 
     return sendSuccessResponse({
-      success: true,
       message: "Consultant details updated successfully",
     });
-  } catch (error: any) {
-    if (error instanceof z.ZodError) {
-      console.log("Error updating consultant details:", error.errors);
-
-      return handleZodErrorResponse(error);
-    } else {
-      console.log("Error updating consultant details:", error.message || error);
-      return sendErrorResponse({
-        success: false,
-        message: "Error updating consultant details",
-        error: error.message || error,
-      });
-    }
-  }
+  });
 }
