@@ -16,7 +16,6 @@ const format: Format = {
 type Props = JSX.IntrinsicElements["div"] & {
   likes: number;
   reposts: number;
-  views: number;
   bookmarks: number;
   liked: boolean;
   reposted: boolean;
@@ -29,7 +28,6 @@ export default function Activity({
   className,
   likes,
   reposts,
-  views,
   bookmarks,
   onLike,
   onRepost,
@@ -44,13 +42,9 @@ export default function Activity({
       {...rest}
       className={clsx(
         className,
-        "~text-[0.8125rem]/sm flex select-none items-center text-zinc-600 dark:text-zinc-300"
+        "~text-[0.8125rem]/sm flex select-none items-center pl-4 text-zinc-600 dark:text-zinc-300"
       )}
     >
-      <div className="flex flex-1 items-center gap-1.5">
-        <ChartNoAxesColumn absoluteStrokeWidth className="size-4" />
-        <NumberFlow willChange continuous value={views} format={format} />
-      </div>
       <div className="flex-1">
         <button
           className={clsx(

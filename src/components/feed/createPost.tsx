@@ -13,7 +13,9 @@ import { useUploadFile } from "@/hooks/use-upload-file";
 import { getErrorMessage } from "@/lib/handle-error";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { useState } from "react";
+import { Session } from "next-auth";
+import { getSession } from "next-auth/react";
+import { use, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -31,7 +33,7 @@ const PostSchema = z.object({
   media: z.array(z.instanceof(File)),
 });
 
-export default function CreatePost() {
+export default function CreatePost({ session }: { session: Session }) {
   const [loading, setLoading] = useState(false);
 
   const { onUpload, progresses, isUploading } = useUploadFile("postMedia", {});
@@ -101,8 +103,8 @@ export default function CreatePost() {
           >
             <div className="flex items-start gap-3">
               <Avatar className="size-10">
-                <AvatarImage src="https://github.com/shadcn.png" alt="User" />
-                <AvatarFallback>U</AvatarFallback>
+                <AvatarImage src={session.user.image} alt="User" />
+                <AvatarFallback>{session.user.name[0]}</AvatarFallback>
               </Avatar>
 
               <div className="flex-1 space-y-3">

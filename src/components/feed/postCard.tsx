@@ -9,29 +9,30 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatDistanceToNowStrict } from "date-fns";
 import {
   AlertCircle,
   Bookmark,
   EyeOff,
-  MehIcon,
   MoreHorizontal,
   UserMinus,
 } from "lucide-react";
 import Image from "next/image";
 import * as React from "react";
+import { useState } from "react";
 import Activity from "./postActions";
-import { formatDistance, formatDistanceToNow, formatDistanceToNowStrict } from "date-fns";
 
 export interface PostCardProps {
+  postId: string;
   author: {
     name: string;
-    // TODO: Add title to author in future
-    // title: string;
     image: string | null;
   };
   updatedAt: Date;
   content: string;
   media: string[];
+  likeCount: number;
+  isLiked: boolean;
 }
 
 const MediaGrid: React.FC<{ media: string[] }> = ({ media }) => {
@@ -80,11 +81,35 @@ const MediaGrid: React.FC<{ media: string[] }> = ({ media }) => {
 };
 
 const PostCard: React.FC<PostCardProps> = ({
+  postId,
   author,
   updatedAt,
   content,
   media,
+  likeCount: initialLikeCount,
+  isLiked: initialIsLiked,
 }) => {
+  const [isLiked, setIsLiked] = useState(initialIsLiked);
+  const [likeCount, setLikeCount] = useState(initialLikeCount);
+
+  const handleLike = async () => {
+    try {
+      const res = await fetch("/api/post/like", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ postId }),
+      });
+
+      if (!res.ok) throw new Error("Failed to like post");
+
+      const { liked } = await res.json();
+      setIsLiked(liked);
+      setLikeCount((prev) => (liked ? prev + 1 : prev - 1));
+    } catch (error) {
+      console.error("Error liking post:", error);
+    }
+  };
+
   return (
     <Card>
       <CardContent className="p-4">
@@ -140,14 +165,14 @@ const PostCard: React.FC<PostCardProps> = ({
         <div className="mt-2 flex items-center justify-start border-t pt-4">
           <Activity
             className="space-x-8"
-            likes={0}
+            likes={likeCount}
             reposts={0}
-            views={100}
+            // views={100}
             bookmarks={0}
-            liked={false}
+            liked={isLiked}
             reposted={false}
             bookmarked={false}
-            onLike={() => {}}
+            onLike={handleLike}
             onBookmark={() => {}}
             onRepost={() => {}}
           />
