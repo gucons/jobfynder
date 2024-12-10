@@ -25,7 +25,7 @@ jobs:
       - name: SSH into server and run deployment commands
         run: |
           ssh -o StrictHostKeyChecking=no root@jobfynder.com << 'EOF'
-            cd /path/to/jobfynder || exit 1
+            cd ~/jobfynder || exit 1
             pnpm install@latest || exit 1
             pnpm run build || exit 1
             pm2 restart all || exit 1
