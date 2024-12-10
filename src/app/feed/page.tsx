@@ -1,7 +1,6 @@
 import CreatePost from "@/components/feed/createPost";
 import PostCard from "@/components/feed/postCard";
 import { Separator } from "@/components/ui/separator";
-import { posts } from "@/data/posts";
 import prisma from "@/lib/prisma";
 
 type Props = {};
