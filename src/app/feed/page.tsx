@@ -8,7 +8,7 @@ type Props = {};
 async function page({}: Props) {
   const posts = await prisma.post.findMany({
     orderBy: {
-      createdAt: "asc",
+      createdAt: "desc",
     },
     where: {
       // visibility: "PUBLIC",

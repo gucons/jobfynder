@@ -20,6 +20,7 @@ import { z } from "zod";
 import { FileUploader } from "../base/file-upload/file-uploader";
 import ButtonLoading from "../form/loading-button";
 import { AutosizeTextarea } from "../ui/auto-resize-testarea";
+import { TIMEOUT } from "dns";
 
 const PostSchema = z.object({
   content: z
@@ -61,19 +62,19 @@ export default function CreatePost() {
     setLoading(true);
 
     try {
-      await toast.promise(onUpload(values.media), {
-        loading: "Uploading media...",
-        success: "Media uploaded",
-        error: (err) => getErrorMessage(err),
-      });
-
-      const fileKeys = uploadedFiles.map((file) => file.key);
-
-      await toast.promise(
-        createPost({
-          content: values.content,
-          media: fileKeys,
-        }),
+      // First await the media upload
+      toast.promise(
+        async () => {
+          await onUpload(values.media);
+          setTimeout(() => {
+            console.log("Media uploaded");
+          }, 200);
+          const fileKeys = await uploadedFiles.map((file) => file.key);
+          await createPost({
+            content: values.content,
+            media: fileKeys,
+          });
+        },
         {
           loading: "Creating post...",
           success: "Post created successfully",
@@ -133,7 +134,7 @@ export default function CreatePost() {
                           <FileUploader
                             value={field.value}
                             onValueChange={field.onChange}
-                            maxFileCount={4}
+                            maxFileCount={6}
                             maxSize={4 * 1024 * 1024}
                             progresses={progresses}
                             disabled={isUploading}

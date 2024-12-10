@@ -31,7 +31,7 @@ export const ourFileRouter = {
       return { uploadedBy: metadata.userId as string };
     }),
 
-  postMedia: f({ image: { maxFileSize: "4MB", maxFileCount: 4 } })
+  postMedia: f({ image: { maxFileSize: "4MB", maxFileCount: 6 } })
     .middleware(async ({ req }) => {
       // Rate limit the upload
       // const ip = req.headers.get("x-forwarded-for") ?? "127.0.0.1";

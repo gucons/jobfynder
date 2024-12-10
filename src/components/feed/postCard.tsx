@@ -20,6 +20,7 @@ import {
 import Image from "next/image";
 import * as React from "react";
 import Activity from "./postActions";
+import { formatDistance, formatDistanceToNow, formatDistanceToNowStrict } from "date-fns";
 
 export interface PostCardProps {
   author: {
@@ -32,6 +33,51 @@ export interface PostCardProps {
   content: string;
   media: string[];
 }
+
+const MediaGrid: React.FC<{ media: string[] }> = ({ media }) => {
+  if (!media || media.length === 0) return null;
+
+  return (
+    <div
+      className={`mt-4 grid gap-1 overflow-hidden rounded-xl ${
+        media.length === 1
+          ? "grid-cols-1"
+          : media.length === 2
+            ? "grid-cols-2"
+            : media.length === 3
+              ? "grid-cols-2"
+              : "grid-cols-2"
+      }`}
+    >
+      {media.map((imageId, index) => {
+        // For 3 images, make first image full width
+        const isFirstInThree = media.length === 3 && index === 0;
+        // Only show first 4 images
+        if (index >= 4) return null;
+
+        return (
+          <div
+            key={imageId}
+            className={`relative ${isFirstInThree ? "col-span-2" : ""} ${media.length > 1 ? "aspect-square" : "aspect-video"}`}
+          >
+            <Image
+              src={`https://utfs.io/f/${imageId}`}
+              fill
+              alt={`Post image ${index + 1}`}
+              className="object-cover"
+            />
+            {/* Show count of remaining images */}
+            {index === 3 && media.length > 4 && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-xl font-bold text-white">
+                +{media.length - 4}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 const PostCard: React.FC<PostCardProps> = ({
   author,
@@ -54,7 +100,8 @@ const PostCard: React.FC<PostCardProps> = ({
               </h3>
               <p className="m-0 text-xs text-muted-foreground">
                 {/* // TODO: Add title to author in future */}
-                {"Software Engineer"} • {updatedAt.toDateString()}
+                {"Software Engineer"} •{" "}
+                {formatDistanceToNowStrict(updatedAt, { addSuffix: true })}
               </p>
             </div>
           </div>
@@ -89,18 +136,8 @@ const PostCard: React.FC<PostCardProps> = ({
           </DropdownMenu>
         </div>
         <p className="mt-4 leading-relaxed text-gray-700">{content}</p>
-        <div className="mt-4 overflow-hidden rounded-xl bg-secondary/10">
-          {media && media.length > 0 && (
-            <Image
-              src={`https://utfs.io/f/${media[0]}`}
-              width={600}
-              height={300}
-              alt="Post image"
-              className="w-full object-cover"
-            />
-          )}
-        </div>
-        <div className="mt-6 flex items-center justify-start border-t pt-4">
+        <MediaGrid media={media} />
+        <div className="mt-2 flex items-center justify-start border-t pt-4">
           <Activity
             className="space-x-8"
             likes={0}
