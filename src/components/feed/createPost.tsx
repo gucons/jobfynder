@@ -20,7 +20,6 @@ import { z } from "zod";
 import { FileUploader } from "../base/file-upload/file-uploader";
 import ButtonLoading from "../form/loading-button";
 import { AutosizeTextarea } from "../ui/auto-resize-testarea";
-import { TIMEOUT } from "dns";
 
 const PostSchema = z.object({
   content: z
@@ -35,10 +34,7 @@ const PostSchema = z.object({
 export default function CreatePost() {
   const [loading, setLoading] = useState(false);
 
-  const { onUpload, progresses, uploadedFiles, isUploading } = useUploadFile(
-    "postMedia",
-    { defaultUploadedFiles: [] }
-  );
+  const { onUpload, progresses, isUploading } = useUploadFile("postMedia", {});
 
   const form = useForm<z.infer<typeof PostSchema>>({
     resolver: zodResolver(PostSchema),
@@ -62,14 +58,16 @@ export default function CreatePost() {
     setLoading(true);
 
     try {
-      // First await the media upload
+      const fileKeys =
+        values.media.length > 0 ? await onUpload(values.media) : [];
+
+      if (values.media.length > 0 && fileKeys.length > 0) {
+        toast.success("Media uploaded successfully");
+      }
+
       toast.promise(
         async () => {
-          await onUpload(values.media);
-          setTimeout(() => {
-            console.log("Media uploaded");
-          }, 200);
-          const fileKeys = await uploadedFiles.map((file) => file.key);
+          form.reset();
           await createPost({
             content: values.content,
             media: fileKeys,
@@ -77,14 +75,17 @@ export default function CreatePost() {
         },
         {
           loading: "Creating post...",
-          success: "Post created successfully",
+          success: () => {
+            return "Post created successfully";
+          },
           error: (err) => getErrorMessage(err),
         }
       );
-
-      form.reset();
     } catch (err) {
-      console.error(err);
+      console.error("An error occurred", err);
+      toast.error("An error occurred", {
+        description: getErrorMessage(err),
+      });
     } finally {
       setLoading(false);
     }
