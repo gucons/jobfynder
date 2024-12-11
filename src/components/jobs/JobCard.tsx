@@ -24,6 +24,7 @@ interface JobCardProps {
   duration?: number;
   maxPositions: number;
   activeApplications: number;
+  isRecruiter?: boolean;
 }
 
 export function JobCard({
@@ -39,6 +40,7 @@ export function JobCard({
   duration,
   maxPositions,
   activeApplications,
+  isRecruiter = false,
 }: JobCardProps) {
   return (
     <Card className="p-6">
@@ -95,8 +97,14 @@ export function JobCard({
       </div>
 
       <div className="mt-4 flex gap-2">
-        <Button>Apply Now</Button>
-        <Button variant="outline">Save Job</Button>
+        {isRecruiter ? (
+          <Button variant="outline">Edit Job</Button>
+        ) : (
+          <>
+            <Button>Apply Now</Button>
+            <Button variant="outline">Save Job</Button>
+          </>
+        )}
       </div>
     </Card>
   );
