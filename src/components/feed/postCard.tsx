@@ -94,6 +94,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const handleLike = async () => {
     const optimisticLiked = !isLiked;
+    // Optimistic update
     setIsLiked(optimisticLiked);
     setLikeCount((prev) => (optimisticLiked ? prev + 1 : prev - 1));
 
@@ -105,15 +106,11 @@ const PostCard: React.FC<PostCardProps> = ({
       });
 
       if (!res.ok) throw new Error("Failed to like post");
-
-      const { liked } = await res.json();
-      setIsLiked(liked);
-      setLikeCount((prev) => (liked ? prev + 1 : prev - 1));
     } catch (error) {
       console.error("Error liking post:", error);
       // Revert optimistic update in case of error
-      setIsLiked((prev) => !prev);
-      setLikeCount((prev) => (optimisticLiked ? prev - 1 : prev + 1));
+      setIsLiked((optimisticLiked) => !optimisticLiked);
+      setLikeCount((prev) => prev + (optimisticLiked ? -1 : 1));
     }
   };
 
