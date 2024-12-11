@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
     remotePatterns: [
       {
@@ -12,8 +11,11 @@ const nextConfig: NextConfig = {
       },
       { hostname: "utfs.io" },
     ],
-
-    // "images.pexels.com", "placehold.co"],
+  },
+  devIndicators: {
+    appIsrStatus: true,
+    buildActivity: true,
+    buildActivityPosition: "bottom-left",
   },
 };
 
