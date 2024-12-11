@@ -93,6 +93,10 @@ const PostCard: React.FC<PostCardProps> = ({
   const [likeCount, setLikeCount] = useState(initialLikeCount);
 
   const handleLike = async () => {
+    const optimisticLiked = !isLiked;
+    setIsLiked(optimisticLiked);
+    setLikeCount((prev) => (optimisticLiked ? prev + 1 : prev - 1));
+
     try {
       const res = await fetch("/api/post/like", {
         method: "POST",
@@ -107,6 +111,9 @@ const PostCard: React.FC<PostCardProps> = ({
       setLikeCount((prev) => (liked ? prev + 1 : prev - 1));
     } catch (error) {
       console.error("Error liking post:", error);
+      // Revert optimistic update in case of error
+      setIsLiked((prev) => !prev);
+      setLikeCount((prev) => (optimisticLiked ? prev - 1 : prev + 1));
     }
   };
 

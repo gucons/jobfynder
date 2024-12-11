@@ -26,6 +26,8 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no root@jobfynder.com << 'EOF'
             cd ~/jobfynder || exit 1
+            git pull || exit 1
+            npx prisma generate || exit 1
             pnpm install || exit 1
             pnpm run build || exit 1
             pm2 restart all || exit 1
