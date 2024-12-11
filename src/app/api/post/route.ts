@@ -1,11 +1,8 @@
 import prisma from "@/lib/prisma";
-import handleRoute from "@/server/handleRoutes";
+import handleRouteWithAuth from "@/server/handle-auth-route";
 import { NextResponse } from "next/server";
-import { authenticateUser } from "@/server/authenticateUser";
 
-export const GET = handleRoute(async (req: Request) => {
-  const session = await authenticateUser();
-
+export const GET = handleRouteWithAuth(async (req, session) => {
   const posts = await prisma.post.findMany({
     orderBy: {
       createdAt: "desc",
@@ -27,11 +24,11 @@ export const GET = handleRoute(async (req: Request) => {
     },
   });
 
-  const postsWithLikeStatus = posts.map(post => ({
+  const postsWithLikeStatus = posts.map((post) => ({
     ...post,
-    isLiked: post.likes.some(like => like.userId === session.user.id),
+    isLiked: post.likes.some((like) => like.userId === session.user.id),
     likes: post._count.likes,
-    author: post.author
+    author: post.author,
   }));
 
   return NextResponse.json({ posts: postsWithLikeStatus });

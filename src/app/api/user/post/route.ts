@@ -1,12 +1,9 @@
 import prisma from "@/lib/prisma";
 import PostSchema from "@/schema/PostSchema";
-import { authenticateUser } from "@/server/authenticateUser";
-import handleRoute from "@/server/handleRoutes";
+import handleRouteWithAuth from "@/server/handle-auth-route";
 import { NextResponse } from "next/server";
 
-export const POST = handleRoute(async (req: Request) => {
-  const session = await authenticateUser();
-
+export const POST = handleRouteWithAuth(async (req, session) => {
   if (!session || !session.user) {
     return NextResponse.json(
       {
