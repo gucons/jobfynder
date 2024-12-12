@@ -2,19 +2,19 @@ import { getSessionServer } from "@/server/auth";
 import { Session } from "next-auth";
 import Link from "next/link";
 import Logo from "../brand/logo";
-import NotificationPanel from "./notificationPanel";
-import SearchBox from "./searchBox";
-import UserDropdown from "./userPanel";
+import NotificationPanel from "../feed/notificationPanel";
+import SearchBox from "../feed/searchBox";
+import UserDropdown from "../feed/userPanel";
 
-export default async function FeedHeader() {
+export default async function MainHeader() {
   const session = (await getSessionServer()) as Session;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
-      <nav className="container mx-auto flex h-16 max-w-screen-xl items-center justify-between">
+      <nav className="container mx-auto flex h-16 max-w-screen-xl items-center justify-between px-4">
         <div className="flex items-center space-x-4">
           <Link href={"/"} className="flex items-center space-x-2">
-            <Logo width={100} height={100} className="size-12" />
+            <Logo width={100} height={100} className="size-10" />
           </Link>
 
           <SearchBox
