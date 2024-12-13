@@ -146,29 +146,32 @@ enum JobStatus {
 model JobPosting {
   id                 String        @id @default(uuid())
   recruiterId        String
-  title              String
-  description        String
+  title              String        @db.VarChar(100)
+  company            String        @db.VarChar(50)
   location           String
+  type               JobType
+  isRemote           String        @db.VarChar(7) // REMOTE or ON SITE
+  salary             String
+  duration           String?
+  positions          Int
+  description        String        @db.VarChar(5000)
+  skillsets          String[]
+  deadline           DateTime
   maxApplicants      Int
   maxPositions       Int
   activeApplications Int           @default(0)
   acceptedCandidates Int           @default(0)
-  dateOfPosting      DateTime       @default(now())
-  deadline           DateTime
-  skillsets          String[]
-  jobType            JobType
-  duration           Int?          // in months, optional
-  salary             Int
-  status             JobStatus      @default(OPEN)
-  rating             Float          @default(-1)
+  dateOfPosting      DateTime      @default(now())
+  status             JobStatus     @default(OPEN)
+  rating             Float         @default(-1)
   
   // Relations
-  recruiter          Recruiter      @relation(fields: [recruiterId], references: [id])
+  recruiter          Recruiter     @relation(fields: [recruiterId], references: [id])
   applications       Application[]
   ratings            JobRating[]
   
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
 }
 
 model Application {
