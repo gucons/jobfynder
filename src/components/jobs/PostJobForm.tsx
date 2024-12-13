@@ -51,17 +51,10 @@ export function PostJobForm({ session }: { session: Session }) {
   const form = useForm<JobFormData>({
     resolver: zodResolver(JobSchema),
     defaultValues: {
-      title: "",
-      company: "",
-      location: "",
-      type: "FULL_TIME",
-      workLocation: "ON_SITE",
       salary: {
         currency: "USD",
       },
-      positions: 5,
       skills: [],
-      description: "",
     },
   });
 
@@ -251,16 +244,17 @@ export function PostJobForm({ session }: { session: Session }) {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="salary"
                 render={({ field }) => (
                   <FormItem className="col-span-5 flex flex-col space-y-3">
                     <FormLabel>Salary Range</FormLabel>
-                    {/* <div className="relative flex rounded-lg shadow-sm shadow-black/5"> */}
-                    <div className="grid grid-cols-5 rounded-lg shadow-sm shadow-black/5">
+                    <div className="group relative grid grid-cols-5 overflow-hidden rounded-sm border focus-within:outline-none focus-within:ring-1 focus-within:ring-ring focus-within:ring-offset-0 hover:border-input">
+                      {/* Currency Selector */}
                       <Select
-                        value={field.value.currency}
+                        value={field.value?.currency || ""}
                         onValueChange={(value) => {
                           field.onChange({
                             ...field.value,
@@ -268,33 +262,50 @@ export function PostJobForm({ session }: { session: Session }) {
                           });
                         }}
                       >
-                        <SelectTrigger className="col-span-1 inline-flex appearance-none items-center rounded-none rounded-s-lg border border-input bg-background text-center text-sm text-muted-foreground transition-shadow hover:bg-accent hover:text-accent-foreground focus:z-10 focus-visible:border-ring focus-visible:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/20 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50">
+                        <SelectTrigger className="border-0 ring-0 focus:ring-0 text-sm">
                           <SelectValue
-                            placeholder="Currency"
-                            className="capatilize"
+                            placeholder="$"
+                            className="w-full text-center"
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="USD">USD</SelectItem>
-                          <SelectItem value="INR">INR</SelectItem>
-                          <SelectItem value="EUR">EUR</SelectItem>
+                          <SelectItem value="USD">$ USD</SelectItem>
+                          <SelectItem value="INR">₹ INR</SelectItem>
+                          <SelectItem value="EUR">€ EUR</SelectItem>
                         </SelectContent>
                       </Select>
+
+                      {/* Divider */}
+                      <div className="absolute left-[20%] top-1/2 h-5 w-px -translate-y-1/2 bg-border" />
+
+                      {/* Minimum Salary Input */}
                       <Input
+                        value={field.value?.min || ""}
                         onChange={(e) => {
                           field.onChange({
                             ...field.value,
-                            amount: Number(e.target.value),
+                            min: Number(e.target.value),
                           });
                         }}
-                        value={field.value.min}
-                        className="col-span-2 -ms-px rounded-e-none rounded-s-none shadow-none focus-visible:z-10"
-                        placeholder="28,00,000"
+                        className="col-span-2 border-0 focus-visible:ring-0"
+                        placeholder="Min"
                         type="number"
                       />
+
+                      {/* Divider */}
+                      <div className="absolute left-[60%] top-1/2 h-5 w-px -translate-y-1/2 bg-border" />
+
+                      {/* Maximum Salary Input */}
                       <Input
-                        className="col-span-2 -ms-px flex-1 rounded-r-lg rounded-s-none border-l border-gray-300 shadow-none"
-                        placeholder="80,000"
+                        value={field.value?.max || ""}
+                        onChange={(e) => {
+                          field.onChange({
+                            ...field.value,
+                            max: Number(e.target.value),
+                          });
+                        }}
+                        className="col-span-2 border-0 focus-visible:ring-0"
+                        placeholder="Max"
                         type="number"
                       />
                     </div>
@@ -303,6 +314,7 @@ export function PostJobForm({ session }: { session: Session }) {
                 )}
               />
             </div>
+
             {/* Type of job */}
             <div className="flex gap-10 pt-2">
               <FormField
