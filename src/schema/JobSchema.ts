@@ -3,15 +3,21 @@ import { z } from "zod";
 
 const JobSchema = z.object({
   title: z
-    .string()
-    .min(3, { message: "Title must be at least 3 characters long" })
-    .max(100, { message: "Title must be less than 100 characters long" }),
+    .string({
+      required_error: "Job title is required",
+    })
+    .min(3, { message: "Job title must be at least 3 characters long" })
+    .max(100, { message: "Job title must be less than 100 characters long" }),
   company: z
-    .string()
+    .string({
+      required_error: "Company name is required",
+    })
     .min(2, { message: "Company name must be at least 2 characters long" })
     .max(50, { message: "Company name must be less than 50 characters long" }),
   location: z
-    .string()
+    .string({
+      required_error: "Location is required",
+    })
     .min(2, { message: "Location must be at least 2 characters long" })
     .max(100, { message: "Location must be less than 100 characters long" }),
   type: z.nativeEnum(JobType, {
@@ -48,7 +54,7 @@ const JobSchema = z.object({
     required_error: "Duration is required",
     invalid_type_error: "Invalid date format",
   }),
-  positions: z.coerce
+  positions: z
     .number()
     .min(1, { message: "At least 1 position is required" })
     .max(100, { message: "Maximum 100 positions allowed" }),

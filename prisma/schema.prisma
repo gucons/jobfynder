@@ -165,8 +165,7 @@ model JobPosting {
   description        String       @db.VarChar(5000)
   skills             String[]
   deadline           DateTime
-  maxApplicants      Int
-  maxPositions       Int
+  maxApplicants      Int?
   activeApplications Int          @default(0)
   acceptedCandidates Int          @default(0)
   dateOfPosting      DateTime     @default(now())
