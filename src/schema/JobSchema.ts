@@ -55,7 +55,9 @@ const JobSchema = z.object({
     invalid_type_error: "Invalid date format",
   }),
   positions: z
-    .number()
+    .number({
+      required_error: "Number of positions is required",
+    })
     .min(1, { message: "At least 1 position is required" })
     .max(100, { message: "Maximum 100 positions allowed" }),
   description: z

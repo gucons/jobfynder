@@ -136,14 +136,17 @@ export function PostJobForm({ session }: { session: Session }) {
                 name="positions"
                 render={({ field }) => (
                   <FormItem className="col-span-2">
-                    <FormLabel>Number of Positions</FormLabel>
+                    <FormLabel>Max Positions</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        min={1}
+                        min={0}
                         placeholder="e.g. 2"
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                        value={field.value ?? ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(value ? undefined : Number(value));
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -262,7 +265,7 @@ export function PostJobForm({ session }: { session: Session }) {
                           });
                         }}
                       >
-                        <SelectTrigger className="border-0 ring-0 focus:ring-0 text-sm">
+                        <SelectTrigger className="border-0 text-sm ring-0 focus:ring-0">
                           <SelectValue
                             placeholder="$"
                             className="w-full text-center"

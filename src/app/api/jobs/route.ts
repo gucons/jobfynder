@@ -31,18 +31,31 @@ export const POST = handleRouteWithAuth(async (req, session) => {
       status: 403,
     });
 
-  // const job = await prisma.jobPosting.create({
-  //   data: {
-  //     recruiterId: user.recruiterProfile.id,
-  //     ...data,
-  //     status: JobStatus.OPEN,
-  //   },
-  // });
+  // Remove salary field from data
+  const { salary, ...dataDB } = data;
 
-  return sendSuccessResponse({
-    message: "Job posted successfully",
-    // data: job,
-  });
+  try {
+    const job = await prisma.jobPosting.create({
+      data: {
+        recruiterId: user.recruiterProfile.id,
+        salaryCurrency: salary.currency,
+        salaryMin: salary.min,
+        salaryMax: salary.max,
+        ...dataDB,
+        status: JobStatus.OPEN,
+      },
+    });
+
+    return sendSuccessResponse({
+      message: "Job posted successfully",
+      data: job,
+    });
+  } catch (error) {
+    return sendErrorResponse({
+      message: "Failed to create job posting",
+      status: 500,
+    });
+  }
 });
 
 export const GET = handleRoute(async (req: Request) => {
