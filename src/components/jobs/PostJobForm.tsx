@@ -22,6 +22,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { JobType } from "@prisma/client";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Session } from "next-auth";
@@ -35,14 +36,16 @@ import { AutosizeTextarea } from "../ui/auto-resize-testarea";
 const jobFormSchema = z.object({
   title: z
     .string()
-    .min(3, "Title must be at least 3 characters")
-    .max(100, "Title must be less than 100 characters"),
+    .min(3, { message: "Title must be at least 3 characters long" })
+    .max(100, { message: "Title must be less than 100 characters long" }),
   company: z
     .string()
-    .min(2, "Company name must be at least 2 characters")
-    .max(50, "Company name must be less than 50 characters"),
-  location: z.string().min(2, "Location must be at least 2 characters"),
-  type: z.enum(["FULLTIME", "PARTTIME", "CONTRACT", "INTERNSHIP", "REMOTE"], {
+    .min(2, { message: "Company name must be at least 2 characters long" })
+    .max(50, { message: "Company name must be less than 50 characters long" }),
+  location: z
+    .string()
+    .min(2, { message: "Location must be at least 2 characters long" }),
+  type: z.nativeEnum(JobType, {
     required_error: "Please select a job type",
   }),
   isRemote: z.enum(["REMOTE", "ON SITE"], {
@@ -114,15 +117,22 @@ export function PostJobForm({ session }: { session: Session }) {
   const form = useForm<JobFormData>({
     resolver: zodResolver(jobFormSchema),
     defaultValues: {
+      title: "",
+      company: "",
+      location: "",
+      type: "FULL_TIME",
+      isRemote: "REMOTE",
+      salary: "",
+      duration: "",
+      positions: 5,
       skills: [],
+      description: "",
     },
   });
 
   const onSubmit = async (data: JobFormData) => {
     setIsSubmitting(true);
     try {
-      // Add your API call here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
       toast("Success!", {
         description: "Job has been posted successfully.",
       });
@@ -187,7 +197,7 @@ export function PostJobForm({ session }: { session: Session }) {
                   <FormItem>
                     <FormLabel>Location</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g. San Francisco, CA" {...field} />
+                      <Input placeholder="San Francisco, CA" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -203,12 +213,20 @@ export function PostJobForm({ session }: { session: Session }) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Salary Range</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g. $50,000 - $70,000" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Enter the salary range or fixed amount
-                    </FormDescription>
+                    <div className="relative flex rounded-lg shadow-sm shadow-black/5">
+                      <span className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-sm text-muted-foreground">
+                        $
+                      </span>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          className="ps-7 shadow-none"
+                          placeholder="50,000 - 80,000"
+                          type="text"
+                        />
+                      </FormControl>
+                    </div>
+                    <FormDescription>Enter the salary range</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -253,7 +271,7 @@ export function PostJobForm({ session }: { session: Session }) {
             </div>
 
             {/* Type of job */}
-            <div className="flex justify-between pt-4">
+            <div className="flex justify-between">
               <FormField
                 control={form.control}
                 name="type"
@@ -264,24 +282,25 @@ export function PostJobForm({ session }: { session: Session }) {
                       <RadioGroup
                         onValueChange={field.onChange}
                         value={field.value}
-                        className="flex space-x-2"
+                        className="flex space-x-0.5"
                       >
-                        {["FULLTIME", "PARTTIME", "CONTRACT", "INTERNSHIP"].map(
-                          (value) => (
-                            <Label
-                              key={value}
-                              htmlFor={value}
-                              className={`cursor-pointer rounded-md border px-2.5 py-1.5 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${field.value === value ? "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80" : "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
-                            >
-                              <RadioGroupItem
-                                value={value}
-                                id={value}
-                                className="hidden"
-                              />
-                              {value.charAt(0) + value.slice(1).toLowerCase()}
-                            </Label>
-                          )
-                        )}
+                        {Object.keys(JobType).map((value) => (
+                          <Label
+                            key={value}
+                            htmlFor={value}
+                            className={`cursor-pointer rounded-md border px-2.5 py-1.5 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${field.value === value ? "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80" : "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+                          >
+                            <RadioGroupItem
+                              value={value}
+                              id={value}
+                              className="hidden"
+                            />
+                            {value
+                              .replace("_", " ")
+                              .toLowerCase()
+                              .replace(/\b\w/g, (char) => char.toUpperCase())}
+                          </Label>
+                        ))}
                       </RadioGroup>
                     </FormControl>
                     <FormMessage />
@@ -299,7 +318,7 @@ export function PostJobForm({ session }: { session: Session }) {
                       <RadioGroup
                         onValueChange={field.onChange}
                         value={field.value}
-                        className="flex space-x-2"
+                        className="flex space-x-0.5"
                       >
                         {["REMOTE", "ON SITE"].map((value) => (
                           <Label
@@ -354,7 +373,7 @@ export function PostJobForm({ session }: { session: Session }) {
                             selected={field.value}
                             onSelect={field.onChange}
                             disabled={(date) =>
-                              date < new Date() || date < new Date("1900-01-01")
+                              date < new Date(new Date().setHours(0, 0, 0, 0))
                             }
                             initialFocus
                           />
@@ -382,9 +401,6 @@ export function PostJobForm({ session }: { session: Session }) {
                       onChange={field.onChange}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Enter skills separated by commas
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
