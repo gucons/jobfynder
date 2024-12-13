@@ -157,7 +157,9 @@ model JobPosting {
   location           String
   type               JobType
   workLocation       WorkLocation @default(ON_SITE)
-  salary             String
+  salaryCurrency     String
+  salaryMin          Int
+  salaryMax          Int
   duration           DateTime
   positions          Int
   description        String       @db.VarChar(5000)
