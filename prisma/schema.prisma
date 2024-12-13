@@ -68,24 +68,24 @@ enum UserRole {
 }
 
 model Consultant {
-  id                   String      @id @default(uuid())
-  userId               String      @unique
-  user                 User        @relation(fields: [userId], references: [id])
-  professionalSummary  String      @db.Text
-  experienceYears      Int         @default(0)
-  desiredJobTitles     String[]    @default([])
+  id                   String        @id @default(uuid())
+  userId               String        @unique
+  user                 User          @relation(fields: [userId], references: [id])
+  professionalSummary  String        @db.Text
+  experienceYears      Int           @default(0)
+  desiredJobTitles     String[]      @default([])
   employmentStatus     String
-  industriesOfInterest String[]    @default([])
+  industriesOfInterest String[]      @default([])
   education            Education[]
-  certifications       String[]    @default([])
+  certifications       String[]      @default([])
   linkedinURL          String
   portfolioURL         String
-  skillsAndExpertise   String[]    @default([])
+  skillsAndExpertise   String[]      @default([])
   resumeCV             String
   // Add timestamps if needed
-  createdAt            DateTime    @default(now())
-  updatedAt            DateTime    @updatedAt
-  BenchSales           BenchSales? @relation(fields: [benchSalesId], references: [id])
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  BenchSales           BenchSales?   @relation(fields: [benchSalesId], references: [id])
   benchSalesId         String?
   applications         Application[]
   jobRatings           JobRating[]
@@ -143,67 +143,73 @@ enum JobStatus {
   DRAFT
 }
 
+enum WorkLocation {
+  ON_SITE
+  REMOTE
+  HYBRID
+}
+
 model JobPosting {
-  id                 String        @id @default(uuid())
+  id                 String       @id @default(uuid())
   recruiterId        String
-  title              String        @db.VarChar(100)
-  company            String        @db.VarChar(50)
+  title              String       @db.VarChar(100)
+  company            String       @db.VarChar(50)
   location           String
   type               JobType
-  isRemote           String        @db.VarChar(7) // REMOTE or ON SITE
+  workLocation       WorkLocation @default(ON_SITE)
   salary             String
-  duration           String?
+  duration           DateTime
   positions          Int
-  description        String        @db.VarChar(5000)
-  skillsets          String[]
+  description        String       @db.VarChar(5000)
+  skills             String[]
   deadline           DateTime
   maxApplicants      Int
   maxPositions       Int
-  activeApplications Int           @default(0)
-  acceptedCandidates Int           @default(0)
-  dateOfPosting      DateTime      @default(now())
-  status             JobStatus     @default(OPEN)
-  rating             Float         @default(-1)
-  
+  activeApplications Int          @default(0)
+  acceptedCandidates Int          @default(0)
+  dateOfPosting      DateTime     @default(now())
+  status             JobStatus    @default(OPEN)
+  rating             Float        @default(-1)
+
   // Relations
-  recruiter          Recruiter     @relation(fields: [recruiterId], references: [id])
-  applications       Application[]
-  ratings            JobRating[]
-  
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
+  recruiter    Recruiter     @relation(fields: [recruiterId], references: [id])
+  applications Application[]
+  ratings      JobRating[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Application {
-  id              String    @id @default(uuid())
-  jobId           String
-  consultantId    String
-  status          String    @default("PENDING") // PENDING, ACCEPTED, REJECTED
-  appliedDate     DateTime  @default(now())
-  
+  id           String   @id @default(uuid())
+  jobId        String
+  consultantId String
+  status       String   @default("PENDING") // PENDING, ACCEPTED, REJECTED
+  appliedDate  DateTime @default(now())
+
   // Relations
-  job             JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  consultant      Consultant @relation(fields: [consultantId], references: [id], onDelete: Cascade)
-  
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  job        JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  consultant Consultant @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([jobId, consultantId])
 }
 
 model JobRating {
-  id          String     @id @default(uuid())
-  jobId       String
+  id           String  @id @default(uuid())
+  jobId        String
   consultantId String
-  rating      Float      @default(0) 
-  review      String?
-  
+  rating       Float   @default(0)
+  review       String?
+
   // Relations
-  job         JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  consultant  Consultant @relation(fields: [consultantId], references: [id], onDelete: Cascade)
-  
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  job        JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  consultant Consultant @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([jobId, consultantId])
 }
