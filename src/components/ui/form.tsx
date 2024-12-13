@@ -148,7 +148,34 @@ const FormMessage = React.forwardRef<
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
   const { error, formMessageId } = useFormField();
-  const body = error ? String(error?.message) : children;
+
+  // Utility to extract all nested error messages
+  const extractErrorMessages = (error: any): string[] => {
+    if (!error) return [];
+    if (typeof error.message === "string") return [error.message];
+
+    // Handle nested objects
+    if (typeof error === "object") {
+      return Object.values(error)
+        .map((value) => extractErrorMessages(value))
+        .flat();
+    }
+
+    return [];
+  };
+
+  // Get all error messages
+  const errorMessages = extractErrorMessages(error);
+
+  // Display either the extracted messages or children
+  const body = errorMessages.length
+    ? errorMessages.map((msg, index) => (
+        <React.Fragment key={index}>
+          {msg}
+          <br />
+        </React.Fragment>
+      ))
+    : children;
 
   if (!body) {
     return null;
