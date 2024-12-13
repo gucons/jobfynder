@@ -31,17 +31,17 @@ export const POST = handleRouteWithAuth(async (req, session) => {
       status: 403,
     });
 
-  const job = await prisma.jobPosting.create({
-    data: {
-      recruiterId: user.recruiterProfile.id,
-      ...data,
-      status: JobStatus.OPEN,
-    },
-  });
+  // const job = await prisma.jobPosting.create({
+  //   data: {
+  //     recruiterId: user.recruiterProfile.id,
+  //     ...data,
+  //     status: JobStatus.OPEN,
+  //   },
+  // });
 
   return sendSuccessResponse({
     message: "Job posted successfully",
-    data: job,
+    // data: job,
   });
 });
 
