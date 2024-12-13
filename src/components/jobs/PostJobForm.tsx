@@ -20,110 +20,45 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { skills } from "@/data/skills";
 import { cn } from "@/lib/utils";
+import JobSchema from "@/schema/JobSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { JobType } from "@prisma/client";
-import { format } from "date-fns";
+import { JobType, WorkLocation } from "@prisma/client";
+import { format, formatDistanceToNowStrict } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Session } from "next-auth";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
-import SkillCloud, { Skill } from "../form/skill-cloud";
+import SkillCloud from "../form/skill-cloud";
 import { AutosizeTextarea } from "../ui/auto-resize-testarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import ButtonLoading from "../form/loading-button";
 
-const jobFormSchema = z.object({
-  title: z
-    .string()
-    .min(3, { message: "Title must be at least 3 characters long" })
-    .max(100, { message: "Title must be less than 100 characters long" }),
-  company: z
-    .string()
-    .min(2, { message: "Company name must be at least 2 characters long" })
-    .max(50, { message: "Company name must be less than 50 characters long" }),
-  location: z
-    .string()
-    .min(2, { message: "Location must be at least 2 characters long" }),
-  type: z.nativeEnum(JobType, {
-    required_error: "Please select a job type",
-  }),
-  isRemote: z.enum(["REMOTE", "ON SITE"], {
-    required_error: "Please select a remote option",
-  }),
-  salary: z.string().min(1, "Salary is required"),
-  duration: z.string().optional(),
-  positions: z.coerce
-    .number()
-    .min(1, "At least 1 position is required")
-    .max(100, "Maximum 100 positions allowed"),
-  description: z
-    .string()
-    .min(50, "Description must be at least 50 characters")
-    .max(5000, "Description must be less than 5000 characters"),
-  skills: z.array(z.string()).min(1, "At least one skill is required"),
-  deadline: z.date({
-    required_error: "Application deadline is required",
-  }),
-});
-
-const skills: Skill[] = [
-  { name: "JavaScript", category: "Programming" },
-  { name: "Python", category: "Programming" },
-  { name: "React", category: "Frontend" },
-  { name: "Node.js", category: "Backend" },
-  { name: "AWS", category: "Cloud/DevOps" },
-  { name: "Docker", category: "Cloud/DevOps" },
-  { name: "GraphQL", category: "API" },
-  { name: "TypeScript", category: "Programming" },
-  { name: "SQL", category: "Database" },
-  { name: "Git", category: "Version Control" },
-  { name: "Figma", category: "Design" },
-  { name: "Kubernetes", category: "Cloud/DevOps" },
-  { name: "Vue.js", category: "Frontend" },
-  { name: "MongoDB", category: "Database" },
-  { name: "Java", category: "Programming" },
-  { name: "C#", category: "Programming" },
-  { name: "Ruby", category: "Programming" },
-  { name: "PHP", category: "Programming" },
-  { name: "Swift", category: "Programming" },
-  { name: "Objective-C", category: "Programming" },
-  { name: "Angular", category: "Frontend" },
-  { name: "Django", category: "Backend" },
-  { name: "Flask", category: "Backend" },
-  { name: "Spring", category: "Backend" },
-  { name: "MySQL", category: "Database" },
-  { name: "PostgreSQL", category: "Database" },
-  { name: "Redis", category: "Database" },
-  { name: "Terraform", category: "Cloud/DevOps" },
-  { name: "Ansible", category: "Cloud/DevOps" },
-  { name: "Jenkins", category: "CI/CD" },
-  { name: "Travis CI", category: "CI/CD" },
-  { name: "CircleCI", category: "CI/CD" },
-  { name: "Adobe XD", category: "Design" },
-  { name: "Sketch", category: "Design" },
-  { name: "Sass", category: "Frontend" },
-  { name: "Less", category: "Frontend" },
-  { name: "Webpack", category: "Frontend" },
-  { name: "Babel", category: "Frontend" },
-  { name: "Gulp", category: "Frontend" },
-];
-
-type JobFormData = z.infer<typeof jobFormSchema>;
+type JobFormData = z.infer<typeof JobSchema>;
 
 export function PostJobForm({ session }: { session: Session }) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<JobFormData>({
-    resolver: zodResolver(jobFormSchema),
+    resolver: zodResolver(JobSchema),
     defaultValues: {
       title: "",
       company: "",
       location: "",
       type: "FULL_TIME",
-      isRemote: "REMOTE",
-      salary: "",
-      duration: "",
+      workLocation: "ON_SITE",
+      salary: {
+        currency: "USD",
+      },
       positions: 5,
       skills: [],
       description: "",
@@ -131,7 +66,7 @@ export function PostJobForm({ session }: { session: Session }) {
   });
 
   const onSubmit = async (data: JobFormData) => {
-    setIsSubmitting(true);
+    setLoading(true);
     try {
       toast("Success!", {
         description: "Job has been posted successfully.",
@@ -141,7 +76,7 @@ export function PostJobForm({ session }: { session: Session }) {
         description: "Failed to post job. Please try again.",
       });
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
@@ -158,12 +93,12 @@ export function PostJobForm({ session }: { session: Session }) {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-6">
             {/* Basic Information */}
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-11">
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-3">
                     <FormLabel>Job Title</FormLabel>
                     <FormControl>
                       <Input
@@ -180,7 +115,7 @@ export function PostJobForm({ session }: { session: Session }) {
                 control={form.control}
                 name="company"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-3">
                     <FormLabel>Company Name</FormLabel>
                     <FormControl>
                       <Input placeholder="Your company name" {...field} />
@@ -194,7 +129,7 @@ export function PostJobForm({ session }: { session: Session }) {
                 control={form.control}
                 name="location"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-3">
                     <FormLabel>Location</FormLabel>
                     <FormControl>
                       <Input placeholder="San Francisco, CA" {...field} />
@@ -203,57 +138,11 @@ export function PostJobForm({ session }: { session: Session }) {
                   </FormItem>
                 )}
               />
-            </div>
-
-            {/* Compensation and Duration */}
-            <div className="grid gap-4 sm:grid-cols-3">
-              <FormField
-                control={form.control}
-                name="salary"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Salary Range</FormLabel>
-                    <div className="relative flex rounded-lg shadow-sm shadow-black/5">
-                      <span className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-sm text-muted-foreground">
-                        $
-                      </span>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          className="ps-7 shadow-none"
-                          placeholder="50,000 - 80,000"
-                          type="text"
-                        />
-                      </FormControl>
-                    </div>
-                    <FormDescription>Enter the salary range</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="duration"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Duration</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g. 6 months, 1 year" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Optional for contract/temporary positions
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 control={form.control}
                 name="positions"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-2">
                     <FormLabel>Number of Positions</FormLabel>
                     <FormControl>
                       <Input
@@ -270,8 +159,152 @@ export function PostJobForm({ session }: { session: Session }) {
               />
             </div>
 
+            {/* Duration and Deadline */}
+            <div className="grid gap-4 sm:grid-cols-11">
+              <FormField
+                control={form.control}
+                name="duration"
+                render={({ field }) => (
+                  <FormItem className="col-span-3 flex flex-col space-y-3">
+                    <FormLabel>Duration</FormLabel>
+                    <FormControl>
+                      <FormControl>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className={cn(
+                                  "w-full pl-3 text-left font-normal",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                {field.value ? (
+                                  formatDistanceToNowStrict(field.value)
+                                ) : (
+                                  <span>Pick a date</span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              disabled={(date) =>
+                                date < new Date(new Date().setHours(0, 0, 0, 0))
+                              }
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </FormControl>
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="deadline"
+                render={({ field }) => (
+                  <FormItem className="col-span-3 flex flex-col space-y-3">
+                    <FormLabel>Application Deadline</FormLabel>
+                    <FormControl>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date < new Date(new Date().setHours(0, 0, 0, 0))
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="salary"
+                render={({ field }) => (
+                  <FormItem className="col-span-5 flex flex-col space-y-3">
+                    <FormLabel>Salary Range</FormLabel>
+                    {/* <div className="relative flex rounded-lg shadow-sm shadow-black/5"> */}
+                    <div className="grid grid-cols-5 rounded-lg shadow-sm shadow-black/5">
+                      <Select
+                        value={field.value.currency}
+                        onValueChange={(value) => {
+                          field.onChange({
+                            ...field.value,
+                            currency: value,
+                          });
+                        }}
+                      >
+                        <SelectTrigger className="col-span-1 inline-flex appearance-none items-center rounded-none rounded-s-lg border border-input bg-background text-center text-sm text-muted-foreground transition-shadow hover:bg-accent hover:text-accent-foreground focus:z-10 focus-visible:border-ring focus-visible:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/20 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50">
+                          <SelectValue
+                            placeholder="Currency"
+                            className="capatilize"
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="USD">USD</SelectItem>
+                          <SelectItem value="INR">INR</SelectItem>
+                          <SelectItem value="EUR">EUR</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        onChange={(e) => {
+                          field.onChange({
+                            ...field.value,
+                            amount: Number(e.target.value),
+                          });
+                        }}
+                        value={field.value.min}
+                        className="col-span-2 -ms-px rounded-e-none rounded-s-none shadow-none focus-visible:z-10"
+                        placeholder="28,00,000"
+                        type="number"
+                      />
+                      <Input
+                        className="col-span-2 -ms-px flex-1 rounded-r-lg rounded-s-none border-l border-gray-300 shadow-none"
+                        placeholder="80,000"
+                        type="number"
+                      />
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             {/* Type of job */}
-            <div className="flex justify-between">
+            <div className="flex gap-10 pt-2">
               <FormField
                 control={form.control}
                 name="type"
@@ -310,7 +343,7 @@ export function PostJobForm({ session }: { session: Session }) {
 
               <FormField
                 control={form.control}
-                name="isRemote"
+                name="workLocation"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
                     <FormLabel>Remote Position</FormLabel>
@@ -320,7 +353,7 @@ export function PostJobForm({ session }: { session: Session }) {
                         value={field.value}
                         className="flex space-x-0.5"
                       >
-                        {["REMOTE", "ON SITE"].map((value) => (
+                        {Object.keys(WorkLocation).map((value) => (
                           <Label
                             key={value}
                             htmlFor={value}
@@ -331,7 +364,10 @@ export function PostJobForm({ session }: { session: Session }) {
                               id={value}
                               className="hidden"
                             />
-                            {value.charAt(0) + value.slice(1).toLowerCase()}
+                            {value
+                              .replace("_", " ")
+                              .toLowerCase()
+                              .replace(/\b\w/g, (char) => char.toUpperCase())}
                           </Label>
                         ))}
                       </RadioGroup>
@@ -340,59 +376,14 @@ export function PostJobForm({ session }: { session: Session }) {
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name="deadline"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col space-y-3">
-                    <FormLabel>Application Deadline</FormLabel>
-                    <FormControl>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "w-[240px] pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            disabled={(date) =>
-                              date < new Date(new Date().setHours(0, 0, 0, 0))
-                            }
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
 
             {/* Skills selection */}
-
             <FormField
               control={form.control}
               name="skills"
               render={({ field }) => (
-                <FormItem className="col-span-4">
+                <FormItem className="col-span-4 pt-2">
                   <FormLabel>Required Skills</FormLabel>
                   <FormControl>
                     <SkillCloud
@@ -415,7 +406,7 @@ export function PostJobForm({ session }: { session: Session }) {
                   <FormControl>
                     <AutosizeTextarea
                       placeholder="Describe the role, responsibilities, qualifications, and any other important details..."
-                      rows={8}
+                      minHeight={100}
                       {...field}
                     />
                   </FormControl>
@@ -428,13 +419,11 @@ export function PostJobForm({ session }: { session: Session }) {
               )}
             />
 
-            <Button
-              type="submit"
-              className="w-full sm:w-auto"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Posting..." : "Post Job"}
-            </Button>
+            <ButtonLoading
+              loading={loading}
+              staticText="Submit"
+              loaderText="Submitting"
+            />
           </div>
         </form>
       </Form>
