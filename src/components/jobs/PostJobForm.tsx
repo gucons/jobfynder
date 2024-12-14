@@ -1,7 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
 import {
   Form,
@@ -14,49 +12,36 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { skills } from "@/data/skills";
-import { cn } from "@/lib/utils";
 import JobSchema from "@/schema/JobSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { JobType, WorkLocation } from "@prisma/client";
-import { format, formatDistanceToNowStrict } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { Session } from "next-auth";
+import { ExperienceLevel, JobType, WorkLocation } from "@prisma/client";
+import { Tag, TagInput } from "emblor";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
-import SkillCloud from "../form/skill-cloud";
-import { AutosizeTextarea } from "../ui/auto-resize-testarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 import ButtonLoading from "../form/loading-button";
+import { AutosizeTextarea } from "../ui/auto-resize-testarea";
 
 type JobFormData = z.infer<typeof JobSchema>;
 
-export function PostJobForm({ session }: { session: Session }) {
+export function PostJobForm() {
   const [loading, setLoading] = useState(false);
+
+  // EMBLOR
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
 
   const form = useForm<JobFormData>({
     resolver: zodResolver(JobSchema),
     defaultValues: {
-      salary: {
-        currency: "USD",
-      },
+      salaryRange: {},
       skills: [],
     },
   });
+
+  const { setValue } = form;
 
   const onSubmit = async (data: JobFormData) => {
     setLoading(true);
@@ -85,328 +70,18 @@ export function PostJobForm({ session }: { session: Session }) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-6">
-            {/* Basic Information */}
-            <div className="grid gap-4 sm:grid-cols-11">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem className="col-span-3">
-                    <FormLabel>Job Title</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Senior Frontend Developer"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="company"
-                render={({ field }) => (
-                  <FormItem className="col-span-3">
-                    <FormLabel>Company Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Your company name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="location"
-                render={({ field }) => (
-                  <FormItem className="col-span-3">
-                    <FormLabel>Location</FormLabel>
-                    <FormControl>
-                      <Input placeholder="San Francisco, CA" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="positions"
-                render={({ field }) => (
-                  <FormItem className="col-span-2">
-                    <FormLabel>Max Positions</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min={0}
-                        placeholder="e.g. 2"
-                        value={field.value ?? ""}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          field.onChange(value ? undefined : Number(value));
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            {/* Duration and Deadline */}
-            <div className="grid gap-4 sm:grid-cols-11">
-              <FormField
-                control={form.control}
-                name="duration"
-                render={({ field }) => (
-                  <FormItem className="col-span-3 flex flex-col space-y-3">
-                    <FormLabel>Duration</FormLabel>
-                    <FormControl>
-                      <FormControl>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "w-full pl-3 text-left font-normal",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? (
-                                  formatDistanceToNowStrict(field.value)
-                                ) : (
-                                  <span>Pick a date</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) =>
-                                date < new Date(new Date().setHours(0, 0, 0, 0))
-                              }
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </FormControl>
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="deadline"
-                render={({ field }) => (
-                  <FormItem className="col-span-3 flex flex-col space-y-3">
-                    <FormLabel>Application Deadline</FormLabel>
-                    <FormControl>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "w-full pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            disabled={(date) =>
-                              date < new Date(new Date().setHours(0, 0, 0, 0))
-                            }
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="salary"
-                render={({ field }) => (
-                  <FormItem className="col-span-5 flex flex-col space-y-3">
-                    <FormLabel>Salary Range</FormLabel>
-                    <div className="group relative grid grid-cols-5 overflow-hidden rounded-sm border focus-within:outline-none focus-within:ring-1 focus-within:ring-ring focus-within:ring-offset-0 hover:border-input">
-                      {/* Currency Selector */}
-                      <Select
-                        value={field.value?.currency || ""}
-                        onValueChange={(value) => {
-                          field.onChange({
-                            ...field.value,
-                            currency: value,
-                          });
-                        }}
-                      >
-                        <SelectTrigger className="border-0 text-sm ring-0 focus:ring-0">
-                          <SelectValue
-                            placeholder="$"
-                            className="w-full text-center"
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="USD">$ USD</SelectItem>
-                          <SelectItem value="INR">₹ INR</SelectItem>
-                          <SelectItem value="EUR">€ EUR</SelectItem>
-                        </SelectContent>
-                      </Select>
-
-                      {/* Divider */}
-                      <div className="absolute left-[20%] top-1/2 h-5 w-px -translate-y-1/2 bg-border" />
-
-                      {/* Minimum Salary Input */}
-                      <Input
-                        value={field.value?.min || ""}
-                        onChange={(e) => {
-                          field.onChange({
-                            ...field.value,
-                            min: Number(e.target.value),
-                          });
-                        }}
-                        className="col-span-2 border-0 focus-visible:ring-0"
-                        placeholder="Min"
-                        type="number"
-                      />
-
-                      {/* Divider */}
-                      <div className="absolute left-[60%] top-1/2 h-5 w-px -translate-y-1/2 bg-border" />
-
-                      {/* Maximum Salary Input */}
-                      <Input
-                        value={field.value?.max || ""}
-                        onChange={(e) => {
-                          field.onChange({
-                            ...field.value,
-                            max: Number(e.target.value),
-                          });
-                        }}
-                        className="col-span-2 border-0 focus-visible:ring-0"
-                        placeholder="Max"
-                        type="number"
-                      />
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            {/* Type of job */}
-            <div className="flex gap-10 pt-2">
-              <FormField
-                control={form.control}
-                name="type"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Job Type</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        className="flex space-x-0.5"
-                      >
-                        {Object.keys(JobType).map((value) => (
-                          <Label
-                            key={value}
-                            htmlFor={value}
-                            className={`cursor-pointer rounded-md border px-2.5 py-1.5 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${field.value === value ? "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80" : "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
-                          >
-                            <RadioGroupItem
-                              value={value}
-                              id={value}
-                              className="hidden"
-                            />
-                            {value
-                              .replace("_", " ")
-                              .toLowerCase()
-                              .replace(/\b\w/g, (char) => char.toUpperCase())}
-                          </Label>
-                        ))}
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="workLocation"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Remote Position</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        className="flex space-x-0.5"
-                      >
-                        {Object.keys(WorkLocation).map((value) => (
-                          <Label
-                            key={value}
-                            htmlFor={value}
-                            className={`cursor-pointer rounded-md border px-2.5 py-1.5 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${field.value === value ? "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80" : "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
-                          >
-                            <RadioGroupItem
-                              value={value}
-                              id={value}
-                              className="hidden"
-                            />
-                            {value
-                              .replace("_", " ")
-                              .toLowerCase()
-                              .replace(/\b\w/g, (char) => char.toUpperCase())}
-                          </Label>
-                        ))}
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            {/* Skills selection */}
             <FormField
               control={form.control}
-              name="skills"
+              name="title"
               render={({ field }) => (
-                <FormItem className="col-span-4 pt-2">
-                  <FormLabel>Required Skills</FormLabel>
+                <FormItem>
+                  <FormLabel>Job Title</FormLabel>
                   <FormControl>
-                    <SkillCloud
-                      skills={skills}
-                      selectedSkills={field.value}
-                      onChange={field.onChange}
-                    />
+                    <Input placeholder="Senior Frontend Developer" {...field} />
                   </FormControl>
+                  <FormDescription>
+                    Be specific and include the job level (e.g. Senior, Junior)
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -428,6 +103,276 @@ export function PostJobForm({ session }: { session: Session }) {
                   <FormDescription>
                     Minimum 50 characters. Include key responsibilities,
                     requirements, and benefits.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="company"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Company Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Your company name" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Enter the name of the company hiring for this position
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Location</FormLabel>
+                  <FormControl>
+                    <Input placeholder="San Francisco, CA" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="workLocation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Work Location</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={String(field.value)}
+                      className="flex space-x-0.5"
+                    >
+                      {Object.keys(WorkLocation).map((value) => (
+                        <Label
+                          key={value}
+                          htmlFor={value}
+                          className={`cursor-pointer rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${field.value === value ? "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80" : "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+                        >
+                          <RadioGroupItem
+                            value={value}
+                            id={value}
+                            className="hidden"
+                          />
+                          {value
+                            .replace("_", " ")
+                            .toLowerCase()
+                            .replace(/\b\w/g, (char) => char.toUpperCase())}
+                        </Label>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="employmentType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Employment Type</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="flex space-x-0.5"
+                    >
+                      {Object.keys(JobType).map((value) => (
+                        <Label
+                          key={value}
+                          htmlFor={value}
+                          className={`cursor-pointer rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${field.value === value ? "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80" : "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+                        >
+                          <RadioGroupItem
+                            value={value}
+                            id={value}
+                            className="hidden"
+                          />
+                          {value
+                            .replace("_", " ")
+                            .toLowerCase()
+                            .replace(/\b\w/g, (char) => char.toUpperCase())}
+                        </Label>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="experienceLevel"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>Experience Level</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="flex space-x-0.5"
+                    >
+                      {Object.keys(ExperienceLevel).map((value) => (
+                        <Label
+                          key={value}
+                          htmlFor={value}
+                          className={`cursor-pointer rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${field.value === value ? "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80" : "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+                        >
+                          <RadioGroupItem
+                            value={value}
+                            id={value}
+                            className="hidden"
+                          />
+                          {value
+                            .replace("_", " ")
+                            .toLowerCase()
+                            .replace(/\b\w/g, (char) => char.toUpperCase())}
+                        </Label>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="salaryRange"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Salary Range</FormLabel>
+                  <FormControl>
+                    <div className="flex gap-4">
+                      <Input
+                        type="number"
+                        placeholder="Minimum salary"
+                        value={field.value?.min || ""}
+                        onChange={(e) =>
+                          field.onChange({
+                            ...field.value,
+                            min: Number(e.target.value),
+                          })
+                        }
+                      />
+                      <Input
+                        type="number"
+                        placeholder="Maximum salary"
+                        value={field.value?.max || ""}
+                        onChange={(e) =>
+                          field.onChange({
+                            ...field.value,
+                            max: Number(e.target.value),
+                          })
+                        }
+                      />
+                    </div>
+                  </FormControl>
+                  <FormDescription>
+                    Specify the salary range for this job
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="visaSponsorship"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Visa Sponsorship Available</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={(value) =>
+                        field.onChange(value === "true")
+                      }
+                      value={field.value?.toString()}
+                      className="flex space-x-0.5"
+                    >
+                      <Label
+                        htmlFor="true"
+                        className={`cursor-pointer rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                          field.value === true
+                            ? "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80"
+                            : "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                        }`}
+                      >
+                        <RadioGroupItem
+                          value="true"
+                          id="true"
+                          className="hidden"
+                        />
+                        Yes
+                      </Label>
+                      <Label
+                        htmlFor="false"
+                        className={`cursor-pointer rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                          field.value === false
+                            ? "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80"
+                            : "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                        }`}
+                      >
+                        <RadioGroupItem
+                          value="false"
+                          id="false"
+                          className="hidden"
+                        />
+                        No
+                      </Label>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="skills"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Skills</FormLabel>
+                  <FormControl>
+                    <TagInput
+                      tags={tags}
+                      setTags={(newTags) => {
+                        setTags(newTags);
+                        setValue("skills", newTags as [Tag, ...Tag[]]);
+                      }}
+                      placeholder="Add a skill"
+                      styleClasses={{
+                        tagList: {
+                          container: "gap-1",
+                        },
+                        input:
+                          "rounded-lg transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/20",
+                        tag: {
+                          body: "relative h-7 bg-background border border-input hover:bg-background rounded-md font-medium text-xs ps-2 pe-7",
+                          closeButton:
+                            "absolute -inset-y-px -end-px p-0 rounded-s-none rounded-e-lg flex size-7 transition-colors outline-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 text-muted-foreground/80 hover:text-foreground",
+                        },
+                      }}
+                      activeTagIndex={activeTagIndex}
+                      setActiveTagIndex={setActiveTagIndex}
+                      inlineTags={false}
+                      inputFieldPosition="top"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Add skills required for this job.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
