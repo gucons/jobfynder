@@ -57,6 +57,7 @@
     "currency-symbol-map": "^5.1.0",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.3.0",
+    "emblor": "^1.4.7",
     "framer-motion": "^11.3.31",
     "immutability-helper": "^3.1.1",
     "input-otp": "^1.2.4",

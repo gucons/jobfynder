@@ -32,30 +32,23 @@ export const POST = handleRouteWithAuth(async (req, session) => {
     });
 
   // Remove salary field from data
-  const { salary, ...dataDB } = data;
+  // const { salary, ...dataDB } = data;
 
-  try {
-    const job = await prisma.jobPosting.create({
-      data: {
-        recruiterId: user.recruiterProfile.id,
-        salaryCurrency: salary.currency,
-        salaryMin: salary.min,
-        salaryMax: salary.max,
-        ...dataDB,
-        status: JobStatus.OPEN,
-      },
-    });
+  //   const job = await prisma.jobPosting.create({
+  //     data: {
+  //       recruiterId: user.recruiterProfile.id,
+  //       salaryCurrency: salary.currency,
+  //       salaryMin: salary.min,
+  //       salaryMax: salary.max,
+  //       ...dataDB,
+  //       status: JobStatus.OPEN,
+  //     },
+  //   });
 
-    return sendSuccessResponse({
-      message: "Job posted successfully",
-      data: job,
-    });
-  } catch (error) {
-    return sendErrorResponse({
-      message: "Failed to create job posting",
-      status: 500,
-    });
-  }
+  return sendSuccessResponse({
+    message: "Job posted successfully",
+    // data: job,
+  });
 });
 
 export const GET = handleRoute(async (req: Request) => {
