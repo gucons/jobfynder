@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder"]
 }
 
 datasource db {
@@ -14,35 +15,7 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-model User {
-  id                 String               @id @default(uuid())
-  name               String
-  email              String               @unique
-  image              String?
-  hashedPassword     String?
-  emailVerified      Boolean              @default(false)
-  role               UserRole             @default(PENDING)
-  // Basic Info
-  basicInfoId        String?
-  basicInfo          BasicInfo?
-  // Relations to roles
-  consultantProfile  Consultant?
-  benchSalesProfile  BenchSales?
-  recruiterProfile   Recruiter?
-  // Posts
-  posts              Post[]
-  // Comments
-  comments           Comment[]
-  // Notifications
-  InfoNotification   InfoNotification[]
-  ActionNotification ActionNotification[]
-  // Auth Sessions
-  accounts           Account[]
-  sessions           Session[]
-  Authenticator      Authenticator[]
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-}
+
 
 model BasicInfo {
   id             String   @id @default(uuid())
@@ -60,12 +33,7 @@ model BasicInfo {
   updatedAt      DateTime @updatedAt
 }
 
-enum UserRole {
-  PENDING
-  CONSULTANT
-  BENCH_SALES
-  RECRUITER
-}
+
 
 model Consultant {
   id                   String        @id @default(uuid())
@@ -87,7 +55,7 @@ model Consultant {
   updatedAt            DateTime      @updatedAt
   BenchSales           BenchSales?   @relation(fields: [benchSalesId], references: [id])
   benchSalesId         String?
-  applications         Application[]
+  applications         JobApplication[]
   jobRatings           JobRating[]
 }
 
@@ -117,86 +85,11 @@ model BenchSales {
   updatedAt    DateTime     @updatedAt
 }
 
-model Recruiter {
-  id           String       @id @default(uuid())
-  userId       String       @unique
-  user         User         @relation(fields: [userId], references: [id])
-  company      String? // Recruiter company
-  contactEmail String?      @unique
-  jobPostings  JobPosting[]
-  // Add timestamps if needed
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-}
 
-enum JobType {
-  FULL_TIME
-  PART_TIME
-  CONTRACT
-  INTERNSHIP
-  TEMPORARY
-}
 
-enum JobStatus {
-  OPEN
-  CLOSED
-  DRAFT
-}
 
-enum WorkLocation {
-  ON_SITE
-  REMOTE
-  HYBRID
-}
 
-model JobPosting {
-  id                 String       @id @default(uuid())
-  recruiterId        String
-  title              String       @db.VarChar(100)
-  company            String       @db.VarChar(50)
-  location           String
-  type               JobType
-  workLocation       WorkLocation @default(ON_SITE)
-  salaryCurrency     String
-  salaryMin          Int
-  salaryMax          Int
-  duration           DateTime
-  positions          Int
-  description        String       @db.VarChar(5000)
-  skills             String[]
-  deadline           DateTime
-  maxApplicants      Int?
-  activeApplications Int          @default(0)
-  acceptedCandidates Int          @default(0)
-  dateOfPosting      DateTime     @default(now())
-  status             JobStatus    @default(OPEN)
-  rating             Float        @default(-1)
 
-  // Relations
-  recruiter    Recruiter     @relation(fields: [recruiterId], references: [id])
-  applications Application[]
-  ratings      JobRating[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Application {
-  id           String   @id @default(uuid())
-  jobId        String
-  consultantId String
-  status       String   @default("PENDING") // PENDING, ACCEPTED, REJECTED
-  appliedDate  DateTime @default(now())
-
-  // Relations
-  job        JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  consultant Consultant @relation(fields: [consultantId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([jobId, consultantId])
-}
 
 model JobRating {
   id           String  @id @default(uuid())

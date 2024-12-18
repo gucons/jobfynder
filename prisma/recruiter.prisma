@@ -1,0 +1,24 @@
+model Recruiter {
+    id           String       @id @default(uuid())
+    // Recuritor - User relation
+    userId       String       @unique
+    user         User         @relation(fields: [userId], references: [id])
+    contactEmail String?      @unique
+    jobPostings  JobPosting[]
+    // Companies related to recuritor
+    company      Company[]
+    createdAt    DateTime     @default(now())
+    updatedAt    DateTime     @updatedAt
+}
+
+model Company {
+    id          String     @id @default(uuid())
+    recruiterId String?
+    recruiter   Recruiter? @relation(fields: [recruiterId], references: [id])
+    // Company data
+    name        String     @db.VarChar(100)
+    description String     @db.VarChar(1000)
+    logo        String?
+    createdAt   DateTime   @default(now())
+    updatedAt   DateTime   @updatedAt
+}

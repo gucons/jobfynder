@@ -1,0 +1,76 @@
+model JobPosting {
+    id                     String           @id @default(uuid())
+    // Job Posting Fields
+    title                  String           @db.VarChar(100)
+    description            String           @db.VarChar(5000)
+    companyName            String           @db.VarChar(50)
+    companyDescription     String?          @db.VarChar(1000)
+    location               String
+    workLocation           WorkLocation     @default(ON_SITE)
+    jobType                JobType
+    experienceLevel        ExperienceLevel
+    salaryCurrency         String           @default("USD")
+    salaryRangeMinimun     Int              @default(0)
+    salaryRangeMaximum     Int              @default(0)
+    visaSponsorship        Boolean          @default(false)
+    skills                 String[]
+    qualifications         String[]
+    certifications         String[]
+    educationalRequirments String[] // Minimum education level required
+    benefits               String[]
+    applicationDeadline    DateTime
+    // Relation to recuritor posting the job
+    recruiterId            String
+    // Tracking job applications
+    activeApplications     Int              @default(0)
+    // Job stats
+    status                 JobStatus        @default(OPEN)
+    // Model Relations
+    recruiter              Recruiter        @relation(fields: [recruiterId], references: [id])
+    applications           JobApplication[]
+    ratings                JobRating[]
+    // Timestamps
+    createdAt              DateTime         @default(now())
+    updatedAt              DateTime         @updatedAt
+}
+
+model JobApplication {
+    id           String     @id @default(uuid())
+    // Relations
+    jobId        String
+    consultantId String
+    job          JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
+    consultant   Consultant @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+    createdAt    DateTime   @default(now())
+    updatedAt    DateTime   @updatedAt
+
+    @@unique([jobId, consultantId])
+}
+
+enum WorkLocation {
+    ON_SITE
+    REMOTE
+    HYBRID
+}
+
+enum JobType {
+    FULL_TIME
+    PART_TIME
+    CONTRACT
+    INTERNSHIP
+    TEMPORARY
+}
+
+enum ExperienceLevel {
+    ENTRY_LEVEL
+    MID_LEVEL
+    SENIOR
+    DIRECTOR
+    EXECUTIVE
+}
+
+enum JobStatus {
+    OPEN
+    CLOSED
+    DRAFT
+}
