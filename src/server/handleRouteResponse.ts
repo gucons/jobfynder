@@ -16,7 +16,6 @@ export function sendSuccessResponse(params: SuccessParams) {
   const response = {
     success: true,
     message: params.message,
-    status: params.status || 200,
     data: params.data,
   };
 
@@ -33,7 +32,6 @@ export function sendErrorResponse(params: ErrorParams) {
       process.env.NODE_ENV === "development"
         ? params.error?.message
         : undefined, // Only show error details in development mode
-    status: params.status || 500,
   };
 
   return NextResponse.json(response, {
