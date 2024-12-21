@@ -1,25 +1,34 @@
 import prisma from "@/lib/prisma";
-import { sendSuccessResponse } from "@/server/handle-route-response";
+import { LoginSchema } from "@/schema/LoginSchema";
 import handleRoute from "@/server/handle-route";
+import {
+  sendErrorResponse,
+  sendSuccessResponse,
+} from "@/server/handle-route-response";
 import bcrypt from "bcryptjs";
-import { z } from "zod";
 
 export const POST = handleRoute(async (req) => {
   const requestData = await req.json();
 
-  const data = z
-    .object({
-      name: z.string(),
-      email: z.string().email(),
-      password: z.string(),
-    })
-    .parse(requestData);
+  const data = LoginSchema.parse(requestData);
 
-  const hashedPassword = await bcrypt.hash(data.password, 10);
+  // Check if the user already exists
+  const existingUser = await prisma.user.findUnique({
+    where: { email: data.email },
+  });
+
+  if (existingUser) {
+    return sendErrorResponse({
+      message: "User already exists",
+    });
+  }
+
+  // Hash the password
+  const salt = await bcrypt.genSalt(12);
+  const hashedPassword = await bcrypt.hash(data.password, salt);
 
   await prisma.user.create({
     data: {
-      name: data.name,
       email: data.email,
       hashedPassword,
     },
