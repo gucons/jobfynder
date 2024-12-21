@@ -1,12 +1,9 @@
 "use client";
 
-import Image from "next/image";
-import React, { useTransition } from "react";
-import ImageGallery from "./ImageGallery";
+import ButtonLoading from "@/components/form/loading-button";
+import { PasswordInput } from "@/components/shared/PasswordInput";
 import { Button } from "@/components/ui/button";
-import { LoginSchema, LoginValues } from "@/schema/AuthCredentialSchema";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -16,19 +13,28 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/shared/PasswordInput";
-import Link from "next/link";
-import ButtonLoading from "@/components/form/loading-button";
+
+import {
+  AuthCredentialSchema,
+  AuthCredentialValues,
+} from "@/schema/AuthCredentialSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { MoveRight } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useTransition } from "react";
+import { useForm } from "react-hook-form";
+import ImageGallery from "./ImageGallery";
+import { signIn } from "next-auth/react";
+import { toast } from "sonner";
 
 const LoginForm = () => {
   // states
   const [isPending, startTransition] = useTransition();
 
   // React Hook Form Steps
-  const form = useForm<LoginValues>({
-    resolver: zodResolver(LoginSchema),
+  const form = useForm<AuthCredentialValues>({
+    resolver: zodResolver(AuthCredentialSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -36,11 +42,29 @@ const LoginForm = () => {
   });
 
   // Submit Handler for Form
-  const onSubmit = (values: LoginValues, e?: React.BaseSyntheticEvent) => {
-    console.log("submitting");
+  const onSubmit = async (
+    values: AuthCredentialValues,
+    e?: React.BaseSyntheticEvent
+  ) => {
     e?.preventDefault();
-    const email = values.email;
-    const password = values.password;
+    // Login using next-auth
+    const signInResponse = await signIn("credentials", {
+      email: values.email,
+      // password: values.password,
+      password: "password",
+      redirect: false, // Handle errors on this page
+    });
+
+    // Second check if someone bypasses client side validation
+    if (signInResponse?.error) {
+      toast.error("Log in failed", {
+        description: signInResponse.code, // Get error message from server
+      });
+      return;
+    }
+    toast.success("Login successful! Redirecting you to your dashboard...", {
+      description: "You are now logged in.",
+    });
     startTransition(() => {});
   };
   return (

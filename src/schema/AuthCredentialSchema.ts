@@ -16,4 +16,4 @@ export const AuthCredentialSchema = z.object({
   password: PasswordValidationSchema,
 });
 
-export type LoginValues = z.infer<typeof AuthCredentialSchema>;
+export type AuthCredentialValues = z.infer<typeof AuthCredentialSchema>;
