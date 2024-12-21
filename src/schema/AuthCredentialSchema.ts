@@ -11,9 +11,9 @@ export const PasswordValidationSchema = z
     "Password must contain at least one special character"
   );
 
-export const LoginSchema = z.object({
+export const AuthCredentialSchema = z.object({
   email: z.string().email("Please enter a valid email").min(1),
   password: PasswordValidationSchema,
 });
 
-export type LoginValues = z.infer<typeof LoginSchema>;
+export type LoginValues = z.infer<typeof AuthCredentialSchema>;
