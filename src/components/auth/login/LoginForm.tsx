@@ -35,9 +35,6 @@ const LoginForm = () => {
     },
   });
 
-  const {
-    formState: { errors },
-  } = form;
   // Submit Handler for Form
   const onSubmit = (values: LoginValues, e?: React.BaseSyntheticEvent) => {
     console.log("submitting");
@@ -48,7 +45,7 @@ const LoginForm = () => {
   };
   return (
     <div className="mb-[12px] flex h-[680px] w-[500px] flex-col rounded-[10px] bg-white shadow-md">
-      <div className="flex-center bg-brand-secondary h-[40%] flex-col">
+      <div className="flex-center h-[40%] flex-col bg-brand-secondary">
         <Image
           src="/assets/icons/JF.svg"
           alt="SVG Example"
@@ -76,7 +73,7 @@ const LoginForm = () => {
             height={20}
             className="mr-[9px]"
           />
-          <span className="text-brand-secondary text-sm font-medium">
+          <span className="text-sm font-medium text-brand-secondary">
             Continue with Google
           </span>
         </Button>
@@ -88,7 +85,7 @@ const LoginForm = () => {
             height={20}
             className="mr-[9px]"
           />
-          <span className="text-brand-secondary text-sm font-medium">
+          <span className="text-sm font-medium text-brand-secondary">
             Continue with Github
           </span>
         </Button>
@@ -109,14 +106,14 @@ const LoginForm = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-brand-secondary mb-[7px] text-sm font-medium">
+                  <FormLabel className="mb-[7px] text-sm font-medium text-brand-secondary">
                     Email
                   </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="you@yourgmail.com"
                       {...field}
-                      className="text-brand-secondary mb-[27px] h-[45px] w-full rounded-[8px] border border-solid border-[#E2E7F1] bg-transparent p-2 shadow-sm placeholder:text-start placeholder:text-sm placeholder:text-[#AEB7CA]"
+                      className="mb-[27px] h-[45px] w-full rounded-[8px] border border-solid border-[#E2E7F1] bg-transparent p-2 text-brand-secondary shadow-sm placeholder:text-start placeholder:text-sm placeholder:text-[#AEB7CA]"
                     />
                   </FormControl>
                   <FormMessage />
@@ -128,51 +125,51 @@ const LoginForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-brand-secondary mb-[7px] text-sm font-medium">
+                  <FormLabel className="mb-[7px] text-sm font-medium text-brand-secondary">
                     Password
                   </FormLabel>
                   <FormControl>
                     <PasswordInput
                       placeholder="At least 8 characters."
                       {...field}
-                      className="text-brand-secondary mb-[12px] h-[45px] w-full rounded-[8px] border border-solid border-[#E2E7F1] bg-transparent p-2 shadow-sm placeholder:text-start placeholder:text-sm placeholder:text-[#AEB7CA]"
+                      className="mb-[12px] h-[45px] w-full rounded-[8px] border border-solid border-[#E2E7F1] bg-transparent p-2 text-brand-secondary shadow-sm placeholder:text-start placeholder:text-sm placeholder:text-[#AEB7CA]"
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            <div className="mb-[20px] flex w-full items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="remember-me"
+                  // checked={clickedRemember}
+                  // onCheckedChange={handleRememberMeChange}
+                />
+                <label
+                  htmlFor="remember-me"
+                  className="text-sm font-normal text-[#AEB7CA]"
+                >
+                  Remember me
+                </label>
+              </div>
+              <Link
+                href={"/forgot-password"}
+                className="flex text-sm font-normal text-[#AEB7CA] hover:underline"
+              >
+                Forgot Password?
+              </Link>
+            </div>
+            <ButtonLoading
+              loading={isPending}
+              staticText="Login"
+              loaderText="Submitting"
+              type="submit"
+              icon={<MoveRight />}
+              className="bg-brand-primary text-white transition-colors hover:bg-brand-primary/90 hover:text-white"
+            />
           </form>
         </Form>
-        <div className="mb-[20px] flex w-full items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="remember-me"
-              // checked={clickedRemember}
-              // onCheckedChange={handleRememberMeChange}
-            />
-            <label
-              htmlFor="remember-me"
-              className="text-sm font-normal text-[#AEB7CA]"
-            >
-              Remember me
-            </label>
-          </div>
-          <Link
-            href={"/forgot-password"}
-            className="flex text-sm font-normal text-[#AEB7CA] hover:underline"
-          >
-            Forgot Password?
-          </Link>
-        </div>
-        <ButtonLoading
-          loading={isPending}
-          staticText="Login"
-          loaderText="Submitting"
-          type="submit"
-          icon={<MoveRight />}
-          className="bg-brand-primary hover:bg-brand-primary/90 text-white transition-colors hover:text-white"
-        />
       </div>
     </div>
   );
