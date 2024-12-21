@@ -1,22 +1,21 @@
 import { ThemeProvider } from "@/components/theme/themeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Poppins } from "next/font/google";
 import "./globals.css";
+import HydrationProvider from "@/providers/HydrationProvider";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
-  title: "Jobfynder - Connect with Recruiters & Follow Jobs",
+  title: {
+    template: "%s | Jobfynder",
+    default: "Jobfynder",
+  },
   description:
     "Jobfynder helps IT professionals and staffing agencies connect, post jobs, and access support services like training, resume building, and immigration paperwork.",
   keywords:
@@ -59,13 +58,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} font-[family-name:var(--font-geist-sans)] antialiased`}
+        className={`${poppins.variable} font-[family-name:var(--font-poppins)] antialiased`}
         suppressHydrationWarning
       >
-        <ThemeProvider>
-          {children}
-          <Toaster />
-        </ThemeProvider>
+        <HydrationProvider>
+          <ThemeProvider>
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </HydrationProvider>
       </body>
     </html>
   );

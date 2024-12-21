@@ -1,11 +1,16 @@
 import { Button, ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Loader } from "lucide-react";
-import React from "react";
+import React, { ReactElement } from "react";
 
 const ButtonLoading = React.forwardRef<
   HTMLButtonElement,
-  ButtonProps & { loading: boolean; loaderText?: string; staticText?: string }
+  ButtonProps & {
+    loading: boolean;
+    loaderText?: string;
+    staticText?: string;
+    icon?: ReactElement;
+  }
 >(
   (
     {
@@ -16,13 +21,14 @@ const ButtonLoading = React.forwardRef<
       loading = false,
       loaderText = "Loading",
       staticText = "Submit",
+      icon,
       ...props
     },
     ref
   ) => {
     return (
       <Button
-        className={cn("w-full", className)}
+        className={cn("flex w-full items-center", className)}
         ref={ref}
         {...props}
         disabled={loading}
@@ -35,6 +41,7 @@ const ButtonLoading = React.forwardRef<
         ) : (
           staticText
         )}
+        <span className="ml-1">{icon}</span>
       </Button>
     );
   }

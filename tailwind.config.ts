@@ -10,6 +10,10 @@ export default {
   theme: {
     extend: {
       colors: {
+        brand: {
+          primary: "#00B95D",
+          secondary: "#21252A",
+        },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -52,8 +56,7 @@ export default {
         },
       },
       fontFamily: {
-        "geist-mono": "var(--font-geist-mono)",
-        "geist-sans": "var(--font-geist-sans)",
+        sans: ["var(--font-poppins)", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
