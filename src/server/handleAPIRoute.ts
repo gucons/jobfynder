@@ -1,6 +1,5 @@
-import { getErrorMessage } from "@/lib/handle-error";
 import { NextResponse } from "next/server";
-import { ZodError } from "zod";
+import getErrorMessage from "./getErrorMessage";
 
 const handleRoute = (fn: (req: Request) => Promise<Response>) => {
   return async (req: Request) => {
@@ -15,10 +14,12 @@ const handleRoute = (fn: (req: Request) => Promise<Response>) => {
       return NextResponse.json(
         {
           success: false,
+          message: "Internal server error",
           error:
             process.env.NODE_ENV === "development"
               ? errorMessage
-              : "An error occurred. Please try again later.",
+              : // Return a generic message to not expose internal errors (e.g. database errors)
+                "An error occurred. Please try again later.",
         },
         { status: 500 }
       );

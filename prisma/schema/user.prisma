@@ -1,10 +1,12 @@
 model User {
-    id                 String               @id @default(uuid())
-    name               String
-    email              String               @unique
-    image              String?
-    hashedPassword     String?
-    emailVerified      Boolean              @default(false)
+    id             String  @id @default(uuid())
+    name           String?
+    email          String  @unique
+    image          String?
+    hashedPassword String?
+    emailVerified  Boolean @default(false)
+
+    // ! These fields are to be reconsidered
     role               UserRole             @default(PENDING)
     // Basic Info
     basicInfoId        String?

@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import handleRouteWithAuth from "@/server/handle-auth-route";
+import handleRouteWithAuth from "@/server/handleAPIRouteAuth";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

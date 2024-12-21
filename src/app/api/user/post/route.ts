@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import PostSchema from "@/schema/PostSchema";
-import handleRouteWithAuth from "@/server/handle-auth-route";
+import handleRouteWithAuth from "@/server/handleAPIRouteAuth";
 import { NextResponse } from "next/server";
 
 export const POST = handleRouteWithAuth(async (req, session) => {
