@@ -15,8 +15,6 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-
-
 model BasicInfo {
   id             String   @id @default(uuid())
   fullName       String
@@ -33,27 +31,25 @@ model BasicInfo {
   updatedAt      DateTime @updatedAt
 }
 
-
-
 model Consultant {
-  id                   String        @id @default(uuid())
-  userId               String        @unique
-  user                 User          @relation(fields: [userId], references: [id])
-  professionalSummary  String        @db.Text
-  experienceYears      Int           @default(0)
-  desiredJobTitles     String[]      @default([])
+  id                   String           @id @default(uuid())
+  userId               String           @unique
+  user                 User             @relation(fields: [userId], references: [id])
+  professionalSummary  String           @db.Text
+  experienceYears      Int              @default(0)
+  desiredJobTitles     String[]         @default([])
   employmentStatus     String
-  industriesOfInterest String[]      @default([])
+  industriesOfInterest String[]         @default([])
   education            Education[]
-  certifications       String[]      @default([])
+  certifications       String[]         @default([])
   linkedinURL          String
   portfolioURL         String
-  skillsAndExpertise   String[]      @default([])
+  skillsAndExpertise   String[]         @default([])
   resumeCV             String
   // Add timestamps if needed
-  createdAt            DateTime      @default(now())
-  updatedAt            DateTime      @updatedAt
-  BenchSales           BenchSales?   @relation(fields: [benchSalesId], references: [id])
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  BenchSales           BenchSales?      @relation(fields: [benchSalesId], references: [id])
   benchSalesId         String?
   applications         JobApplication[]
   jobRatings           JobRating[]
@@ -84,12 +80,6 @@ model BenchSales {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 }
-
-
-
-
-
-
 
 model JobRating {
   id           String  @id @default(uuid())
