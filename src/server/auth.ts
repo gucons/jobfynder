@@ -54,7 +54,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const { email, password } = AuthCredentialSchema.parse(credentials);
 
           if (!email || !password) {
-            throw new Error("Please enter your email and password.");
+            throw new CustomCredentialsError(
+              "invalid_credentials",
+              "Please enter your email and password."
+            );
           }
 
           const existingUser = await prisma.user.findUnique({
@@ -70,13 +73,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               hashedPassword: true,
             },
           });
-          if (!existingUser) throw new Error("No user found, please register.");
+          if (!existingUser) {
+            throw new CustomCredentialsError(
+              "user_not_found",
+              "No user found, please register."
+            );
+          }
 
           const isPasswordValid = await bcrypt.compare(
             password,
             existingUser.hashedPassword as string
           );
-          if (!isPasswordValid) throw new Error("Invalid email or password.");
+          if (!isPasswordValid) {
+            throw new CustomCredentialsError(
+              "invalid_credentials",
+              "Invalid email or password."
+            );
+          }
 
           // Return user if credentials are valid
           const { hashedPassword, ...userWithoutPassword } = existingUser;
@@ -85,17 +98,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         } catch (error: any) {
           if (error instanceof z.ZodError) {
             throw new CustomCredentialsError(
-              error.errors[0].message || "Invalid email or password.",
-              "invalid_credentials"
+              "invalid_credentials",
+              error.errors[0].message || "Invalid email or password."
             );
+          } else if (error instanceof CustomCredentialsError) {
+            throw error;
           } else {
             console.error(
               "Error during authentication:",
               error.message || error
             );
             throw new CustomCredentialsError(
-              "An error occurred during authentication.",
-              "internal_error"
+              "internal_server_error",
+              "An error occurred during authentication."
             );
           }
         }
