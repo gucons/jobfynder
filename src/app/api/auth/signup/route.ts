@@ -1,16 +1,16 @@
 import prisma from "@/lib/prisma";
-import { LoginSchema } from "@/schema/LoginSchema";
-import handleRoute from "@/server/handle-route";
+import { AuthCredentialSchema } from "@/schema/AuthCredentialSchema";
+import handleRoute from "@/server/handleAPIRoute";
 import {
   sendErrorResponse,
   sendSuccessResponse,
-} from "@/server/handle-route-response";
+} from "@/server/handleRouteResponse";
 import bcrypt from "bcryptjs";
 
 export const POST = handleRoute(async (req) => {
   const requestData = await req.json();
 
-  const data = LoginSchema.parse(requestData);
+  const data = AuthCredentialSchema.parse(requestData);
 
   // Check if the user already exists
   const existingUser = await prisma.user.findUnique({

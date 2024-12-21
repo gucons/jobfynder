@@ -1,9 +1,9 @@
 import prisma from "@/lib/prisma";
-import handleRouteWithAuth from "@/server/handle-auth-route";
+import handleRouteWithAuth from "@/server/handleAPIRouteAuth";
 import {
   sendErrorResponse,
   sendSuccessResponse,
-} from "@/server/handle-route-response";
+} from "@/server/handleRouteResponse";
 import { UserRole } from "@prisma/client";
 import { z } from "zod";
 

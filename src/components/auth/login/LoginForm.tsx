@@ -4,7 +4,7 @@ import Image from "next/image";
 import React, { useTransition } from "react";
 import ImageGallery from "./ImageGallery";
 import { Button } from "@/components/ui/button";
-import { LoginSchema, LoginValues } from "@/schema/LoginSchema";
+import { LoginSchema, LoginValues } from "@/schema/AuthCredentialSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {

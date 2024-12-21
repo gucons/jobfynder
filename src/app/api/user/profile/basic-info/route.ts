@@ -1,10 +1,10 @@
 import prisma from "@/lib/prisma";
 import BasicDetailsSchema from "@/schema/basicDetailsSchema";
-import handleRouteWithAuth from "@/server/handle-auth-route";
+import handleRouteWithAuth from "@/server/handleAPIRouteAuth";
 import {
   sendErrorResponse,
   sendSuccessResponse,
-} from "@/server/handle-route-response";
+} from "@/server/handleRouteResponse";
 
 export const POST = handleRouteWithAuth(async (req, session) => {
   const requestData = await req.json();

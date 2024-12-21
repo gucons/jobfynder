@@ -1,11 +1,11 @@
 import prisma from "@/lib/prisma";
 import JobSchema from "@/schema/JobSchema";
-import handleRouteWithAuth from "@/server/handle-auth-route";
-import handleRoute from "@/server/handle-route";
+import handleRouteWithAuth from "@/server/handleAPIRouteAuth";
+import handleRoute from "@/server/handleAPIRoute";
 import {
   sendErrorResponse,
   sendSuccessResponse,
-} from "@/server/handle-route-response";
+} from "@/server/handleRouteResponse";
 import { JobStatus } from "@prisma/client";
 import { NextResponse } from "next/server";
 
