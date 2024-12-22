@@ -1,4 +1,6 @@
 {
-  "extends": ["next/core-web-vitals"]
-  //  "next/typescript"]  // If you are using TypeScript (Very strict)
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript"
+  ]
 }

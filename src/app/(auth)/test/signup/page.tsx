@@ -1,29 +1,29 @@
-import LoginForm from '@/components/auth/login/LoginForm';
+import SignupForm from '@/components/auth/signup/SignupForm';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import React from 'react';
 
 export const metadata: Metadata = {
-  title: 'Login',
+  title: 'Signup',
 };
 
-const TestLogin = () => {
+const TestSignup = () => {
   return (
     <div className="flex w-full flex-col items-center justify-center">
-      <LoginForm />
+      <SignupForm />
       <div className="flex items-center justify-center">
         <span className="mr-1 text-sm font-medium text-[#AEB7CA]">
-          Don’t have a Job finder profile?
+          Already have a profile?
         </span>
         <Link
-          href="/test/signup"
+          href="/test/login"
           className="text-sm font-medium text-[#21252A] hover:underline"
         >
-          Create One!
+          Log in
         </Link>
       </div>
     </div>
   );
 };
 
-export default TestLogin;
+export default TestSignup;
