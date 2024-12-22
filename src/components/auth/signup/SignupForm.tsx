@@ -3,7 +3,6 @@
 import ButtonLoading from '@/components/form/loading-button';
 import { PasswordInput } from '@/components/shared/PasswordInput';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -21,14 +20,11 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { MoveRight } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
 import React, { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import ImageGallery from '../../shared/ImageGallery';
-import { signIn } from 'next-auth/react';
-import { toast } from 'sonner';
 
-const LoginForm = () => {
+const SignupForm = () => {
   // states
   const [isPending, startTransition] = useTransition();
 
@@ -48,27 +44,25 @@ const LoginForm = () => {
   ) => {
     e?.preventDefault();
     startTransition(async () => {
-      // Login using next-auth
-      const signInResponse = await signIn('credentials', {
-        email: values.email,
-        // password: values.password,
-        password: 'password',
-        redirect: false, // Handle errors on this page
-      });
-
-      // Second check if someone bypasses client side validation
-      if (signInResponse?.error) {
-        toast.error('Log in failed', {
-          description: signInResponse.code, // Get error message from server
-        });
-        return;
-      }
-      toast.success('Login successful! Redirecting you to your dashboard...', {
-        description: 'You are now logged in.',
-      });
+      // // Login using next-auth
+      // const signInResponse = await signIn('credentials', {
+      //   email: values.email,
+      //   // password: values.password,
+      //   password: 'password',
+      //   redirect: false, // Handle errors on this page
+      // });
+      // // Second check if someone bypasses client side validation
+      // if (signInResponse?.error) {
+      //   toast.error('Log in failed', {
+      //     description: signInResponse.code, // Get error message from server
+      //   });
+      //   return;
+      // }
+      // toast.success('Login successful! Redirecting you to your dashboard...', {
+      //   description: 'You are now logged in.',
+      // });
     });
   };
-
   return (
     <div className="mb-[12px] flex h-[680px] w-[500px] flex-col rounded-sm bg-white shadow-md">
       <div className="flex-center h-[40%] flex-col bg-brand-secondary">
@@ -80,10 +74,11 @@ const LoginForm = () => {
           className="mb-[13px]"
         />
         <h2 className="text-[#FFFFFF mb-[6px] text-center text-xl font-semibold">
-          Welcome back!
+          Let&apos;s Get Started{' '}
+          <span className="text-brand-primary">Job Fynder</span>
         </h2>
         <h2 className="text-md mb-[15px] text-center font-normal text-[#AEB7CA]">
-          Login to your account.
+          Sign up & create your profile.
         </h2>
         <ImageGallery />
         <h2 className="text-center text-xs italic text-[#96A0B5]">
@@ -158,47 +153,30 @@ const LoginForm = () => {
                     <PasswordInput
                       placeholder="At least 8 characters."
                       {...field}
-                      className="mb-[12px] h-[45px] w-full rounded-[8px] border border-solid border-[#E2E7F1] bg-transparent p-2 text-brand-secondary shadow-sm placeholder:text-start placeholder:text-sm placeholder:text-[#AEB7CA]"
+                      className="mb-[10px] h-[45px] w-full rounded-[8px] border border-solid border-[#E2E7F1] bg-transparent p-2 text-brand-secondary shadow-sm placeholder:text-start placeholder:text-sm placeholder:text-[#AEB7CA]"
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <div className="mb-[20px] flex w-full items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="remember-me"
-                  // checked={clickedRemember}
-                  // onCheckedChange={handleRememberMeChange}
-                />
-                <label
-                  htmlFor="remember-me"
-                  className="text-sm font-normal text-[#AEB7CA]"
-                >
-                  Remember me
-                </label>
-              </div>
-              <Link
-                href={'/forgot-password'}
-                className="flex text-sm font-normal text-[#AEB7CA] hover:underline"
-              >
-                Forgot Password?
-              </Link>
-            </div>
             <ButtonLoading
               loading={isPending}
-              staticText="Login"
+              staticText="Create Profile"
               loaderText="Submitting"
               type="submit"
               icon={<MoveRight />}
-              className="mt-[15px] bg-brand-primary text-white transition-colors hover:bg-brand-primary/90 hover:text-white"
+              className="bg-brand-primary text-white transition-colors hover:bg-brand-primary/90 hover:text-white"
             />
           </form>
         </Form>
+        <h2 className="mt-[10px] text-center text-[13px] font-normal text-[#AEB7CA]">
+          By clicking &quot;Create Profile“ you agree to our Code of
+          Conduct, Terms of Service and Privacy Policy.
+        </h2>
       </div>
     </div>
   );
 };
 
-export default LoginForm;
+export default SignupForm;
