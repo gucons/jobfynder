@@ -5,6 +5,7 @@ model User {
     image          String?
     hashedPassword String?
     emailVerified  Boolean @default(false)
+    OTP            OTP[]
 
     // ! These fields are to be reconsidered
     role               UserRole             @default(PENDING)
@@ -35,4 +36,20 @@ enum UserRole {
     CONSULTANT
     BENCH_SALES
     RECRUITER
+}
+
+model OTP {
+    id        String     @id @default(cuid())
+    userId    String
+    user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+    code      String     @db.VarChar(6)
+    purpose   OTPPurpose
+    expiry    DateTime
+    used      Boolean    @default(false) // To track if the OTP was already used
+    createdAt DateTime   @default(now())
+}
+
+enum OTPPurpose {
+    EMAIL_VERIFICATION
+    PASSWORD_RESET
 }
