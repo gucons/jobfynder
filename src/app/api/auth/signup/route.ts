@@ -1,10 +1,14 @@
+import OTPCodeEmail from "@/emails/OTPTemplate";
 import prisma from "@/lib/prisma";
 import { AuthCredentialSchema } from "@/schema/AuthCredentialSchema";
+import { generateOTP } from "@/server/generateOTP";
 import handleRoute from "@/server/handleAPIRoute";
 import {
   sendErrorResponse,
   sendSuccessResponse,
 } from "@/server/handleRouteResponse";
+import { sendMail } from "@/server/sendMail";
+import { render } from "@react-email/components";
 import bcrypt from "bcryptjs";
 
 export const POST = handleRoute(async (req) => {
@@ -15,6 +19,9 @@ export const POST = handleRoute(async (req) => {
   // Check if the user already exists
   const existingUser = await prisma.user.findUnique({
     where: { email: data.email },
+    select: {
+      id: true,
+    },
   });
 
   if (existingUser) {
@@ -27,11 +34,39 @@ export const POST = handleRoute(async (req) => {
   const salt = await bcrypt.genSalt(12);
   const hashedPassword = await bcrypt.hash(data.password, salt);
 
-  await prisma.user.create({
+  // Create a new user
+  const user = await prisma.user.create({
     data: {
       email: data.email,
       hashedPassword,
     },
+    select: {
+      id: true,
+    },
+  });
+
+  // Generate OTP for email verification
+  const { code, expiresAt } = generateOTP();
+
+  // Creat a OTP and attach it to user
+  const OTP = await prisma.oTP.create({
+    data: {
+      userId: user.id,
+      code: code,
+      expiry: expiresAt,
+      purpose: "EMAIL_VERIFICATION",
+    },
+  });
+
+  const EmailHTML = await render(OTPCodeEmail({ code }), {
+    pretty: true,
+  });
+
+  // Send mail to user for email verification
+  await sendMail({
+    toEmail: data.email,
+    subject: "Verify your email",
+    htmlBody: EmailHTML,
   });
 
   return sendSuccessResponse({
