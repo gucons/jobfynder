@@ -41,15 +41,19 @@ export const POST = handleRouteWithAuth(async (req, session) => {
     },
   });
 
-  // Check if the OTP is valid
-  if (
-    !user ||
-    !user.OTP ||
-    user.OTP.length === 0 // No OTP found (OTP has expired)
-  ) {
+  // Check if user and OTP exist
+  if (!user || !user.OTP) {
     return sendErrorResponse({
-      message: 'Invalid OTP',
-      status: 400,
+      message: 'No verification code found. Please request a new code.',
+      status: 404,
+    });
+  }
+
+  // Check if OTP is expired (array empty due to gte filter)
+  if (user.OTP.length === 0) {
+    return sendErrorResponse({
+      message: 'Verification code has expired. Please request a new code.',
+      status: 410,
     });
   }
 
@@ -70,7 +74,7 @@ export const POST = handleRouteWithAuth(async (req, session) => {
     });
 
     return sendErrorResponse({
-      message: 'Invalid OTP',
+      message: 'Incorrect verification code. Please try again.',
       status: 400,
     });
   }
@@ -78,7 +82,7 @@ export const POST = handleRouteWithAuth(async (req, session) => {
   // Check if the OTP has been used more than MAX_USES
   if (user.OTP[0].usageCount >= env.EMAIL_OTP_MAX_USES) {
     return sendErrorResponse({
-      message: 'OTP has been used too many times, please request a new one',
+      message: 'OTP has been used too many times. Please request a new code.',
       status: 429,
     });
   }
