@@ -1,12 +1,12 @@
-import prisma from "@/lib/prisma";
-import { AuthCredentialSchema } from "@/schema/AuthCredentialSchema";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import bcrypt from "bcryptjs";
-import NextAuth, { CredentialsSignin, Session } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import Github from "next-auth/providers/github";
-import Google from "next-auth/providers/google";
-import { z } from "zod";
+import prisma from '@/lib/prisma';
+import { AuthCredentialSchema } from '@/schema/AuthCredentialSchema';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import bcrypt from 'bcryptjs';
+import NextAuth, { CredentialsSignin, Session } from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
+import Github from 'next-auth/providers/github';
+import Google from 'next-auth/providers/google';
+import { z } from 'zod';
 
 const prismaAdapter = PrismaAdapter(prisma);
 
@@ -37,15 +37,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Credentials({
       credentials: {
         email: {
-          label: "Email",
-          placeholder: "johndoe@email.com",
-          type: "email",
+          label: 'Email',
+          placeholder: 'johndoe@email.com',
+          type: 'email',
           required: true,
         },
         password: {
-          label: "Password",
-          placeholder: "Shhhhhhhh!",
-          type: "password",
+          label: 'Password',
+          placeholder: 'Shhhhhhhh!',
+          type: 'password',
           required: true,
         },
       },
@@ -55,8 +55,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           if (!email || !password) {
             throw new CustomCredentialsError(
-              "invalid_credentials",
-              "Please enter your email and password."
+              'invalid_credentials',
+              'Please enter your email and password.',
             );
           }
 
@@ -75,19 +75,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           });
           if (!existingUser) {
             throw new CustomCredentialsError(
-              "user_not_found",
-              "No user found, please register."
+              'user_not_found',
+              'No user found, please register.',
             );
           }
 
           const isPasswordValid = await bcrypt.compare(
             password,
-            existingUser.hashedPassword as string
+            existingUser.hashedPassword as string,
           );
           if (!isPasswordValid) {
             throw new CustomCredentialsError(
-              "invalid_credentials",
-              "Invalid email or password."
+              'invalid_credentials',
+              'Invalid email or password.',
             );
           }
 
@@ -98,19 +98,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         } catch (error: any) {
           if (error instanceof z.ZodError) {
             throw new CustomCredentialsError(
-              "invalid_credentials",
-              error.errors[0].message || "Invalid email or password."
+              'invalid_credentials',
+              error.errors[0].message || 'Invalid email or password.',
             );
           } else if (error instanceof CustomCredentialsError) {
             throw error;
           } else {
             console.error(
-              "Error during authentication:",
-              error.message || error
+              'Error during authentication:',
+              error.message || error,
             );
             throw new CustomCredentialsError(
-              "internal_server_error",
-              "An error occurred during authentication."
+              'internal_server_error',
+              'An error occurred during authentication.',
             );
           }
         }
@@ -120,31 +120,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google,
   ],
   // ! Check if the token needs to be modified
-  // callbacks: {
-  //   async jwt({ token, user }) {
-  //     if (user) {
-  //       token.id = user.id;
-  //     }
-  //     return token;
-  //   },
-  //   async session({ session, token }) {
-  //     if (token) {
-  //       session.user = {
-  //         ...session.user,
-  //         id: token.id as string,
-  //       };
-  //     }
-  //     return session;
-  //   },
-  // },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user = {
+          ...session.user,
+          id: token.id as string,
+        };
+      }
+      return session;
+    },
+  },
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   pages: {
-    signIn: "/login", // Custom signin page
-    error: "/error", // Custom error page
+    signIn: '/login', // Custom signin page
+    error: '/error', // Custom error page
   },
-  debug: process.env.NODE_ENV === "development",
+  debug: process.env.NODE_ENV === 'development',
 });
 
 export async function getSessionServer() {
