@@ -27,7 +27,7 @@ export function sendSuccessResponse(params: SuccessParams) {
 export function sendErrorResponse(params: ErrorParams) {
   const response = {
     success: false,
-    message: "Internal server error",
+    message: params.message,
     error:
       process.env.NODE_ENV === "development"
         ? params.error?.message
