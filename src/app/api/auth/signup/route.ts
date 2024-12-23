@@ -27,6 +27,7 @@ export const POST = handleRoute(async (req) => {
   if (existingUser) {
     return sendErrorResponse({
       message: 'User already exists',
+      status: 409,
     });
   }
 

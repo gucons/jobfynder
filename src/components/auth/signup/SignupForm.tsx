@@ -23,10 +23,13 @@ import Image from 'next/image';
 import React, { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import ImageGallery from '../../shared/ImageGallery';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 const SignupForm = () => {
   // states
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   // React Hook Form Steps
   const form = useForm<AuthCredentialValues>({
@@ -43,29 +46,24 @@ const SignupForm = () => {
     e?: React.BaseSyntheticEvent,
   ) => {
     e?.preventDefault();
+    const email = values.email;
+    const password = values.password;
     startTransition(async () => {
-      // // Login using next-auth
-      // const signInResponse = await signIn('credentials', {
-      //   email: values.email,
-      //   // password: values.password,
-      //   password: 'password',
-      //   redirect: false, // Handle errors on this page
-      // });
-      // // Second check if someone bypasses client side validation
-      // if (signInResponse?.error) {
-      //   toast.error('Log in failed', {
-      //     description: signInResponse.code, // Get error message from server
-      //   });
-      //   return;
-      // }
-      // toast.success('Login successful! Redirecting you to your dashboard...', {
-      //   description: 'You are now logged in.',
-      // });
+      try {
+        const signUpResponse = await axios
+          .post('/api/auth/signup', { email, password })
+          .then(() => {
+            router.push('/test/verify-otp');
+          });
+        console.log(signUpResponse);
+      } catch (error) {
+        console.log(error);
+      }
     });
   };
   return (
-    <div className="mb-[12px] flex h-[680px] w-[500px] flex-col rounded-sm bg-white shadow-md">
-      <div className="flex-center h-[40%] flex-col bg-brand-secondary">
+    <div className="mb-[12px] flex h-[680px] w-[500px] flex-col rounded-md bg-white shadow-md">
+      <div className="flex-center h-[40%] flex-col rounded-tl-md rounded-tr-md bg-brand-secondary">
         <Image
           src="/assets/icons/JF.svg"
           alt="SVG Example"
@@ -85,7 +83,7 @@ const SignupForm = () => {
           Join 90,571+ peers.
         </h2>
       </div>
-      <div className="flex h-[70%] flex-col items-center bg-white p-10">
+      <div className="flex h-[70%] flex-col items-center rounded-bl-md rounded-br-md bg-white p-10">
         <Button className="flex-center mb-[12px] h-[45px] w-[420px] rounded-[5px] border border-solid border-[#E2E7F1] bg-white text-center shadow-sm">
           <Image
             src="/assets/icons/Google.svg"
