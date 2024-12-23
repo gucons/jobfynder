@@ -39,14 +39,17 @@ enum UserRole {
 }
 
 model OTP {
-    id        String     @id @default(cuid())
-    userId    String
-    user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-    code      String     @db.VarChar(6)
-    purpose   OTPPurpose
-    expiry    DateTime
-    used      Boolean    @default(false) // To track if the OTP was already used
-    createdAt DateTime   @default(now())
+    id         String     @id @default(cuid())
+    userId     String
+    user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+    code       String     @db.VarChar(6)
+    purpose    OTPPurpose
+    expiry     DateTime
+    usageCount Int        @default(0) // To track the number of times the OTP is used
+    used       Boolean    @default(false) // To track if the OTP was already used
+    createdAt  DateTime   @default(now())
+
+    @@unique([userId, purpose]) // Single OTP per user per purpose
 }
 
 enum OTPPurpose {
