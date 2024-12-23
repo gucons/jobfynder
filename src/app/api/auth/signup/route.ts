@@ -1,15 +1,15 @@
-import OTPCodeEmail from "@/emails/OTPTemplate";
-import prisma from "@/lib/prisma";
-import { AuthCredentialSchema } from "@/schema/AuthCredentialSchema";
-import { generateOTP } from "@/server/generateOTP";
-import handleRoute from "@/server/handleAPIRoute";
+import OTPCodeEmail from '@/emails/OTPTemplate';
+import prisma from '@/lib/prisma';
+import { AuthCredentialSchema } from '@/schema/AuthCredentialSchema';
+import { generateOTP } from '@/server/generateOTP';
+import handleRoute from '@/server/handleAPIRoute';
 import {
   sendErrorResponse,
   sendSuccessResponse,
-} from "@/server/handleRouteResponse";
-import { sendMail } from "@/server/sendMail";
-import { render } from "@react-email/components";
-import bcrypt from "bcryptjs";
+} from '@/server/handleRouteResponse';
+import { sendMail } from '@/server/sendMail';
+import { render } from '@react-email/components';
+import bcrypt from 'bcryptjs';
 
 export const POST = handleRoute(async (req) => {
   const requestData = await req.json();
@@ -26,7 +26,7 @@ export const POST = handleRoute(async (req) => {
 
   if (existingUser) {
     return sendErrorResponse({
-      message: "User already exists",
+      message: 'User already exists',
     });
   }
 
@@ -48,13 +48,26 @@ export const POST = handleRoute(async (req) => {
   // Generate OTP for email verification
   const { code, expiresAt } = generateOTP();
 
-  // Creat a OTP and attach it to user
-  const OTP = await prisma.oTP.create({
-    data: {
+  // Create or update OTP for the user
+  await prisma.oTP.upsert({
+    where: {
+      userId_purpose: {
+        userId: user.id,
+        purpose: 'EMAIL_VERIFICATION',
+      },
+    },
+    update: {
+      code: code,
+      expiry: expiresAt,
+    },
+    create: {
       userId: user.id,
       code: code,
       expiry: expiresAt,
-      purpose: "EMAIL_VERIFICATION",
+      purpose: 'EMAIL_VERIFICATION',
+    },
+    select: {
+      id: true,
     },
   });
 
@@ -65,11 +78,11 @@ export const POST = handleRoute(async (req) => {
   // Send mail to user for email verification
   await sendMail({
     toEmail: data.email,
-    subject: "Verify your email",
+    subject: 'Verify your email',
     htmlBody: EmailHTML,
   });
 
   return sendSuccessResponse({
-    message: "User created successfully",
+    message: 'User created successfully',
   });
 });
