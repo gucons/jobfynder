@@ -1,12 +1,17 @@
 model pendingUser {
     id             String  @id @default(uuid())
     email          String  @unique
-    username       String?
-    name           String?
     image          String?
+    username       String?
+    firstName      String?
+    lastName       String?
+    bio            String?
     hashedPassword String?
     emailVerified  Boolean @default(false)
     // OTP            OTP[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@unique([id, email])
     @@unique([id, username])
