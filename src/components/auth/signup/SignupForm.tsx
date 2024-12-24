@@ -18,13 +18,14 @@ import {
   AuthCredentialValues,
 } from '@/schema/AuthCredentialSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
+import axios, { AxiosError } from 'axios';
 import { MoveRight } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React, { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import ImageGallery from '../../shared/ImageGallery';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
 
 const SignupForm = () => {
   // states
@@ -46,24 +47,38 @@ const SignupForm = () => {
     e?: React.BaseSyntheticEvent,
   ) => {
     e?.preventDefault();
-    const email = values.email;
-    const password = values.password;
     startTransition(async () => {
+      // Register the user
       try {
-        const signUpResponse = await axios
-          .post('/api/auth/signup', { email, password })
-          .then(() => {
-            router.push('/test/verify-otp');
+        const response = await axios.post<{
+          success: boolean;
+          message: string;
+        }>('/api/auth/signup', values);
+
+        if (response.data.success) {
+          toast.success('Account created successfully', {
+            description: 'Please check your email to verify your account.',
           });
-        console.log(signUpResponse);
-      } catch (error) {
-        console.log(error);
+          router.replace('/....');
+        }
+      } catch (error: unknown) {
+        if (error instanceof AxiosError) {
+          toast.error('Log in failed', {
+            description: error.response?.data.message,
+          });
+          return;
+        } else {
+          toast.error('Log in failed', {
+            description: 'An error occurred. Please try again.',
+          });
+          return;
+        }
       }
     });
   };
   return (
-    <div className="mb-[12px] flex h-[680px] w-[500px] flex-col rounded-md bg-white shadow-md">
-      <div className="flex-center h-[40%] flex-col rounded-tl-md rounded-tr-md bg-brand-secondary">
+    <div className="mb-[12px] flex h-[680px] w-[500px] flex-col rounded-sm bg-white shadow-md">
+      <div className="flex-center h-[40%] flex-col bg-brand-secondary">
         <Image
           src="/assets/icons/JF.svg"
           alt="SVG Example"
@@ -83,7 +98,7 @@ const SignupForm = () => {
           Join 90,571+ peers.
         </h2>
       </div>
-      <div className="flex h-[70%] flex-col items-center rounded-bl-md rounded-br-md bg-white p-10">
+      <div className="flex h-[70%] flex-col items-center bg-white p-10">
         <Button className="flex-center mb-[12px] h-[45px] w-[420px] rounded-[5px] border border-solid border-[#E2E7F1] bg-white text-center shadow-sm">
           <Image
             src="/assets/icons/Google.svg"
