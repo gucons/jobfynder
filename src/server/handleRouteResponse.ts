@@ -1,9 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
 type SuccessParams = {
   message: string;
+  description?: string;
   status?: number;
-  data?: JSON;
+  data?: unknown;
 };
 
 type ErrorParams = {
@@ -16,6 +17,7 @@ export function sendSuccessResponse(params: SuccessParams) {
   const response = {
     success: true,
     message: params.message,
+    description: params.description,
     data: params.data,
   };
 
@@ -29,7 +31,7 @@ export function sendErrorResponse(params: ErrorParams) {
     success: false,
     message: params.message,
     error:
-      process.env.NODE_ENV === "development"
+      process.env.NODE_ENV === 'development'
         ? params.error?.message
         : undefined, // Only show error details in development mode
   };

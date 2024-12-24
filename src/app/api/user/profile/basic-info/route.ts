@@ -1,10 +1,10 @@
-import prisma from "@/lib/prisma";
-import BasicDetailsSchema from "@/schema/basicDetailsSchema";
-import handleRouteWithAuth from "@/server/handleAPIRouteAuth";
+import prisma from '@/lib/prisma';
+import BasicDetailsSchema from '@/schema/userDetailsSchema';
+import handleRouteWithAuth from '@/server/handleAPIRouteAuth';
 import {
   sendErrorResponse,
   sendSuccessResponse,
-} from "@/server/handleRouteResponse";
+} from '@/server/handleRouteResponse';
 
 export const POST = handleRouteWithAuth(async (req, session) => {
   const requestData = await req.json();
@@ -25,11 +25,11 @@ export const POST = handleRouteWithAuth(async (req, session) => {
 
   if (!consultant) {
     return sendErrorResponse({
-      message: "Consultant not found",
+      message: 'Consultant not found',
     });
   }
 
   return sendSuccessResponse({
-    message: "Consultant details updated successfully",
+    message: 'Consultant details updated successfully',
   });
 });

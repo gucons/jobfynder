@@ -13,3 +13,11 @@
 //    */
 //   prefix: "uploader/ratelimit",
 // });
+
+export const rateLimit = async (identifier: string) => {
+  // Implement rate limiting logic here
+  // You can use Redis or similar to track request counts
+  console.log(`Rate limiting for ${identifier}`); // ! Use upstash ratelimit in future
+
+  return { success: true };
+};

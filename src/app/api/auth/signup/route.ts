@@ -35,8 +35,8 @@ export const POST = handleRoute(async (req) => {
   const salt = await bcrypt.genSalt(12);
   const hashedPassword = await bcrypt.hash(data.password, salt);
 
-  // Create a new user
-  const user = await prisma.user.create({
+  // Create a new pending user
+  const user = await prisma.pendingUser.create({
     data: {
       email: data.email,
       hashedPassword,
