@@ -1,0 +1,14 @@
+model pendingUser {
+    id             String  @id @default(uuid())
+    email          String  @unique
+    username       String?
+    name           String?
+    image          String?
+    hashedPassword String?
+    emailVerified  Boolean @default(false)
+    // OTP            OTP[]
+
+    @@unique([id, email])
+    @@unique([id, username])
+    @@index([id, email])
+}

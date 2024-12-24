@@ -1,6 +1,7 @@
 model User {
     id             String  @id @default(uuid())
-    name           String?
+    name           String
+    username       String
     email          String  @unique
     image          String?
     hashedPassword String?
@@ -29,6 +30,10 @@ model User {
     Authenticator      Authenticator[]
     createdAt          DateTime             @default(now())
     updatedAt          DateTime             @updatedAt
+
+    @@index([id, email, username])
+    @@unique([id, email])
+    @@unique([id, username])
 }
 
 enum UserRole {
