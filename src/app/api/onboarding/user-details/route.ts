@@ -1,6 +1,6 @@
 import prisma from '@/lib/prisma';
 import { rateLimit } from '@/lib/rate-limit';
-import { UserDetailsSchema } from '@/schema/basicDetailsSchema';
+import { UserDetailsSchema } from '@/schema/userDetailsSchema';
 import handleRouteWithAuth from '@/server/handleAPIRouteAuth';
 import {
   sendErrorResponse,
