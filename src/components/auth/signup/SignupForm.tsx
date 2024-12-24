@@ -53,7 +53,7 @@ const SignupForm = () => {
         const response = await axios.post<{
           success: boolean;
           message: string;
-        }>('api/auth/signup', values);
+        }>('/api/auth/signup', values);
 
         if (response.data.success) {
           toast.success('Account created successfully', {
@@ -64,7 +64,7 @@ const SignupForm = () => {
       } catch (error: unknown) {
         if (error instanceof AxiosError) {
           toast.error('Log in failed', {
-            description: error.response?.data,
+            description: error.response?.data.message,
           });
           return;
         } else {
