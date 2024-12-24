@@ -1,6 +1,5 @@
 import prisma from '@/lib/prisma';
 import { AuthCredentialSchema } from '@/schema/AuthCredentialSchema';
-import { PrismaAdapter } from '@auth/prisma-adapter';
 import bcrypt from 'bcryptjs';
 import NextAuth, { CredentialsSignin, Session } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
@@ -8,19 +7,18 @@ import Github from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
 import { z } from 'zod';
 
-const prismaAdapter = PrismaAdapter(prisma);
-
 // !Update the adaptor once the normal auth flow is done
-// @ts-ignore
-prismaAdapter.createUser = async (data) => {
-  return await prisma.user.create({
-    data: {
-      email: data.email as string,
-      image: data.image as string,
-      emailVerified: true,
-    },
-  });
-};
+// const prismaAdapter = PrismaAdapter(prisma);
+
+// prismaAdapter.createUser = async (data) => {
+//   return await prisma.user.create({
+//     data: {
+//       email: data.email as string,
+//       image: data.image as string,
+//       emailVerified: true,
+//     },
+//   });
+// };
 
 class CustomCredentialsError extends CredentialsSignin {
   code: string;
@@ -51,8 +49,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       authorize: async (credentials) => {
         try {
+          // Validate credentials
           const { email, password } = AuthCredentialSchema.parse(credentials);
-
           if (!email || !password) {
             throw new CustomCredentialsError(
               'invalid_credentials',
@@ -60,20 +58,40 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             );
           }
 
-          const existingUser = await prisma.user.findUnique({
-            where: {
-              email: email,
-            },
-            select: {
-              id: true,
-              name: true,
-              image: true,
-              email: true,
-              emailVerified: true,
-              hashedPassword: true,
-            },
-          });
-          if (!existingUser) {
+          const [fullUser, pendingUser] = await Promise.all([
+            prisma.user.findUnique({
+              where: {
+                email: email,
+              },
+              select: {
+                id: true,
+                username: true,
+                firstName: true,
+                lastName: true,
+                image: true,
+                email: true,
+                emailVerified: true,
+                hashedPassword: true,
+              },
+            }),
+            prisma.pendingUser.findUnique({
+              where: {
+                email: email,
+              },
+              select: {
+                id: true,
+                // username: true,
+                // firstName: true,
+                // lastName: true,
+                image: true,
+                email: true,
+                emailVerified: true,
+                hashedPassword: true,
+              },
+            }),
+          ]);
+
+          if (!fullUser || !pendingUser) {
             throw new CustomCredentialsError(
               'user_not_found',
               'No user found, please register.',
@@ -82,8 +100,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           const isPasswordValid = await bcrypt.compare(
             password,
-            existingUser.hashedPassword as string,
+            (fullUser || pendingUser).hashedPassword as string,
           );
+
           if (!isPasswordValid) {
             throw new CustomCredentialsError(
               'invalid_credentials',
@@ -91,11 +110,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             );
           }
 
-          // Return user if credentials are valid
-          const { hashedPassword, ...userWithoutPassword } = existingUser;
-
-          return userWithoutPassword;
-        } catch (error: any) {
+          if (fullUser) {
+            const { hashedPassword, ...userWithoutPassword } = fullUser; // eslint-disable-line @typescript-eslint/no-unused-vars
+            return {
+              ...userWithoutPassword,
+              onboardingComplete: true,
+            };
+          } else {
+            return {
+              id: pendingUser.id,
+              email: pendingUser.email,
+              image: pendingUser.image,
+              emailVerified: pendingUser.emailVerified,
+              username: 'onboarding_username',
+              firstName: 'onboarding_firstName',
+              lastName: 'onboarding_lastName',
+              onboardingComplete: false,
+            };
+          }
+        } catch (error: unknown) {
           if (error instanceof z.ZodError) {
             throw new CustomCredentialsError(
               'invalid_credentials',
@@ -106,7 +139,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           } else {
             console.error(
               'Error during authentication:',
-              error.message || error,
+              (error as Error).message || error,
             );
             throw new CustomCredentialsError(
               'internal_server_error',
@@ -119,20 +152,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Github,
     Google,
   ],
-  // ! Check if the token needs to be modified
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        return { ...user };
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        session.user = {
-          ...session.user,
-          id: token.id as string,
-        };
+        return { ...session, ...token };
       }
       return session;
     },
@@ -149,6 +178,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 export async function getSessionServer() {
   const session = await auth();
-  if (session?.user) return session as Session;
+  if (session?.user || session?.user?.id || session?.user?.email)
+    return session as Session;
   return null;
 }
