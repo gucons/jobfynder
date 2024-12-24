@@ -1,22 +1,38 @@
 // next-auth.d.ts
-import { DefaultSession } from "next-auth";
+import { DefaultSession } from 'next-auth';
 
-declare module "next-auth" {
+declare module 'next-auth' {
   interface Session {
     user: {
       id: string;
-      name?: string;
-      image?: string;
       email: string;
       emailVerified: boolean;
-    } & DefaultSession["user"];
+      username: string;
+      firstName: string;
+      lastName: string;
+      image: string | null;
+      onboardingComplete: boolean;
+    } & Omit<DefaultSession['user'], 'name' | 'email' | 'image'>;
   }
 
   interface User {
     id: string;
-    name?: string;
-    image?: string;
     email: string;
     emailVerified: boolean;
+    username: string;
+    firstName: string;
+    lastName: string;
+    image: string | null;
+    onboardingComplete: boolean;
+  }
+
+  interface JWT {
+    id: string;
+    username: string;
+    firstName: string;
+    lastName: string;
+    bio: string;
+    image: string | null;
+    onboardingComplete: boolean;
   }
 }
