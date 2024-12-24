@@ -51,8 +51,7 @@ const LoginForm = () => {
       // Login using next-auth
       const signInResponse = await signIn('credentials', {
         email: values.email,
-        // password: values.password,
-        password: 'password',
+        password: values.password,
         redirect: false, // Handle errors on this page
       });
 

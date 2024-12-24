@@ -13,6 +13,7 @@ import bcrypt from 'bcryptjs';
 
 export const POST = handleRoute(async (req) => {
   const requestData = await req.json();
+  console.log(requestData);
 
   const data = AuthCredentialSchema.parse(requestData);
 
@@ -27,6 +28,7 @@ export const POST = handleRoute(async (req) => {
   if (existingUser) {
     return sendErrorResponse({
       message: 'User already exists',
+      status: 409,
     });
   }
 

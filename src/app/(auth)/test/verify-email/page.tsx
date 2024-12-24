@@ -1,29 +1,29 @@
-import SignupForm from '@/components/auth/signup/SignupForm';
+import VerifyOtpForm from '@/components/auth/signup/VerifyOtpForm';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import React from 'react';
 
 export const metadata: Metadata = {
-  title: 'Signup',
+  title: 'Verify Email',
 };
 
-const TestSignup = () => {
+const VerifyEmailPage = () => {
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-center">
-      <SignupForm />
+    <div className="flex-center h-screen w-screen flex-col gap-7">
+      <VerifyOtpForm />
       <div className="flex items-center justify-center">
         <span className="mr-1 text-sm font-medium text-[#AEB7CA]">
-          Already have a profile?
+          Need help?
         </span>
         <Link
-          href="/test/login"
+          href="#"
           className="text-sm font-medium text-[#21252A] hover:underline"
         >
-          Log in
+          Contact us
         </Link>
       </div>
     </div>
   );
 };
 
-export default TestSignup;
+export default VerifyEmailPage;

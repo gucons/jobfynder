@@ -165,7 +165,7 @@ importers:
         specifier: ^3.1.1
         version: 3.1.1
       input-otp:
-        specifier: ^1.2.4
+        specifier: ^1.4.1
         version: 1.4.1(react-dom@19.0.0-rc-66855b96-20241106(react@19.0.0-rc-66855b96-20241106))(react@19.0.0-rc-66855b96-20241106)
       javascript-time-ago:
         specifier: ^2.5.11
