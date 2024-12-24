@@ -16,13 +16,17 @@ import {
 } from '@/components/ui/input-otp';
 import { VerifyOtpValues, VerifyOtpSchema } from '@/schema/VerifyEmailSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
+import axios, { AxiosError } from 'axios';
 import { MoveRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 const OtpInputForm = () => {
   // states
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   // React Hook form steps
   const form = useForm<VerifyOtpValues>({
@@ -38,23 +42,30 @@ const OtpInputForm = () => {
   ) => {
     e?.preventDefault();
     startTransition(async () => {
-      // // Login using next-auth
-      // const signInResponse = await signIn('credentials', {
-      //   email: values.email,
-      //   // password: values.password,
-      //   password: 'password',
-      //   redirect: false, // Handle errors on this page
-      // });
-      // // Second check if someone bypasses client side validation
-      // if (signInResponse?.error) {
-      //   toast.error('Log in failed', {
-      //     description: signInResponse.code, // Get error message from server
-      //   });
-      //   return;
-      // }
-      // toast.success('Login successful! Redirecting you to your dashboard...', {
-      //   description: 'You are now logged in.',
-      // });
+      // Register the user
+      try {
+        const response = await axios.post<{
+          success: boolean;
+          message: string;
+        }>('/api/auth/verify-email', values);
+
+        if (response.data.success) {
+          toast.success('Email verified successfully', {});
+          router.push('/');
+        }
+      } catch (error: unknown) {
+        if (error instanceof AxiosError) {
+          toast.error('Email verification failed', {
+            description: error.response?.data.message,
+          });
+          return;
+        } else {
+          toast.error('Email verification failed', {
+            description: 'An error occurred. Please try again.',
+          });
+          return;
+        }
+      }
     });
   };
   return (

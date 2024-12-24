@@ -4,10 +4,10 @@ import Link from 'next/link';
 import React from 'react';
 
 export const metadata: Metadata = {
-  title: 'Verify-OTP',
+  title: 'Verify Email',
 };
 
-const VerifyOtpPage = () => {
+const VerifyEmailPage = () => {
   return (
     <div className="flex-center h-screen w-screen flex-col gap-7">
       <VerifyOtpForm />
@@ -26,4 +26,4 @@ const VerifyOtpPage = () => {
   );
 };
 
-export default VerifyOtpPage;
+export default VerifyEmailPage;

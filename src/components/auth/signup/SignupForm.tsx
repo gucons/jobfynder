@@ -59,7 +59,7 @@ const SignupForm = () => {
           toast.success('Account created successfully', {
             description: 'Please check your email to verify your account.',
           });
-          router.replace('/....');
+          router.push('/test/verify-email');
         }
       } catch (error: unknown) {
         if (error instanceof AxiosError) {
